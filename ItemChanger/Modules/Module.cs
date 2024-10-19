@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace ItemChanger.Modules;
 
@@ -25,7 +26,7 @@ public abstract class Module
             }
             catch (Exception e)
             {
-                LogError($"Error initializing module {Name}:\n{e}");
+                LogHelper.LogError($"Error initializing module {Name}:\n{e}");
             }
             Loaded = true;
         }
@@ -45,7 +46,7 @@ public abstract class Module
             }
             catch (Exception e)
             {
-                LogError($"Error unloading module {Name}:\n{e}");
+                LogHelper.LogError($"Error unloading module {Name}:\n{e}");
             }
             Loaded = false;
         }

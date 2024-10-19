@@ -1,4 +1,6 @@
-﻿namespace ItemChanger.Modules;
+﻿using System.Collections.Generic;
+
+namespace ItemChanger.Modules;
 
 /// <summary>
 /// An interface implemented by modules for sharing information between assemblies that do not strongly reference each other.

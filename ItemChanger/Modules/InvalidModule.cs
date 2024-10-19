@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 
 namespace ItemChanger.Modules;
 
@@ -24,7 +25,7 @@ public sealed class InvalidModule : Module
     /// <summary>
     /// Converter which erases the InvalidModule during serialization and writes the JSON which it wraps.
     /// </summary>
-    public class InvalidModuleConverter : JsonConverter<InvalidModule>
+    internal class InvalidModuleConverter : JsonConverter<InvalidModule>
     {
         public override bool CanRead => false;
         public override bool CanWrite => true;
