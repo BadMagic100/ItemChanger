@@ -1,114 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <ProjectGuid>{E4EF2EA1-3DBF-4442-B904-51F72F39758B}</ProjectGuid>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFrameworks>net472;net6.0;net8.0</TargetFrameworks>
     <RootNamespace>ItemChanger</RootNamespace>
     <AssemblyTitle>ItemChanger</AssemblyTitle>
-    <VersionPrefix>2.1.4</VersionPrefix>
-    <VersionSuffix></VersionSuffix>
-    <Deterministic>true</Deterministic>
+    <Version>0.0.1</Version>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <LangVersion>latest</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <ImplicitUsings>true</ImplicitUsings>
-    <Nullable>annotations</Nullable>
-    <NoWarn>1701;1702;CS1591;IDE0018</NoWarn>
-    <HollowKnightRefs>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Hollow Knight\hollow_knight_Data\Managed</HollowKnightRefs>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
-
-  <Import Project="LocalOverrides.targets" Condition="Exists('LocalOverrides.targets')" />
     
   <ItemGroup>
-    <Using Remove="System.Net.Http" />
-    <Using Remove="System.Threading" />
-    <Using Remove="System.Threading.Tasks" />
     <PackageReference Include="PolySharp" Version="1.8.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <Using Include="ItemChanger.LogHelper" Static="true" />
-    <Using Include="UnityEngine" />
-    <Using Include="UnityEngine.Object" Alias="UObject" />
-    <Using Include="UnityEngine.SceneManagement.Scene" Alias="Scene" />
-    <Using Include="HutongGames.PlayMaker" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Remove="**\*.png" />
-    <None Remove="**\*.json" />
-    <None Remove="**\*.xml" />
-    <None Remove="**\*.wav" />
+    <Folder Include="Resources\" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\**\*.png" />
-    <EmbeddedResource Include="Resources\**\*.json" />
-    <EmbeddedResource Include="Resources\**\*.xml" />
-    <EmbeddedResource Include="Resources\**\*.wav" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>$(HollowKnightRefs)\Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="MMHOOK_Assembly-CSharp">
-      <HintPath>$(HollowKnightRefs)\MMHOOK_Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="MMHOOK_PlayMaker">
-      <HintPath>$(HollowKnightRefs)\MMHOOK_PlayMaker.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil">
-      <HintPath>$(HollowKnightRefs)\Mono.Cecil.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Security">
-      <HintPath>$(HollowKnightRefs)\Mono.Security.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoMod.RuntimeDetour">
-      <HintPath>$(HollowKnightRefs)\MonoMod.RuntimeDetour.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoMod.Utils">
-      <HintPath>$(HollowKnightRefs)\MonoMod.Utils.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>$(HollowKnightRefs)\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="PlayMaker">
-      <HintPath>$(HollowKnightRefs)\PlayMaker.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>$(HollowKnightRefs)\UnityEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.AudioModule">
-      <HintPath>$(HollowKnightRefs)\UnityEngine.AudioModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>$(HollowKnightRefs)\UnityEngine.CoreModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.ImageConversionModule">
-      <HintPath>$(HollowKnightRefs)\UnityEngine.ImageConversionModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.JSONSerializeModule">
-      <HintPath>$(HollowKnightRefs)\UnityEngine.JSONSerializeModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.ParticleSystemModule">
-      <HintPath>$(HollowKnightRefs)\UnityEngine.ParticleSystemModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.Physics2DModule">
-      <HintPath>$(HollowKnightRefs)\UnityEngine.Physics2DModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.TextRenderingModule">
-      <HintPath>$(HollowKnightRefs)\UnityEngine.TextRenderingModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>$(HollowKnightRefs)\UnityEngine.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UIModule">
-      <HintPath>$(HollowKnightRefs)\UnityEngine.UIModule.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <Target Name="CopyMod" AfterTargets="PostBuildEvent">
-    <Copy SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).pdb;$(TargetDir)$(TargetName).xml;$(SolutionDir)README.md" DestinationFolder="$(HollowKnightRefs)\Mods\ItemChanger" SkipUnchangedFiles="true" />
-  </Target>
-  <Target Name="ClearReferenceCopyLocalPaths" AfterTargets="ResolveAssemblyReferences">
-    <ItemGroup>
-      <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" />
-    </ItemGroup>
-  </Target>
 </Project>

@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace ItemChanger.Extensions
 {
@@ -7,28 +10,6 @@ namespace ItemChanger.Extensions
     /// </summary>
     public static class Extensions
     {
-        public static T GetOrAddComponent<T>(this GameObject go) where T : Component
-        {
-            T t = go.GetComponent<T>();
-            if (t == null) return go.AddComponent<T>();
-            else return t;
-        }
-
-        public static TValue? GetOrAdd<TKey, TValue>(this Dictionary<TKey, TValue?> dict, TKey key, TValue? add = default)
-        {
-            if (!dict.TryGetValue(key, out TValue? value))
-            {
-                value = add;
-                dict.Add(key, value);
-            }
-
-            return value;
-        }
-
-        public static TValue? GetOrDefault<TKey, TValue>(this Dictionary<TKey, TValue?> dict, TKey key, TValue? @default = default)
-            => dict.TryGetValue(key, out TValue? value) ? value : @default;
-
-
         public static string CapLength(this string s, int length) => s.Length > length ? s.Substring(0, length) : s;
 
         /// <summary>
