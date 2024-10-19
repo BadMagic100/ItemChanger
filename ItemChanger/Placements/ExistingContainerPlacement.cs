@@ -1,16 +1,16 @@
 ﻿using ItemChanger.Locations;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ItemChanger.Placements;
 
 /// <summary>
 /// Placement which supports modifying existing containers in place or replacing them with a container preferred by the item list.
 /// </summary>
-public class ExistingContainerPlacement : AbstractPlacement, ISingleCostPlacement, IPrimaryLocationPlacement
+public class ExistingContainerPlacement(string Name) : AbstractPlacement(Name), ISingleCostPlacement, IPrimaryLocationPlacement
 {
-    public ExistingContainerPlacement(string Name) : base(Name) { }
-
-    public ExistingContainerLocation Location;
+    public required ExistingContainerLocation Location { get; init; }
     AbstractLocation IPrimaryLocationPlacement.Location => Location;
 
     [JsonProperty]
@@ -68,7 +68,7 @@ public class ExistingContainerPlacement : AbstractPlacement, ISingleCostPlacemen
             .OfType<Tags.UnsupportedContainerTag>()
             .Select(t => t.containerType));
 
-        string containerType = items
+        string? containerType = items
             .Select(i => i.GetPreferredContainer())
             .FirstOrDefault(c => Container.GetContainer(c) is Container container && container.SupportsInstantiate && !unsupported.Contains(c) &&
             (!mustSupportCost || container.SupportsCost) && 

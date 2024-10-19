@@ -1,4 +1,6 @@
 ﻿using ItemChanger.Locations;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ItemChanger.Placements;
 
@@ -6,15 +8,13 @@ namespace ItemChanger.Placements;
 /// The default placement for most use cases.
 /// Chooses an item container for its location based on its item list.
 /// </summary>
-public class MutablePlacement : AbstractPlacement, IContainerPlacement, ISingleCostPlacement, IPrimaryLocationPlacement
+public class MutablePlacement(string Name) : AbstractPlacement(Name), IContainerPlacement, ISingleCostPlacement, IPrimaryLocationPlacement
 {
-    public MutablePlacement(string Name) : base(Name) { }
-
-    public ContainerLocation Location;
+    public required ContainerLocation Location { get; init; }
     AbstractLocation IPrimaryLocationPlacement.Location => Location;
 
-    public override string MainContainerType => containerType;
-    public string containerType = Container.Unknown;
+    public override string MainContainerType => ContainerType;
+    public string ContainerType { get; set; } = Container.Unknown;
 
     public Cost? Cost { get; set; }
 
@@ -33,16 +33,16 @@ public class MutablePlacement : AbstractPlacement, IContainerPlacement, ISingleC
 
     public void GetContainer(AbstractLocation location, out GameObject obj, out string containerType)
     {
-        if (this.containerType == Container.Unknown)
+        if (this.ContainerType == Container.Unknown)
         {
-            this.containerType = ChooseContainerType(this, location as ContainerLocation, Items);
+            this.ContainerType = ChooseContainerType(this, location as ContainerLocation, Items);
         }
         
-        containerType = this.containerType;
+        containerType = this.ContainerType;
         var container = Container.GetContainer(containerType);
         if (container == null || !container.SupportsInstantiate)
         {
-            this.containerType = containerType = ChooseContainerType(this, location as ContainerLocation, Items);
+            this.ContainerType = containerType = ChooseContainerType(this, location as ContainerLocation, Items);
             container = Container.GetContainer(containerType);
             if (container == null)
             {
@@ -68,7 +68,7 @@ public class MutablePlacement : AbstractPlacement, IContainerPlacement, ISingleC
             .OfType<Tags.UnsupportedContainerTag>()
             .Select(t => t.containerType));
 
-        string containerType = items
+        string? containerType = items
             .Select(i => i.GetPreferredContainer())
             .FirstOrDefault(c => location.Supports(c) && !unsupported.Contains(c) && Container.SupportsAll(c, true, mustSupportCost, mustSupportSceneChange));
 

@@ -11,6 +11,7 @@ use :new() in type constraints throughout to enforce/encourage json-friendly con
 Audit fields -> properties and usage of required throughout
 docs
 move public APIs out of the "Internal" namespace
+see if there is a good way to dejank single/multicost placements
 
 Unity stuff - is a unity shim package needed? How to deal with unity refs from nuget package?
 

@@ -1,4 +1,8 @@
-﻿namespace ItemChanger.Placements;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace ItemChanger.Placements;
 
 /// <summary>
 /// Placement which handles switching between two possible locations according to a test.
@@ -7,25 +11,26 @@ public class DualPlacement : AbstractPlacement, IContainerPlacement, ISingleCost
 {
     public DualPlacement(string Name) : base(Name) { }
 
-    public AbstractLocation trueLocation;
-    public AbstractLocation falseLocation;
+    public required AbstractLocation TrueLocation { get; init; }
+    public required AbstractLocation FalseLocation { get; init; }
 
-    public IBool Test;
+    public required IBool Test {  get; init; }
+
     private bool cachedValue;
 
-    public string containerType = Container.Unknown;
-    public override string MainContainerType => containerType;
+    public string ContainerType { get; set; } = Container.Unknown;
+    public override string MainContainerType => ContainerType;
 
-    [Newtonsoft.Json.JsonIgnore]
-    public AbstractLocation Location => cachedValue ? trueLocation : falseLocation;
+    [JsonIgnore]
+    public AbstractLocation Location => cachedValue ? TrueLocation : FalseLocation;
     
     public Cost? Cost { get; set; }
 
     protected override void OnLoad()
     {
         cachedValue = Test.Value;
-        trueLocation.Placement = this;
-        falseLocation.Placement = this;
+        TrueLocation.Placement = this;
+        FalseLocation.Placement = this;
         SetContainerType();
         Location.Load();
         Cost?.Load();
@@ -53,12 +58,12 @@ public class DualPlacement : AbstractPlacement, IContainerPlacement, ISingleCost
     // MutablePlacement implementation of GetContainer
     public void GetContainer(AbstractLocation location, out GameObject obj, out string containerType)
     {
-        if (this.containerType == Container.Unknown)
+        if (this.ContainerType == Container.Unknown)
         {
-            this.containerType = MutablePlacement.ChooseContainerType(this, location as Locations.ContainerLocation, Items);
+            this.ContainerType = MutablePlacement.ChooseContainerType(this, location as Locations.ContainerLocation, Items);
         }
 
-        containerType = this.containerType;
+        containerType = this.ContainerType;
         Container? container = Container.GetContainer(containerType);
         if (container is null || !container.SupportsInstantiate)
         {
@@ -76,51 +81,51 @@ public class DualPlacement : AbstractPlacement, IContainerPlacement, ISingleCost
     private void SetContainerType()
     {
         bool mustSupportCost = Cost != null;
-        bool mustSupportSceneChange = falseLocation.GetTags<Tags.ChangeSceneTag>().Any() 
-            || trueLocation.GetTags<Tags.ChangeSceneTag>().Any() || GetTags<Tags.ChangeSceneTag>().Any();
-        if (Container.SupportsAll(containerType, true, mustSupportCost, mustSupportSceneChange))
+        bool mustSupportSceneChange = FalseLocation.GetTags<Tags.ChangeSceneTag>().Any() 
+            || TrueLocation.GetTags<Tags.ChangeSceneTag>().Any() || GetTags<Tags.ChangeSceneTag>().Any();
+        if (Container.SupportsAll(ContainerType, true, mustSupportCost, mustSupportSceneChange))
         {
             return;
         }
 
-        if (falseLocation is Locations.ExistingContainerLocation fecl)
+        if (FalseLocation is Locations.ExistingContainerLocation fecl)
         {
-            if (containerType == fecl.ContainerType && Container.SupportsAll(containerType, false, mustSupportCost, mustSupportSceneChange))
+            if (ContainerType == fecl.ContainerType && Container.SupportsAll(ContainerType, false, mustSupportCost, mustSupportSceneChange))
             {
                 return;
             }
             else
             {
-                containerType = ExistingContainerPlacement.ChooseContainerType(this, fecl, Items);
+                ContainerType = ExistingContainerPlacement.ChooseContainerType(this, fecl, Items);
                 return;
             }
         }
-        else if (trueLocation is Locations.ExistingContainerLocation tecl)
+        else if (TrueLocation is Locations.ExistingContainerLocation tecl)
         {
-            if (containerType == tecl.ContainerType && Container.SupportsAll(containerType, false, mustSupportCost, mustSupportSceneChange))
+            if (ContainerType == tecl.ContainerType && Container.SupportsAll(ContainerType, false, mustSupportCost, mustSupportSceneChange))
             {
                 return;
             }
             else
             {
-                containerType = ExistingContainerPlacement.ChooseContainerType(this, tecl, Items);
+                ContainerType = ExistingContainerPlacement.ChooseContainerType(this, tecl, Items);
                 return;
             }
         }
 
-        Locations.ContainerLocation? cl = (falseLocation as Locations.ContainerLocation) ?? (trueLocation as Locations.ContainerLocation);
+        Locations.ContainerLocation? cl = (FalseLocation as Locations.ContainerLocation) ?? (TrueLocation as Locations.ContainerLocation);
         if (cl == null)
         {
             return;
         }
 
-        containerType = MutablePlacement.ChooseContainerType(this, cl, Items); // container type already failed the initial test
+        ContainerType = MutablePlacement.ChooseContainerType(this, cl, Items); // container type already failed the initial test
     }
 
     public override IEnumerable<Tag> GetPlacementAndLocationTags()
     {
         return base.GetPlacementAndLocationTags()
-            .Concat(falseLocation.tags ?? Enumerable.Empty<Tag>())
-            .Concat(trueLocation.tags ?? Enumerable.Empty<Tag>());
+            .Concat(FalseLocation.tags ?? Enumerable.Empty<Tag>())
+            .Concat(TrueLocation.tags ?? Enumerable.Empty<Tag>());
     }
 }

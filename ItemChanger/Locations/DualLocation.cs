@@ -38,8 +38,8 @@ public class DualLocation : AbstractLocation
         return new Placements.DualPlacement(name)
         {
             Test = Test,
-            falseLocation = FalseLocation,
-            trueLocation = TrueLocation,   
+            FalseLocation = FalseLocation,
+            TrueLocation = TrueLocation,   
             tags = tags,
         };
     }
