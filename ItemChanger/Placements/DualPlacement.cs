@@ -1,127 +1,126 @@
-﻿namespace ItemChanger.Placements
+﻿namespace ItemChanger.Placements;
+
+/// <summary>
+/// Placement which handles switching between two possible locations according to a test.
+/// </summary>
+public class DualPlacement : AbstractPlacement, IContainerPlacement, ISingleCostPlacement, IPrimaryLocationPlacement
 {
-    /// <summary>
-    /// Placement which handles switching between two possible locations according to a test.
-    /// </summary>
-    public class DualPlacement : AbstractPlacement, IContainerPlacement, ISingleCostPlacement, IPrimaryLocationPlacement
+    public DualPlacement(string Name) : base(Name) { }
+
+    public AbstractLocation trueLocation;
+    public AbstractLocation falseLocation;
+
+    public IBool Test;
+    private bool cachedValue;
+
+    public string containerType = Container.Unknown;
+    public override string MainContainerType => containerType;
+
+    [Newtonsoft.Json.JsonIgnore]
+    public AbstractLocation Location => cachedValue ? trueLocation : falseLocation;
+    
+    public Cost? Cost { get; set; }
+
+    protected override void OnLoad()
     {
-        public DualPlacement(string Name) : base(Name) { }
+        cachedValue = Test.Value;
+        trueLocation.Placement = this;
+        falseLocation.Placement = this;
+        SetContainerType();
+        Location.Load();
+        Cost?.Load();
+        Events.OnBeginSceneTransition += OnBeginSceneTransition;
+    }
 
-        public AbstractLocation trueLocation;
-        public AbstractLocation falseLocation;
+    protected override void OnUnload()
+    {
+        Location.Unload();
+        Cost?.Unload();
+        Events.OnBeginSceneTransition -= OnBeginSceneTransition;
+    }
 
-        public IBool Test;
-        private bool cachedValue;
-
-        public string containerType = Container.Unknown;
-        public override string MainContainerType => containerType;
-
-        [Newtonsoft.Json.JsonIgnore]
-        public AbstractLocation Location => cachedValue ? trueLocation : falseLocation;
-        
-        public Cost? Cost { get; set; }
-
-        protected override void OnLoad()
-        {
-            cachedValue = Test.Value;
-            trueLocation.Placement = this;
-            falseLocation.Placement = this;
-            SetContainerType();
-            Location.Load();
-            Cost?.Load();
-            Events.OnBeginSceneTransition += OnBeginSceneTransition;
-        }
-
-        protected override void OnUnload()
+    private void OnBeginSceneTransition(Transition obj)
+    {
+        bool value = Test.Value;
+        if (cachedValue != value)
         {
             Location.Unload();
-            Cost?.Unload();
-            Events.OnBeginSceneTransition -= OnBeginSceneTransition;
+            cachedValue = value;
+            Location.Load();
+        }
+    }
+
+    // MutablePlacement implementation of GetContainer
+    public void GetContainer(AbstractLocation location, out GameObject obj, out string containerType)
+    {
+        if (this.containerType == Container.Unknown)
+        {
+            this.containerType = MutablePlacement.ChooseContainerType(this, location as Locations.ContainerLocation, Items);
         }
 
-        private void OnBeginSceneTransition(Transition obj)
+        containerType = this.containerType;
+        Container? container = Container.GetContainer(containerType);
+        if (container is null || !container.SupportsInstantiate)
         {
-            bool value = Test.Value;
-            if (cachedValue != value)
-            {
-                Location.Unload();
-                cachedValue = value;
-                Location.Load();
-            }
+            // this means that the container that was chosen on load isn't valid
+            // most likely due from switching from a noninstantiatable ECL to a CL
+            // so, we make a shiny but we don't modify the saved container type
+            containerType = Container.Shiny;
+            container = Container.GetContainer(containerType)!;
         }
 
-        // MutablePlacement implementation of GetContainer
-        public void GetContainer(AbstractLocation location, out GameObject obj, out string containerType)
+        obj = container.GetNewContainer(new ContainerInfo(container.Name, this, location.flingType, Cost, 
+            location.GetTags<Tags.ChangeSceneTag>().FirstOrDefault()?.ToChangeSceneInfo()));
+    }
+
+    private void SetContainerType()
+    {
+        bool mustSupportCost = Cost != null;
+        bool mustSupportSceneChange = falseLocation.GetTags<Tags.ChangeSceneTag>().Any() 
+            || trueLocation.GetTags<Tags.ChangeSceneTag>().Any() || GetTags<Tags.ChangeSceneTag>().Any();
+        if (Container.SupportsAll(containerType, true, mustSupportCost, mustSupportSceneChange))
         {
-            if (this.containerType == Container.Unknown)
-            {
-                this.containerType = MutablePlacement.ChooseContainerType(this, location as Locations.ContainerLocation, Items);
-            }
-
-            containerType = this.containerType;
-            Container? container = Container.GetContainer(containerType);
-            if (container is null || !container.SupportsInstantiate)
-            {
-                // this means that the container that was chosen on load isn't valid
-                // most likely due from switching from a noninstantiatable ECL to a CL
-                // so, we make a shiny but we don't modify the saved container type
-                containerType = Container.Shiny;
-                container = Container.GetContainer(containerType)!;
-            }
-
-            obj = container.GetNewContainer(new ContainerInfo(container.Name, this, location.flingType, Cost, 
-                location.GetTags<Tags.ChangeSceneTag>().FirstOrDefault()?.ToChangeSceneInfo()));
+            return;
         }
 
-        private void SetContainerType()
+        if (falseLocation is Locations.ExistingContainerLocation fecl)
         {
-            bool mustSupportCost = Cost != null;
-            bool mustSupportSceneChange = falseLocation.GetTags<Tags.ChangeSceneTag>().Any() 
-                || trueLocation.GetTags<Tags.ChangeSceneTag>().Any() || GetTags<Tags.ChangeSceneTag>().Any();
-            if (Container.SupportsAll(containerType, true, mustSupportCost, mustSupportSceneChange))
+            if (containerType == fecl.ContainerType && Container.SupportsAll(containerType, false, mustSupportCost, mustSupportSceneChange))
             {
                 return;
             }
-
-            if (falseLocation is Locations.ExistingContainerLocation fecl)
+            else
             {
-                if (containerType == fecl.ContainerType && Container.SupportsAll(containerType, false, mustSupportCost, mustSupportSceneChange))
-                {
-                    return;
-                }
-                else
-                {
-                    containerType = ExistingContainerPlacement.ChooseContainerType(this, fecl, Items);
-                    return;
-                }
+                containerType = ExistingContainerPlacement.ChooseContainerType(this, fecl, Items);
+                return;
             }
-            else if (trueLocation is Locations.ExistingContainerLocation tecl)
-            {
-                if (containerType == tecl.ContainerType && Container.SupportsAll(containerType, false, mustSupportCost, mustSupportSceneChange))
-                {
-                    return;
-                }
-                else
-                {
-                    containerType = ExistingContainerPlacement.ChooseContainerType(this, tecl, Items);
-                    return;
-                }
-            }
-
-            Locations.ContainerLocation? cl = (falseLocation as Locations.ContainerLocation) ?? (trueLocation as Locations.ContainerLocation);
-            if (cl == null)
+        }
+        else if (trueLocation is Locations.ExistingContainerLocation tecl)
+        {
+            if (containerType == tecl.ContainerType && Container.SupportsAll(containerType, false, mustSupportCost, mustSupportSceneChange))
             {
                 return;
             }
-
-            containerType = MutablePlacement.ChooseContainerType(this, cl, Items); // container type already failed the initial test
+            else
+            {
+                containerType = ExistingContainerPlacement.ChooseContainerType(this, tecl, Items);
+                return;
+            }
         }
 
-        public override IEnumerable<Tag> GetPlacementAndLocationTags()
+        Locations.ContainerLocation? cl = (falseLocation as Locations.ContainerLocation) ?? (trueLocation as Locations.ContainerLocation);
+        if (cl == null)
         {
-            return base.GetPlacementAndLocationTags()
-                .Concat(falseLocation.tags ?? Enumerable.Empty<Tag>())
-                .Concat(trueLocation.tags ?? Enumerable.Empty<Tag>());
+            return;
         }
+
+        containerType = MutablePlacement.ChooseContainerType(this, cl, Items); // container type already failed the initial test
+    }
+
+    public override IEnumerable<Tag> GetPlacementAndLocationTags()
+    {
+        return base.GetPlacementAndLocationTags()
+            .Concat(falseLocation.tags ?? Enumerable.Empty<Tag>())
+            .Concat(trueLocation.tags ?? Enumerable.Empty<Tag>());
     }
 }

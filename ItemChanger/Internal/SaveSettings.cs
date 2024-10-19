@@ -4,111 +4,110 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ItemChanger
+namespace ItemChanger;
+
+// The api uses Activator.CreateInstance to construct local settings when entering the main menu.
+// Since Settings is intended to be nullable, we only let the api work with a wrapper.
+public readonly struct SaveSettings
 {
-    // The api uses Activator.CreateInstance to construct local settings when entering the main menu.
-    // Since Settings is intended to be nullable, we only let the api work with a wrapper.
-    public readonly struct SaveSettings
+    public static readonly SaveSettings Empty = default;
+    [JsonConstructor]
+    public SaveSettings(Settings value) => this.value = value;
+    public readonly Settings value;
+    public static implicit operator SaveSettings(Settings value) => new(value);
+    public static implicit operator Settings(SaveSettings s) => s.value;
+}
+
+public class Settings
+{
+    [JsonConstructor]
+    private Settings() { }
+
+    public Settings(bool createDefaultModules = true) 
     {
-        public static readonly SaveSettings Empty = default;
-        [JsonConstructor]
-        public SaveSettings(Settings value) => this.value = value;
-        public readonly Settings value;
-        public static implicit operator SaveSettings(Settings value) => new(value);
-        public static implicit operator Settings(SaveSettings s) => s.value;
+        mods = createDefaultModules ? ModuleCollection.Create() : new();
     }
 
-    public class Settings
+    public ModuleCollection mods;
+    
+    public Dictionary<string, AbstractPlacement> Placements = new();
+    
+    [JsonConverter(typeof(Transition.TransitionDictConverter<ITransition>))]
+    public Dictionary<Transition, ITransition> TransitionOverrides = new();
+    
+    public List<IDeployer> Deployers = new();
+
+    public StartDef? Start = null;
+
+    public IEnumerable<AbstractItem> GetItems() => Placements.SelectMany(kvp => kvp.Value.Items);
+    public IEnumerable<AbstractPlacement> GetPlacements() => (Placements ??= new Dictionary<string, AbstractPlacement>()).Select(kvp => kvp.Value);
+
+    internal void SavePlacements(IEnumerable<AbstractPlacement> placements)
     {
-        [JsonConstructor]
-        private Settings() { }
+        ItemChangerMod.AddPlacements(placements, PlacementConflictResolution.MergeKeepingNew);
+    }
 
-        public Settings(bool createDefaultModules = true) 
+    internal void ResetSemiPersistentItems()
+    {
+        foreach (var item in GetItems())
         {
-            mods = createDefaultModules ? ModuleCollection.Create() : new();
-        }
-
-        public ModuleCollection mods;
-        
-        public Dictionary<string, AbstractPlacement> Placements = new();
-        
-        [JsonConverter(typeof(Transition.TransitionDictConverter<ITransition>))]
-        public Dictionary<Transition, ITransition> TransitionOverrides = new();
-        
-        public List<IDeployer> Deployers = new();
-
-        public StartDef? Start = null;
-
-        public IEnumerable<AbstractItem> GetItems() => Placements.SelectMany(kvp => kvp.Value.Items);
-        public IEnumerable<AbstractPlacement> GetPlacements() => (Placements ??= new Dictionary<string, AbstractPlacement>()).Select(kvp => kvp.Value);
-
-        internal void SavePlacements(IEnumerable<AbstractPlacement> placements)
-        {
-            ItemChangerMod.AddPlacements(placements, PlacementConflictResolution.MergeKeepingNew);
-        }
-
-        internal void ResetSemiPersistentItems()
-        {
-            foreach (var item in GetItems())
+            if (item.GetTag<Tags.IPersistenceTag>(out var tag) && tag.Persistence == Persistence.SemiPersistent)
             {
-                if (item.GetTag<Tags.IPersistenceTag>(out var tag) && tag.Persistence == Persistence.SemiPersistent)
-                {
-                    item.RefreshObtained();
-                }
+                item.RefreshObtained();
             }
         }
+    }
 
-        internal void ResetPersistentItems()
+    internal void ResetPersistentItems()
+    {
+        foreach (var item in GetItems())
         {
-            foreach (var item in GetItems())
+            if (item.GetTag<Tags.IPersistenceTag>(out var tag) && tag.Persistence == Persistence.Persistent)
             {
-                if (item.GetTag<Tags.IPersistenceTag>(out var tag) && tag.Persistence == Persistence.Persistent)
-                {
-                    item.RefreshObtained();
-                }
+                item.RefreshObtained();
             }
         }
+    }
 
-        internal static bool loaded = false;
+    internal static bool loaded = false;
 
-        internal void Load()
+    internal void Load()
+    {
+        if (loaded)
         {
-            if (loaded)
-            {
-                throw new InvalidOperationException("An instance of Settings was already loaded.");
-            }
-
-            loaded = true;
-            mods.Initialize();
-            foreach (AbstractPlacement p in GetPlacements())
-            {
-                p.Load();
-            }
-
-            foreach (IDeployer d in Deployers)
-            {
-                Events.AddSceneChangeEdit(d.SceneName, d.OnSceneChange);
-            }
+            throw new InvalidOperationException("An instance of Settings was already loaded.");
         }
 
-        internal void Unload()
+        loaded = true;
+        mods.Initialize();
+        foreach (AbstractPlacement p in GetPlacements())
         {
-            if (!loaded)
-            {
-                throw new InvalidOperationException("No instance of Settings was loaded.");
-            }
+            p.Load();
+        }
 
-            loaded = false;
-            mods.Unload();
-            foreach (var loc in GetPlacements())
-            {
-                loc.Unload();
-            }
+        foreach (IDeployer d in Deployers)
+        {
+            Events.AddSceneChangeEdit(d.SceneName, d.OnSceneChange);
+        }
+    }
 
-            foreach (IDeployer d in Deployers)
-            {
-                Events.RemoveSceneChangeEdit(d.SceneName, d.OnSceneChange);
-            }
+    internal void Unload()
+    {
+        if (!loaded)
+        {
+            throw new InvalidOperationException("No instance of Settings was loaded.");
+        }
+
+        loaded = false;
+        mods.Unload();
+        foreach (var loc in GetPlacements())
+        {
+            loc.Unload();
+        }
+
+        foreach (IDeployer d in Deployers)
+        {
+            Events.RemoveSceneChangeEdit(d.SceneName, d.OnSceneChange);
         }
     }
 }

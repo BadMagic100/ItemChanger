@@ -1,253 +1,252 @@
 ﻿using System.Collections;
 using System.Reflection;
 
-namespace ItemChanger
+namespace ItemChanger;
+
+
+public class StartDef
 {
+    public const string RESPAWN_MARKER_NAME = "ITEMCHANGER_RESPAWN_MARKER";
+    public const string RESPAWN_TAG = "RespawnPoint";
+    public virtual string SceneName { get; set; }
+    public virtual float X { get; set; }
+    public virtual float Y { get; set; }
+    public virtual int MapZone { get; set; } = 2;
+    public virtual bool RespawnFacingRight { get; set; } = true;
+    public virtual SpecialStartEffects SpecialEffects { get; set; } = SpecialStartEffects.Default;
+    internal static StartDef? Start => Internal.Ref.Settings.Start;
 
-    public class StartDef
+    public class StartComponent : MonoBehaviour
     {
-        public const string RESPAWN_MARKER_NAME = "ITEMCHANGER_RESPAWN_MARKER";
-        public const string RESPAWN_TAG = "RespawnPoint";
-        public virtual string SceneName { get; set; }
-        public virtual float X { get; set; }
-        public virtual float Y { get; set; }
-        public virtual int MapZone { get; set; } = 2;
-        public virtual bool RespawnFacingRight { get; set; } = true;
-        public virtual SpecialStartEffects SpecialEffects { get; set; } = SpecialStartEffects.Default;
-        internal static StartDef? Start => Internal.Ref.Settings.Start;
+        public StartDef def;
+    }
 
-        public class StartComponent : MonoBehaviour
+    public void ApplyToPlayerData(PlayerData pd)
+    {
+        pd.respawnMarkerName = RESPAWN_MARKER_NAME;
+        pd.respawnScene = SceneName;
+        pd.mapZone = (GlobalEnums.MapZone)MapZone;
+    }
+
+    public GameObject CreateRespawnMarker(Vector3 pos)
+    {
+        GameObject marker = new()
         {
-            public StartDef def;
+            name = StartDef.RESPAWN_MARKER_NAME,
+            tag = StartDef.RESPAWN_TAG
+        };
+        marker.AddComponent<RespawnMarker>().respawnFacingRight = RespawnFacingRight;
+        marker.AddComponent<StartComponent>().def = this;
+        marker.transform.position = pos;
+        return marker;
+    }
+
+    public virtual void CreateRespawnMarker(Scene startScene)
+    {
+        GameObject marker = new()
+        {
+            name = StartDef.RESPAWN_MARKER_NAME,
+            tag = StartDef.RESPAWN_TAG
+        };
+        marker.AddComponent<RespawnMarker>().respawnFacingRight = RespawnFacingRight;
+        marker.AddComponent<StartComponent>().def = this;
+        marker.transform.position = new Vector3(this.X, this.Y, 7.4f);
+    }
+
+    internal static void Hook()
+    {
+        HookBenchwarp();
+        Events.OnSceneChange += OnSceneChange;
+        On.HeroController.Respawn += OnRespawn;
+    }
+
+    internal static void Unhook()
+    {
+        UnHookBenchwarp();
+        Events.OnSceneChange -= OnSceneChange;
+        On.HeroController.Respawn -= OnRespawn;
+    }
+
+    internal static void OnSceneChange(Scene to)
+    {
+        if (Start != null && to.name == Start.SceneName)
+        {
+            Start.CreateRespawnMarker(to);
         }
+    }
 
-        public void ApplyToPlayerData(PlayerData pd)
+    internal static Func<
+        (string respawnScene, string respawnMarkerName, int respawnType, int mapZone),
+        (string respawnScene, string respawnMarkerName, int respawnType, int mapZone)
+        >
+        BenchwarpGetStartDef = def => Start == null ? def : (Start.SceneName, RESPAWN_MARKER_NAME, 0, Start.MapZone);
+
+    internal static void HookBenchwarp()
+    {
+        try
         {
-            pd.respawnMarkerName = RESPAWN_MARKER_NAME;
-            pd.respawnScene = SceneName;
-            pd.mapZone = (GlobalEnums.MapZone)MapZone;
+            FieldInfo field = Type.GetType("Benchwarp.Events, Benchwarp")
+                .GetField("OnGetStartDef", BindingFlags.Public | BindingFlags.Static);
+
+            field.FieldType
+                .GetEvent("Event", BindingFlags.Public | BindingFlags.Instance)
+                .AddEventHandler(field.GetValue(null), BenchwarpGetStartDef);
         }
-
-        public GameObject CreateRespawnMarker(Vector3 pos)
+        catch
         {
-            GameObject marker = new()
+            return;
+        }
+    }
+
+    internal static void UnHookBenchwarp()
+    {
+        try
+        {
+            FieldInfo field = Type.GetType("Benchwarp.Events, Benchwarp")
+                .GetField("OnGetStartDef", BindingFlags.Public | BindingFlags.Static);
+
+            field.FieldType
+                .GetEvent("Event", BindingFlags.Public | BindingFlags.Instance)
+                .RemoveEventHandler(field.GetValue(null), BenchwarpGetStartDef);
+        }
+        catch
+        {
+            return;
+        }
+    }
+
+    private static IEnumerator OnRespawn(On.HeroController.orig_Respawn orig, HeroController self)
+    {
+        IEnumerator? e = orig(self); // the enumerator given by monomod
+        IEnumerator? r = null; // hopefully, the enumerator generated by HeroController.Respawn()
+        Type? E = e?.GetType();
+        Type? T = MonoMod.Utils.Extensions.GetStateMachineTarget(typeof(HeroController).GetMethod("Respawn", BindingFlags.Public | BindingFlags.Instance)).DeclaringType;
+
+        // Various checks to detect if another On hook modifies HC.Respawn
+        if (e != null && E != T)
+        {
+            while (e.MoveNext())
             {
-                name = StartDef.RESPAWN_MARKER_NAME,
-                tag = StartDef.RESPAWN_TAG
-            };
-            marker.AddComponent<RespawnMarker>().respawnFacingRight = RespawnFacingRight;
-            marker.AddComponent<StartComponent>().def = this;
-            marker.transform.position = pos;
-            return marker;
-        }
-
-        public virtual void CreateRespawnMarker(Scene startScene)
-        {
-            GameObject marker = new()
-            {
-                name = StartDef.RESPAWN_MARKER_NAME,
-                tag = StartDef.RESPAWN_TAG
-            };
-            marker.AddComponent<RespawnMarker>().respawnFacingRight = RespawnFacingRight;
-            marker.AddComponent<StartComponent>().def = this;
-            marker.transform.position = new Vector3(this.X, this.Y, 7.4f);
-        }
-
-        internal static void Hook()
-        {
-            HookBenchwarp();
-            Events.OnSceneChange += OnSceneChange;
-            On.HeroController.Respawn += OnRespawn;
-        }
-
-        internal static void Unhook()
-        {
-            UnHookBenchwarp();
-            Events.OnSceneChange -= OnSceneChange;
-            On.HeroController.Respawn -= OnRespawn;
-        }
-
-        internal static void OnSceneChange(Scene to)
-        {
-            if (Start != null && to.name == Start.SceneName)
-            {
-                Start.CreateRespawnMarker(to);
-            }
-        }
-
-        internal static Func<
-            (string respawnScene, string respawnMarkerName, int respawnType, int mapZone),
-            (string respawnScene, string respawnMarkerName, int respawnType, int mapZone)
-            >
-            BenchwarpGetStartDef = def => Start == null ? def : (Start.SceneName, RESPAWN_MARKER_NAME, 0, Start.MapZone);
-
-        internal static void HookBenchwarp()
-        {
-            try
-            {
-                FieldInfo field = Type.GetType("Benchwarp.Events, Benchwarp")
-                    .GetField("OnGetStartDef", BindingFlags.Public | BindingFlags.Static);
-
-                field.FieldType
-                    .GetEvent("Event", BindingFlags.Public | BindingFlags.Instance)
-                    .AddEventHandler(field.GetValue(null), BenchwarpGetStartDef);
-            }
-            catch
-            {
-                return;
-            }
-        }
-
-        internal static void UnHookBenchwarp()
-        {
-            try
-            {
-                FieldInfo field = Type.GetType("Benchwarp.Events, Benchwarp")
-                    .GetField("OnGetStartDef", BindingFlags.Public | BindingFlags.Static);
-
-                field.FieldType
-                    .GetEvent("Event", BindingFlags.Public | BindingFlags.Instance)
-                    .RemoveEventHandler(field.GetValue(null), BenchwarpGetStartDef);
-            }
-            catch
-            {
-                return;
-            }
-        }
-
-        private static IEnumerator OnRespawn(On.HeroController.orig_Respawn orig, HeroController self)
-        {
-            IEnumerator? e = orig(self); // the enumerator given by monomod
-            IEnumerator? r = null; // hopefully, the enumerator generated by HeroController.Respawn()
-            Type? E = e?.GetType();
-            Type? T = MonoMod.Utils.Extensions.GetStateMachineTarget(typeof(HeroController).GetMethod("Respawn", BindingFlags.Public | BindingFlags.Instance)).DeclaringType;
-
-            // Various checks to detect if another On hook modifies HC.Respawn
-            if (e != null && E != T)
-            {
-                while (e.MoveNext())
+                if (e.Current != null && e.Current.GetType() == T)
                 {
-                    if (e.Current != null && e.Current.GetType() == T)
-                    {
-                        r = e.Current as IEnumerator;
-                        break;
-                    }
-                    else
-                    {
-                        yield return e.Current;
-                    }
-                }
-            }
-            else
-            {
-                r = e;
-            }
-
-            if (r == null)
-            {
-                LogError("Unable to edit HeroController.Respawn--another subscriber has replaced the enumerator.");
-                yield break;
-            }
-
-            FieldInfo[] fields = T.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            FieldInfo state = fields.FirstOrDefault(f => f.Name.Contains("state") && f.FieldType == typeof(int));
-            FieldInfo spawn = fields.FirstOrDefault(f => f.Name.Contains("spawnPoint") && f.FieldType == typeof(Transform));
-
-            int GetState() => (int)state.GetValue(r);
-            void SetState(int i) => state.SetValue(r, i);
-            Transform GetSpawnPoint() => (Transform)spawn.GetValue(r);
-
-            while (r.MoveNext())
-            {
-                yield return r.Current;
-                if (GetState() == 2 && GameManager.instance.GetSceneNameString() != "GG_Atrium")
-                {
-                    // HC.Respawn
-                    self.IgnoreInput();
-                    RespawnMarker rm = GetSpawnPoint().GetComponent<RespawnMarker>();
-                    if (rm && !rm.respawnFacingRight)
-                    {
-                        self.FaceLeft();
-                    }
-                    else
-                    {
-                        self.FaceRight();
-                    } (typeof(HeroController).GetField("heroInPosition", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(self) as HeroController.HeroInPosition)?.Invoke(false);
-                    var hac = self.GetComponent<HeroAnimationController>();
-                    float wakeUpTime = hac.GetClipDuration("Wake Up Ground"); // 46 frames, 18 fps, 2.55s
-                    // break from HC.Respawn
-                    var sc = rm.GetComponent<StartComponent>();
-                    if (sc && sc.def != null && (sc.def.SpecialEffects & SpecialStartEffects.DelayedWake) != 0)
-                    {
-                        self.playerData.isInvincible = true;
-                        hac.PlayClip("Prostrate");
-                        self.StopAnimationControl();
-                        self.controlReqlinquished = true;
-                        yield return DoDelayedRespawn(sc.def.SpecialEffects);
-                        hac.animator.PlayFrom("Wake Up Ground", 1.56f);
-                        yield return new WaitForSeconds(wakeUpTime - 1.56f);
-                    }
-                    else
-                    {
-                        hac.PlayClip("Wake Up Ground");
-                        self.StopAnimationControl();
-                        self.controlReqlinquished = true;
-                        yield return new WaitForSeconds(wakeUpTime);
-                    }
-
-                    self.StartAnimationControl();
-                    self.controlReqlinquished = false;
-                    self.proxyFSM.SendEvent("HeroCtrl-Respawned");
-                    typeof(HeroController).GetMethod("FinishedEnteringScene", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(self, new object[] { true, false });
-                    self.playerData.disablePause = false;
-                    if (sc && sc.def != null && (sc.def.SpecialEffects & SpecialStartEffects.ExtraInvincibility) != 0)
-                    {
-                        yield return new WaitForSeconds(0.5f);
-                    }
-                    self.playerData.isInvincible = false;
-                    SetState(-1);
+                    r = e.Current as IEnumerator;
                     break;
                 }
-            }
-
-            // finish enumerating if another On hook targeted HC.Respawn
-            if (e != r && e is not null)
-            {
-                while (e.MoveNext())
+                else
                 {
                     yield return e.Current;
                 }
             }
         }
-
-        private static IEnumerator DoDelayedRespawn(SpecialStartEffects effects)
+        else
         {
-            float t = 0f;
-            float u = 0f;
-            bool refillSoul = (effects & SpecialStartEffects.SlowSoulRefill) == SpecialStartEffects.SlowSoulRefill;
-            HeroActions ia = InputHandler.Instance.inputActions;
+            r = e;
+        }
 
-            while (true)
+        if (r == null)
+        {
+            LogError("Unable to edit HeroController.Respawn--another subscriber has replaced the enumerator.");
+            yield break;
+        }
+
+        FieldInfo[] fields = T.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        FieldInfo state = fields.FirstOrDefault(f => f.Name.Contains("state") && f.FieldType == typeof(int));
+        FieldInfo spawn = fields.FirstOrDefault(f => f.Name.Contains("spawnPoint") && f.FieldType == typeof(Transform));
+
+        int GetState() => (int)state.GetValue(r);
+        void SetState(int i) => state.SetValue(r, i);
+        Transform GetSpawnPoint() => (Transform)spawn.GetValue(r);
+
+        while (r.MoveNext())
+        {
+            yield return r.Current;
+            if (GetState() == 2 && GameManager.instance.GetSceneNameString() != "GG_Atrium")
             {
-                if (ia.jump.IsPressed || ia.attack.IsPressed || ia.cast.IsPressed || ia.left.IsPressed || ia.right.IsPressed || ia.up.IsPressed || ia.down.IsPressed)
+                // HC.Respawn
+                self.IgnoreInput();
+                RespawnMarker rm = GetSpawnPoint().GetComponent<RespawnMarker>();
+                if (rm && !rm.respawnFacingRight)
                 {
-                    yield break;
-                }
-                else if (t < 4f)
-                {
-                    t += 0.02f;
-                }
-                else if (refillSoul && u > 0.09f)
-                {
-                    HeroController.instance.TryAddMPChargeSpa(1);
-                    u = 0f;
+                    self.FaceLeft();
                 }
                 else
                 {
-                    u += 0.02f;
+                    self.FaceRight();
+                } (typeof(HeroController).GetField("heroInPosition", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(self) as HeroController.HeroInPosition)?.Invoke(false);
+                var hac = self.GetComponent<HeroAnimationController>();
+                float wakeUpTime = hac.GetClipDuration("Wake Up Ground"); // 46 frames, 18 fps, 2.55s
+                // break from HC.Respawn
+                var sc = rm.GetComponent<StartComponent>();
+                if (sc && sc.def != null && (sc.def.SpecialEffects & SpecialStartEffects.DelayedWake) != 0)
+                {
+                    self.playerData.isInvincible = true;
+                    hac.PlayClip("Prostrate");
+                    self.StopAnimationControl();
+                    self.controlReqlinquished = true;
+                    yield return DoDelayedRespawn(sc.def.SpecialEffects);
+                    hac.animator.PlayFrom("Wake Up Ground", 1.56f);
+                    yield return new WaitForSeconds(wakeUpTime - 1.56f);
                 }
-                yield return new WaitForSeconds(0.02f);
+                else
+                {
+                    hac.PlayClip("Wake Up Ground");
+                    self.StopAnimationControl();
+                    self.controlReqlinquished = true;
+                    yield return new WaitForSeconds(wakeUpTime);
+                }
+
+                self.StartAnimationControl();
+                self.controlReqlinquished = false;
+                self.proxyFSM.SendEvent("HeroCtrl-Respawned");
+                typeof(HeroController).GetMethod("FinishedEnteringScene", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(self, new object[] { true, false });
+                self.playerData.disablePause = false;
+                if (sc && sc.def != null && (sc.def.SpecialEffects & SpecialStartEffects.ExtraInvincibility) != 0)
+                {
+                    yield return new WaitForSeconds(0.5f);
+                }
+                self.playerData.isInvincible = false;
+                SetState(-1);
+                break;
             }
+        }
+
+        // finish enumerating if another On hook targeted HC.Respawn
+        if (e != r && e is not null)
+        {
+            while (e.MoveNext())
+            {
+                yield return e.Current;
+            }
+        }
+    }
+
+    private static IEnumerator DoDelayedRespawn(SpecialStartEffects effects)
+    {
+        float t = 0f;
+        float u = 0f;
+        bool refillSoul = (effects & SpecialStartEffects.SlowSoulRefill) == SpecialStartEffects.SlowSoulRefill;
+        HeroActions ia = InputHandler.Instance.inputActions;
+
+        while (true)
+        {
+            if (ia.jump.IsPressed || ia.attack.IsPressed || ia.cast.IsPressed || ia.left.IsPressed || ia.right.IsPressed || ia.up.IsPressed || ia.down.IsPressed)
+            {
+                yield break;
+            }
+            else if (t < 4f)
+            {
+                t += 0.02f;
+            }
+            else if (refillSoul && u > 0.09f)
+            {
+                HeroController.instance.TryAddMPChargeSpa(1);
+                u = 0f;
+            }
+            else
+            {
+                u += 0.02f;
+            }
+            yield return new WaitForSeconds(0.02f);
         }
     }
 }

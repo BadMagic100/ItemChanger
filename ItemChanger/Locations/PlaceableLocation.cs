@@ -1,15 +1,14 @@
-﻿namespace ItemChanger.Locations
+﻿namespace ItemChanger.Locations;
+
+/// <summary>
+/// Base type for ContainerLocations which support receiving receiving a container at a placement-controlled time and manner.
+/// </summary>
+public abstract class PlaceableLocation : ContainerLocation
 {
     /// <summary>
-    /// Base type for ContainerLocations which support receiving receiving a container at a placement-controlled time and manner.
+    /// A managed ContainerLocation receives its container through PlaceContainer, rather than by requesting it in GetContainer.
     /// </summary>
-    public abstract class PlaceableLocation : ContainerLocation
-    {
-        /// <summary>
-        /// A managed ContainerLocation receives its container through PlaceContainer, rather than by requesting it in GetContainer.
-        /// </summary>
-        public required bool Managed { get; init; }
+    public required bool Managed { get; init; }
 
-        public abstract void PlaceContainer(GameObject obj, string containerType);
-    }
+    public abstract void PlaceContainer(GameObject obj, string containerType);
 }

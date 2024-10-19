@@ -1,7 +1,6 @@
-﻿namespace ItemChanger.Tags
+﻿namespace ItemChanger.Tags;
+
+public class CompletionWeightTag : Tag
 {
-    public class CompletionWeightTag : Tag
-    {
-        public float Weight { get; set; } = 1;
-    }
+    public float Weight { get; set; } = 1;
 }

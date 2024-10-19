@@ -6,223 +6,222 @@ using System.Collections.Generic;
 using System.Linq;
 using Module = ItemChanger.Modules.Module;
 
-namespace ItemChanger.Internal
+namespace ItemChanger.Internal;
+
+public class ModuleCollection
 {
-    public class ModuleCollection
+    [JsonConverter(typeof(ModuleListDeserializer))]
+    public List<Module> Modules = new();
+
+    public void Initialize()
     {
-        [JsonConverter(typeof(ModuleListDeserializer))]
-        public List<Module> Modules = new();
-
-        public void Initialize()
+        for (int i = 0; i < Modules.Count; i++)
         {
-            for (int i = 0; i < Modules.Count; i++)
-            {
-                Modules[i].LoadOnce();
-            }
+            Modules[i].LoadOnce();
+        }
+    }
+
+    public void Unload()
+    {
+        for (int i = 0; i < Modules.Count; i++)
+        {
+            Modules[i].UnloadOnce();
+        }
+    }
+
+    public Module Add(Module m)
+    {
+        if (m == null)
+        {
+            throw new ArgumentNullException(nameof(m));
         }
 
-        public void Unload()
+        Modules.Add(m);
+        if (Settings.loaded)
         {
-            for (int i = 0; i < Modules.Count; i++)
-            {
-                Modules[i].UnloadOnce();
-            }
+            m.LoadOnce();
         }
 
-        public Module Add(Module m)
+        return m;
+    }
+
+    public T Add<T>() where T : Module, new()
+    {
+        T t = new();
+        return (T)Add(t);
+    }
+
+    public Module Add(Type T)
+    {
+        try
         {
-            if (m == null)
-            {
-                throw new ArgumentNullException(nameof(m));
-            }
+            Module m = (Module)Activator.CreateInstance(T)!;
+            return Add(m);
+        }
+        catch (Exception e)
+        {
+            LogHelper.LogError($"Unable to instantiate module of type {T.Name} through reflection:\n{e}");
+            throw;
+        }
+    }
 
-            Modules.Add(m);
-            if (Settings.loaded)
-            {
-                m.LoadOnce();
-            }
+    /// <summary>
+    /// Returns the first module of type T, or default.
+    /// </summary>
+    public T? Get<T>()
+    {
+        return Modules.OfType<T>().FirstOrDefault();
+    }
 
-            return m;
+    public T GetOrAdd<T>() where T : Module, new()
+    {
+        T? t = Modules.OfType<T>().FirstOrDefault();
+        if (t == null)
+        {
+            t = Add<T>();
         }
 
-        public T Add<T>() where T : Module, new()
+        return t;
+    }
+
+    public Module GetOrAdd(Type T)
+    {
+        Module? m = Modules.FirstOrDefault(m => T.IsInstanceOfType(m));
+        if (m == null)
         {
-            T t = new();
-            return (T)Add(t);
+            m = Add(T);
         }
 
-        public Module Add(Type T)
+        return m;
+    }
+
+    public void Remove(Module m)
+    {
+        if (Modules.Remove(m) && Settings.loaded)
         {
-            try
-            {
-                Module m = (Module)Activator.CreateInstance(T)!;
-                return Add(m);
-            }
-            catch (Exception e)
-            {
-                LogHelper.LogError($"Unable to instantiate module of type {T.Name} through reflection:\n{e}");
-                throw;
-            }
+            m.UnloadOnce();
         }
+    }
 
-        /// <summary>
-        /// Returns the first module of type T, or default.
-        /// </summary>
-        public T? Get<T>()
+    public void Remove<T>()
+    {
+        if (Modules.OfType<T>().FirstOrDefault() is Module m)
         {
-            return Modules.OfType<T>().FirstOrDefault();
+            Remove(m);
         }
+    }
 
-        public T GetOrAdd<T>() where T : Module, new()
+    public void Remove(Type T)
+    {
+        if (Settings.loaded)
         {
-            T? t = Modules.OfType<T>().FirstOrDefault();
-            if (t == null)
-            {
-                t = Add<T>();
-            }
-
-            return t;
-        }
-
-        public Module GetOrAdd(Type T)
-        {
-            Module? m = Modules.FirstOrDefault(m => T.IsInstanceOfType(m));
-            if (m == null)
-            {
-                m = Add(T);
-            }
-
-            return m;
-        }
-
-        public void Remove(Module m)
-        {
-            if (Modules.Remove(m) && Settings.loaded)
+            foreach (Module m in Modules.Where(m => m.GetType() == T))
             {
                 m.UnloadOnce();
             }
         }
+        Modules.RemoveAll(m => m.GetType() == T);
+    }
 
-        public void Remove<T>()
+    public void Remove(string name)
+    {
+        if (Modules.Where(m => m.Name == name).FirstOrDefault() is Module m)
         {
-            if (Modules.OfType<T>().FirstOrDefault() is Module m)
-            {
-                Remove(m);
-            }
+            Remove(m);
+        }
+    }
+
+    /// <summary>
+    /// Creates a new module collection with default modules loaded
+    /// </summary>
+    public static ModuleCollection Create()
+    {
+        ModuleCollection mc = new();
+
+        foreach (Type T in typeof(Module).Assembly.GetTypes()
+            .Where(t => t.IsSubclassOf(typeof(Module)) && !t.IsAbstract && Attribute.IsDefined(t, typeof(DefaultModuleAttribute))))
+        {
+            mc.Modules.Add((Module)Activator.CreateInstance(T)!);
         }
 
-        public void Remove(Type T)
+        return mc;
+    }
+
+    internal class ModuleListSerializer : JsonConverter<List<Module>>
+    {
+        public override bool CanRead => false;
+        public override bool CanWrite => true;
+        public bool RemoveNewProfileModules;
+        public override List<Module> ReadJson(JsonReader reader, Type objectType, List<Module>? existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
-            if (Settings.loaded)
-            {
-                foreach (Module m in Modules.Where(m => m.GetType() == T))
-                {
-                    m.UnloadOnce();
-                }
-            }
-            Modules.RemoveAll(m => m.GetType() == T);
+            throw new NotImplementedException();
         }
-
-        public void Remove(string name)
+        public override void WriteJson(JsonWriter writer, List<Module>? value, JsonSerializer serializer)
         {
-            if (Modules.Where(m => m.Name == name).FirstOrDefault() is Module m)
+            if (value is null)
             {
-                Remove(m);
+                writer.WriteNull();
+                return;
             }
+
+            if (RemoveNewProfileModules)
+            {
+                value = new(value.Where(t => !t.ModuleHandlingProperties.HasFlag(ModuleHandlingFlags.RemoveOnNewProfile)));
+            }
+
+            serializer.Serialize(writer, value.ToArray());
         }
+    }
 
-        /// <summary>
-        /// Creates a new module collection with default modules loaded
-        /// </summary>
-        public static ModuleCollection Create()
+    internal class ModuleListDeserializer : JsonConverter<List<Module>>
+    {
+        public override bool CanRead => true;
+        public override bool CanWrite => false;
+
+        public override List<Module>? ReadJson(JsonReader reader, Type objectType, List<Module>? existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
-            ModuleCollection mc = new();
-
-            foreach (Type T in typeof(Module).Assembly.GetTypes()
-                .Where(t => t.IsSubclassOf(typeof(Module)) && !t.IsAbstract && Attribute.IsDefined(t, typeof(DefaultModuleAttribute))))
+            JToken jt = JToken.Load(reader);
+            if (jt.Type == JTokenType.Null)
             {
-                mc.Modules.Add((Module)Activator.CreateInstance(T)!);
+                return null;
             }
-
-            return mc;
-        }
-
-        internal class ModuleListSerializer : JsonConverter<List<Module>>
-        {
-            public override bool CanRead => false;
-            public override bool CanWrite => true;
-            public bool RemoveNewProfileModules;
-            public override List<Module> ReadJson(JsonReader reader, Type objectType, List<Module>? existingValue, bool hasExistingValue, JsonSerializer serializer)
+            else if (jt.Type == JTokenType.Array)
             {
-                throw new NotImplementedException();
-            }
-            public override void WriteJson(JsonWriter writer, List<Module>? value, JsonSerializer serializer)
-            {
-                if (value is null)
+                JArray ja = (JArray)jt;
+                List<Module> list = new(ja.Count);
+                foreach (JToken jModule in ja)
                 {
-                    writer.WriteNull();
-                    return;
-                }
-
-                if (RemoveNewProfileModules)
-                {
-                    value = new(value.Where(t => !t.ModuleHandlingProperties.HasFlag(ModuleHandlingFlags.RemoveOnNewProfile)));
-                }
-
-                serializer.Serialize(writer, value.ToArray());
-            }
-        }
-
-        internal class ModuleListDeserializer : JsonConverter<List<Module>>
-        {
-            public override bool CanRead => true;
-            public override bool CanWrite => false;
-
-            public override List<Module>? ReadJson(JsonReader reader, Type objectType, List<Module>? existingValue, bool hasExistingValue, JsonSerializer serializer)
-            {
-                JToken jt = JToken.Load(reader);
-                if (jt.Type == JTokenType.Null)
-                {
-                    return null;
-                }
-                else if (jt.Type == JTokenType.Array)
-                {
-                    JArray ja = (JArray)jt;
-                    List<Module> list = new(ja.Count);
-                    foreach (JToken jModule in ja)
+                    Module t;
+                    try
                     {
-                        Module t;
-                        try
-                        {
-                            t = jModule.ToObject<Module>(serializer)!;
-                        }
-                        catch (Exception e)
-                        {
-                            ModuleHandlingFlags flags = ((JObject)jModule).GetValue(nameof(Module.ModuleHandlingProperties))?.ToObject<ModuleHandlingFlags>(serializer) ?? ModuleHandlingFlags.None;
-                            if (flags.HasFlag(ModuleHandlingFlags.AllowDeserializationFailure))
-                            {
-                                t = new InvalidModule
-                                {
-                                    JSON = jModule,
-                                    DeserializationError = e,
-                                };
-                            }
-                            else
-                            {
-                                throw;
-                            }
-                        }
-                        list.Add(t);
+                        t = jModule.ToObject<Module>(serializer)!;
                     }
-                    return list;
+                    catch (Exception e)
+                    {
+                        ModuleHandlingFlags flags = ((JObject)jModule).GetValue(nameof(Module.ModuleHandlingProperties))?.ToObject<ModuleHandlingFlags>(serializer) ?? ModuleHandlingFlags.None;
+                        if (flags.HasFlag(ModuleHandlingFlags.AllowDeserializationFailure))
+                        {
+                            t = new InvalidModule
+                            {
+                                JSON = jModule,
+                                DeserializationError = e,
+                            };
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    list.Add(t);
                 }
-                throw new JsonSerializationException("Unable to handle tag list pattern: " + jt.ToString());
+                return list;
             }
+            throw new JsonSerializationException("Unable to handle tag list pattern: " + jt.ToString());
+        }
 
-            public override void WriteJson(JsonWriter writer, List<Module>? value, JsonSerializer serializer)
-            {
-                throw new NotImplementedException();
-            }
+        public override void WriteJson(JsonWriter writer, List<Module>? value, JsonSerializer serializer)
+        {
+            throw new NotImplementedException();
         }
     }
 }

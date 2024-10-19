@@ -1,23 +1,22 @@
-﻿namespace ItemChanger.Locations
+﻿namespace ItemChanger.Locations;
+
+/// <summary>
+/// Interface for locations which support a nearby toggleable item preview.
+/// </summary>
+public interface ILocalHintLocation
 {
-    /// <summary>
-    /// Interface for locations which support a nearby toggleable item preview.
-    /// </summary>
-    public interface ILocalHintLocation
-    {
-        bool HintActive { get; set; }
-    }
+    bool HintActive { get; set; }
+}
 
-    public static class LocalHintLocationExtensions
+public static class LocalHintLocationExtensions
+{
+    public static bool GetItemHintActive(this ILocalHintLocation ilhl)
     {
-        public static bool GetItemHintActive(this ILocalHintLocation ilhl)
+        if (ilhl is AbstractLocation loc && loc.Placement.HasTag<Tags.DisableItemPreviewTag>())
         {
-            if (ilhl is AbstractLocation loc && loc.Placement.HasTag<Tags.DisableItemPreviewTag>())
-            {
-                return false;
-            }
-
-            return ilhl.HintActive;
+            return false;
         }
+
+        return ilhl.HintActive;
     }
 }

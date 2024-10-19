@@ -1,46 +1,45 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace ItemChanger.Tags
+namespace ItemChanger.Tags;
+
+/// <summary>
+/// Tag which failed to deserialize. Contains the raw data of the tag and the error which prevented deserialization.
+/// </summary>
+[JsonConverter(typeof(InvalidTagConverter))]
+public sealed class InvalidTag : Tag
 {
     /// <summary>
-    /// Tag which failed to deserialize. Contains the raw data of the tag and the error which prevented deserialization.
+    /// The raw data of the tag, as a JToken.
     /// </summary>
-    [JsonConverter(typeof(InvalidTagConverter))]
-    public sealed class InvalidTag : Tag
+    public JToken JSON { get; init; }
+    /// <summary>
+    /// The error thrown during deserialization.
+    /// </summary>
+    public Exception DeserializationError { get; init; }
+
+    /// <summary>
+    /// Converter which erases the InvalidTag during serialization and writes the JSON which it wraps.
+    /// </summary>
+    public class InvalidTagConverter : JsonConverter<InvalidTag>
     {
-        /// <summary>
-        /// The raw data of the tag, as a JToken.
-        /// </summary>
-        public JToken JSON { get; init; }
-        /// <summary>
-        /// The error thrown during deserialization.
-        /// </summary>
-        public Exception DeserializationError { get; init; }
+        public override bool CanRead => false;
+        public override bool CanWrite => true;
 
-        /// <summary>
-        /// Converter which erases the InvalidTag during serialization and writes the JSON which it wraps.
-        /// </summary>
-        public class InvalidTagConverter : JsonConverter<InvalidTag>
+        public override InvalidTag? ReadJson(JsonReader reader, Type objectType, InvalidTag? existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
-            public override bool CanRead => false;
-            public override bool CanWrite => true;
+            throw new NotImplementedException();
+        }
 
-            public override InvalidTag? ReadJson(JsonReader reader, Type objectType, InvalidTag? existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, InvalidTag? value, JsonSerializer serializer)
+        {
+            if (value is null)
             {
-                throw new NotImplementedException();
+                writer.WriteNull();
+                return;
             }
 
-            public override void WriteJson(JsonWriter writer, InvalidTag? value, JsonSerializer serializer)
-            {
-                if (value is null)
-                {
-                    writer.WriteNull();
-                    return;
-                }
-
-                value.JSON.WriteTo(writer);
-            }
+            value.JSON.WriteTo(writer);
         }
     }
 }

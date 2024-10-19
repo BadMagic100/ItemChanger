@@ -1,6 +1,5 @@
-﻿namespace ItemChanger.Tags
+﻿namespace ItemChanger.Tags;
+
+public interface IItemModifierTag
 {
-    public interface IItemModifierTag
-    {
-    }
 }
