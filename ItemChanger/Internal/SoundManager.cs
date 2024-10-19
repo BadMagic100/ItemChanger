@@ -1,6 +1,8 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Text;
-using UnityEngine.Audio;
 
 namespace ItemChanger.Internal
 {
@@ -35,13 +37,19 @@ namespace ItemChanger.Internal
         /// </summary>
         public AudioClip GetAudioClip(string name)
         {
-            if (_cachedClips.TryGetValue(name, out AudioClip clip)) return clip;
+            if (_cachedClips.TryGetValue(name, out AudioClip clip))
+            {
+                return clip;
+            }
             else if (_resourcePaths.TryGetValue(name, out string path))
             {
                 using Stream s = _assembly.GetManifestResourceStream(path);
                 return _cachedClips[name] = FromStream(s, name);
             }
-            else throw new ArgumentException($"{name} does not correspond to an embedded audio file.");
+            else
+            {
+                throw new ArgumentException($"{name} does not correspond to an embedded audio file.");
+            }
         }
 
         /// <summary>
@@ -93,10 +101,22 @@ namespace ItemChanger.Internal
             int totalLength = dataLength + 36; // header length is 36 (first 8 bytes are excluded)
 
             // Begin Header
-            foreach (char c in "RIFF") bw.Write(c);
+            foreach (char c in "RIFF")
+            {
+                bw.Write(c);
+            }
+
             bw.Write(totalLength); // length of the rest of the file
-            foreach (char c in "WAVE") bw.Write(c);
-            foreach (char c in "fmt ") bw.Write(c);
+            foreach (char c in "WAVE")
+            {
+                bw.Write(c);
+            }
+
+            foreach (char c in "fmt ")
+            {
+                bw.Write(c);
+            }
+
             bw.Write(16); // length of format data following this number
             bw.Write((short)1); // pcm format (noncompressed)
             bw.Write((short)clip.channels); // number of channels
@@ -104,7 +124,11 @@ namespace ItemChanger.Internal
             bw.Write(clip.frequency * clip.channels * bytesPerSample); // byte rate
             bw.Write((short)(clip.channels * bytesPerSample)); // block align
             bw.Write(bitsPerSample); // bits per sample
-            foreach (char c in "data") bw.Write(c);
+            foreach (char c in "data")
+            {
+                bw.Write(c);
+            }
+
             bw.Write(dataLength);
             // End Header
 

@@ -8,8 +8,7 @@
         /// <summary>
         /// A managed ContainerLocation receives its container through PlaceContainer, rather than by requesting it in GetContainer.
         /// </summary>
-        ///
-        public bool managed;
+        public required bool Managed { get; init; }
 
         public abstract void PlaceContainer(GameObject obj, string containerType);
     }

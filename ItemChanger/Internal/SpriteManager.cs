@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 
 namespace ItemChanger.Internal
 {
@@ -21,13 +23,21 @@ namespace ItemChanger.Internal
 
             public virtual float GetPixelsPerUnit(string name) 
             {
-                if (overridePPUs != null && overridePPUs.TryGetValue(name, out float ppu)) return ppu;
+                if (overridePPUs != null && overridePPUs.TryGetValue(name, out float ppu))
+                {
+                    return ppu;
+                }
+
                 return defaultPixelsPerUnit;
             }
 
             public virtual FilterMode GetFilterMode(string name)
             {
-                if (overrideFilterModes != null && overrideFilterModes.TryGetValue(name, out FilterMode mode)) return mode;
+                if (overrideFilterModes != null && overrideFilterModes.TryGetValue(name, out FilterMode mode))
+                {
+                    return mode;
+                }
+
                 return defaultFilterMode;
             }
         }
@@ -89,7 +99,10 @@ namespace ItemChanger.Internal
         /// </summary>
         public Sprite GetSprite(string name)
         {
-            if (_cachedSprites.TryGetValue(name, out Sprite sprite)) return sprite;
+            if (_cachedSprites.TryGetValue(name, out Sprite sprite))
+            {
+                return sprite;
+            }
             else if (_resourcePaths.TryGetValue(name, out string path))
             {
                 using Stream s = _assembly.GetManifestResourceStream(path);

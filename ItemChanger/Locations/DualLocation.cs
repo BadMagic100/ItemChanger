@@ -1,32 +1,45 @@
-﻿namespace ItemChanger.Locations
+﻿using System;
+
+namespace ItemChanger.Locations
 {
     /// <summary>
-    /// Helper location meant to be unpacked into a DualPlacement
+    /// Helper location representing a binary choice of locations based on a condition.
     /// </summary>
     public class DualLocation : AbstractLocation
     {
+        /// <inheritdoc/>
         protected override void OnLoad()
         {
             throw new NotImplementedException();
         }
 
+        /// <inheritdoc/>
         protected override void OnUnload()
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// A test to determine which location to use
+        /// </summary>
+        public required IBool Test;
+        /// <summary>
+        /// The location to use when <see cref="Test"/> is <code>false</code>
+        /// </summary>
+        public required AbstractLocation FalseLocation { get; init; }
+        /// <summary>
+        /// The location to use when <see cref="Test"/> is <code>true</code>
+        /// </summary>
+        public required AbstractLocation TrueLocation { get; init; }
 
-        public IBool Test;
-        public AbstractLocation falseLocation;
-        public AbstractLocation trueLocation;
-
+        /// <inheritdoc/>
         public override AbstractPlacement Wrap()
         {
             return new Placements.DualPlacement(name)
             {
                 Test = Test,
-                falseLocation = falseLocation,
-                trueLocation = trueLocation,   
+                falseLocation = FalseLocation,
+                trueLocation = TrueLocation,   
                 tags = tags,
             };
         }

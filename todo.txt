@@ -1,0 +1,17 @@
+Things to change
+
+Rename AbstractX to X and renamespace them to appropriate homes
+Move Cost stuff to a namespace
+Make ModuleCollection a real collection and hide the Modules field
+Make Load and Unload protected in favor of LoadOnce and UnloadOnce
+Hide Loaded from serialization
+Need a way for default modules not dependent on being defined in the assembly with IC
+Game-agnostic container implementation
+use :new() in type constraints throughout to enforce/encourage json-friendly construction
+Audit fields -> properties and usage of required throughout
+docs
+move public APIs out of the "Internal" namespace
+
+Unity stuff - is a unity shim package needed? How to deal with unity refs from nuget package?
+
+Serialization - Do we need to support reflectionless serialization (system.text.json)? How do we not make it a major pain for users?

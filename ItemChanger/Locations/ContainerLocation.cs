@@ -7,7 +7,10 @@ namespace ItemChanger.Locations
     /// </summary>
     public abstract class ContainerLocation : AbstractLocation
     {
-        public bool forceShiny;
+        /// <summary>
+        /// Whether to force a shiny at the location.
+        /// </summary>
+        public bool ForceShiny { get; init; }
 
         public void GetContainer(out GameObject obj, out string containerType)
         {
@@ -16,7 +19,7 @@ namespace ItemChanger.Locations
 
         public virtual bool Supports(string containerType)
         {
-            return containerType == Container.Shiny ? true : !forceShiny;
+            return containerType == Container.Shiny ? true : !ForceShiny;
         }
 
         public override AbstractPlacement Wrap()

@@ -7,12 +7,18 @@ namespace ItemChanger.Locations
     /// </summary>
     public abstract class ExistingContainerLocation : AbstractLocation
     {
-        public string containerType;
-        public bool nonreplaceable;
+        /// <summary>
+        /// The type of container which already exists at this location
+        /// </summary>
+        public required string ContainerType { get; init; }
+        /// <summary>
+        /// Whether to prevent replacement of the container
+        /// </summary>
+        public required bool NonReplaceable { get; init; }
 
         public virtual bool WillBeReplaced()
         {
-            return !(Placement.MainContainerType == containerType || nonreplaceable || Container.GetContainer(Placement.MainContainerType) is not Container c || !c.SupportsInstantiate);
+            return !(Placement.MainContainerType == ContainerType || NonReplaceable || Container.GetContainer(Placement.MainContainerType) is not Container c || !c.SupportsInstantiate);
         }
 
         /// <summary>

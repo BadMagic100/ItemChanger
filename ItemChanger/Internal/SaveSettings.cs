@@ -1,5 +1,8 @@
 ﻿using ItemChanger.Internal;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ItemChanger
 {
@@ -8,7 +11,7 @@ namespace ItemChanger
     public readonly struct SaveSettings
     {
         public static readonly SaveSettings Empty = default;
-        [Newtonsoft.Json.JsonConstructor]
+        [JsonConstructor]
         public SaveSettings(Settings value) => this.value = value;
         public readonly Settings value;
         public static implicit operator SaveSettings(Settings value) => new(value);
@@ -70,20 +73,42 @@ namespace ItemChanger
 
         internal void Load()
         {
-            if (loaded) throw new InvalidOperationException("An instance of Settings was already loaded.");
+            if (loaded)
+            {
+                throw new InvalidOperationException("An instance of Settings was already loaded.");
+            }
+
             loaded = true;
             mods.Initialize();
-            foreach (AbstractPlacement p in GetPlacements()) p.Load();
-            foreach (IDeployer d in Deployers) Events.AddSceneChangeEdit(d.SceneName, d.OnSceneChange);
+            foreach (AbstractPlacement p in GetPlacements())
+            {
+                p.Load();
+            }
+
+            foreach (IDeployer d in Deployers)
+            {
+                Events.AddSceneChangeEdit(d.SceneName, d.OnSceneChange);
+            }
         }
 
         internal void Unload()
         {
-            if (!loaded) throw new InvalidOperationException("No instance of Settings was loaded.");
+            if (!loaded)
+            {
+                throw new InvalidOperationException("No instance of Settings was loaded.");
+            }
+
             loaded = false;
             mods.Unload();
-            foreach (var loc in GetPlacements()) loc.Unload();
-            foreach (IDeployer d in Deployers) Events.RemoveSceneChangeEdit(d.SceneName, d.OnSceneChange);
+            foreach (var loc in GetPlacements())
+            {
+                loc.Unload();
+            }
+
+            foreach (IDeployer d in Deployers)
+            {
+                Events.RemoveSceneChangeEdit(d.SceneName, d.OnSceneChange);
+            }
         }
     }
 }

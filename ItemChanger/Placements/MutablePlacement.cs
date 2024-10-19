@@ -53,7 +53,7 @@ namespace ItemChanger.Placements
 
         public static string ChooseContainerType(ISingleCostPlacement placement, ContainerLocation? location, IEnumerable<AbstractItem> items)
         {
-            if (location?.forceShiny ?? true)
+            if (location?.ForceShiny ?? true)
             {
                 return Container.Shiny;
             }

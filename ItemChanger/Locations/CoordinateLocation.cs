@@ -1,15 +1,13 @@
-﻿using ItemChanger.Util;
-
-namespace ItemChanger.Locations
+﻿namespace ItemChanger.Locations
 {
     /// <summary>
     /// Location which places a container at a specified coordinate position.
     /// </summary>
     public class CoordinateLocation : PlaceableLocation
     {
-        public float x;
-        public float y;
-        public float elevation;
+        public required float X { get; init; }
+        public required float Y { get; init; }
+        public required float Z { get; init; }
 
         protected override void OnLoad()
         {
@@ -23,7 +21,7 @@ namespace ItemChanger.Locations
 
         public void OnActiveSceneChanged(Scene to)
         {
-            if (!managed && to.name == UnsafeSceneName)
+            if (!Managed && to.name == UnsafeSceneName)
             {
                 base.GetContainer(out GameObject obj, out string containerType);
                 PlaceContainer(obj, containerType);
@@ -32,8 +30,11 @@ namespace ItemChanger.Locations
 
         public override void PlaceContainer(GameObject obj, string containerType)
         {
-            Container.GetContainer(containerType)!.ApplyTargetContext(obj, x, y, elevation);
-            if (!obj.activeSelf) obj.SetActive(true);
+            Container.GetContainer(containerType)!.ApplyTargetContext(obj, X, Y, Z);
+            if (!obj.activeSelf)
+            {
+                obj.SetActive(true);
+            }
         }
     }
 }

@@ -82,7 +82,7 @@
 
             if (falseLocation is Locations.ExistingContainerLocation fecl)
             {
-                if (containerType == fecl.containerType && Container.SupportsAll(containerType, false, mustSupportCost, mustSupportSceneChange)) return;
+                if (containerType == fecl.ContainerType && Container.SupportsAll(containerType, false, mustSupportCost, mustSupportSceneChange)) return;
                 else
                 {
                     containerType = ExistingContainerPlacement.ChooseContainerType(this, fecl, Items);
@@ -91,7 +91,7 @@
             }
             else if (trueLocation is Locations.ExistingContainerLocation tecl)
             {
-                if (containerType == tecl.containerType && Container.SupportsAll(containerType, false, mustSupportCost, mustSupportSceneChange)) return;
+                if (containerType == tecl.ContainerType && Container.SupportsAll(containerType, false, mustSupportCost, mustSupportSceneChange)) return;
                 else
                 {
                     containerType = ExistingContainerPlacement.ChooseContainerType(this, tecl, Items);

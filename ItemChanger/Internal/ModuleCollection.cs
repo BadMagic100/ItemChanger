@@ -1,7 +1,9 @@
-﻿using System.Reflection;
-using ItemChanger.Modules;
-using Newtonsoft.Json.Linq;
+﻿using ItemChanger.Modules;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Module = ItemChanger.Modules.Module;
 
 namespace ItemChanger.Internal
@@ -29,9 +31,17 @@ namespace ItemChanger.Internal
 
         public Module Add(Module m)
         {
-            if (m == null) throw new ArgumentNullException(nameof(m));
+            if (m == null)
+            {
+                throw new ArgumentNullException(nameof(m));
+            }
+
             Modules.Add(m);
-            if (Settings.loaded) m.LoadOnce();
+            if (Settings.loaded)
+            {
+                m.LoadOnce();
+            }
+
             return m;
         }
 
@@ -45,12 +55,12 @@ namespace ItemChanger.Internal
         {
             try
             {
-                Module m = (Module)Activator.CreateInstance(T);
+                Module m = (Module)Activator.CreateInstance(T)!;
                 return Add(m);
             }
             catch (Exception e)
             {
-                LogError($"Unable to instantiate module of type {T.Name} through reflection:\n{e}");
+                LogHelper.LogError($"Unable to instantiate module of type {T.Name} through reflection:\n{e}");
                 throw;
             }
         }
@@ -65,42 +75,65 @@ namespace ItemChanger.Internal
 
         public T GetOrAdd<T>() where T : Module, new()
         {
-            T t = Modules.OfType<T>().FirstOrDefault();
-            if (t == null) t = Add<T>();
+            T? t = Modules.OfType<T>().FirstOrDefault();
+            if (t == null)
+            {
+                t = Add<T>();
+            }
+
             return t;
         }
 
         public Module GetOrAdd(Type T)
         {
-            Module m = Modules.FirstOrDefault(m => T.IsInstanceOfType(m));
-            if (m == null) m = Add(T);
+            Module? m = Modules.FirstOrDefault(m => T.IsInstanceOfType(m));
+            if (m == null)
+            {
+                m = Add(T);
+            }
+
             return m;
         }
 
         public void Remove(Module m)
         {
-            if (Modules.Remove(m) && Settings.loaded) m.UnloadOnce();
+            if (Modules.Remove(m) && Settings.loaded)
+            {
+                m.UnloadOnce();
+            }
         }
 
         public void Remove<T>()
         {
-            if (Modules.OfType<T>().FirstOrDefault() is Module m) Remove(m);
+            if (Modules.OfType<T>().FirstOrDefault() is Module m)
+            {
+                Remove(m);
+            }
         }
 
         public void Remove(Type T)
         {
             if (Settings.loaded)
             {
-                foreach (Module m in Modules.Where(m => m.GetType() == T)) m.UnloadOnce();
+                foreach (Module m in Modules.Where(m => m.GetType() == T))
+                {
+                    m.UnloadOnce();
+                }
             }
             Modules.RemoveAll(m => m.GetType() == T);
         }
 
         public void Remove(string name)
         {
-            if (Modules.Where(m => m.Name == name).FirstOrDefault() is Module m) Remove(m);
+            if (Modules.Where(m => m.Name == name).FirstOrDefault() is Module m)
+            {
+                Remove(m);
+            }
         }
 
+        /// <summary>
+        /// Creates a new module collection with default modules loaded
+        /// </summary>
         public static ModuleCollection Create()
         {
             ModuleCollection mc = new();
@@ -108,13 +141,13 @@ namespace ItemChanger.Internal
             foreach (Type T in typeof(Module).Assembly.GetTypes()
                 .Where(t => t.IsSubclassOf(typeof(Module)) && !t.IsAbstract && Attribute.IsDefined(t, typeof(DefaultModuleAttribute))))
             {
-                mc.Modules.Add((Module)Activator.CreateInstance(T));
+                mc.Modules.Add((Module)Activator.CreateInstance(T)!);
             }
 
             return mc;
         }
 
-        public class ModuleListSerializer : JsonConverter<List<Module>>
+        internal class ModuleListSerializer : JsonConverter<List<Module>>
         {
             public override bool CanRead => false;
             public override bool CanWrite => true;
@@ -140,7 +173,7 @@ namespace ItemChanger.Internal
             }
         }
 
-        public class ModuleListDeserializer : JsonConverter<List<Module>>
+        internal class ModuleListDeserializer : JsonConverter<List<Module>>
         {
             public override bool CanRead => true;
             public override bool CanWrite => false;
@@ -148,7 +181,10 @@ namespace ItemChanger.Internal
             public override List<Module>? ReadJson(JsonReader reader, Type objectType, List<Module>? existingValue, bool hasExistingValue, JsonSerializer serializer)
             {
                 JToken jt = JToken.Load(reader);
-                if (jt.Type == JTokenType.Null) return null;
+                if (jt.Type == JTokenType.Null)
+                {
+                    return null;
+                }
                 else if (jt.Type == JTokenType.Array)
                 {
                     JArray ja = (JArray)jt;
@@ -171,7 +207,10 @@ namespace ItemChanger.Internal
                                     DeserializationError = e,
                                 };
                             }
-                            else throw;
+                            else
+                            {
+                                throw;
+                            }
                         }
                         list.Add(t);
                     }

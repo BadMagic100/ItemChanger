@@ -1,4 +1,7 @@
-﻿namespace ItemChanger.Locations
+﻿using Newtonsoft.Json;
+using System;
+
+namespace ItemChanger.Locations
 {
     /// <summary>
     /// Location type which cannot accept a container, and thus must implement itself. Examples include items given in dialogue, etc.
@@ -33,7 +36,7 @@
             Placement.GiveAll(GetGiveInfo(), callback);
         }
 
-        [Newtonsoft.Json.JsonIgnore]
+        [JsonIgnore]
         public virtual bool SupportsCost => false;
 
         public override AbstractPlacement Wrap()

@@ -36,10 +36,10 @@ namespace ItemChanger.Placements
 
         private void UpdateContainerType()
         {
-            if (currentContainerType == Location.containerType) return;
-            if (Location.nonreplaceable)
+            if (currentContainerType == Location.ContainerType) return;
+            if (Location.NonReplaceable)
             {
-                currentContainerType = Location.containerType;
+                currentContainerType = Location.ContainerType;
                 return;
             }
             if (Container.GetContainer(currentContainerType) is Container c && c.SupportsInstantiate) return;
@@ -49,7 +49,7 @@ namespace ItemChanger.Placements
 
         public static string ChooseContainerType(ISingleCostPlacement placement, ExistingContainerLocation location, IEnumerable<AbstractItem> items)
         {
-            if (location.nonreplaceable) return location.containerType;
+            if (location.NonReplaceable) return location.ContainerType;
 
             bool mustSupportCost = placement.Cost != null && !location.HandlesCostBeforeContainer;
             bool mustSupportSceneChange = location.GetTags<Tags.ChangeSceneTag>().Any() || ((AbstractPlacement)placement).GetTags<Tags.ChangeSceneTag>().Any();
@@ -66,7 +66,7 @@ namespace ItemChanger.Placements
 
             if (string.IsNullOrEmpty(containerType))
             {
-                return mustSupportCost ? Container.Shiny : location.containerType;
+                return mustSupportCost ? Container.Shiny : location.ContainerType;
             }
 
             return containerType;
