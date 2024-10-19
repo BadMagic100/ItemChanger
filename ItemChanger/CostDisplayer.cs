@@ -1,6 +1,4 @@
-﻿using ItemChanger.Modules;
-
-namespace ItemChanger
+﻿namespace ItemChanger
 {
     /// <summary>
     /// A utility object which dictates how costs (and especially multicosts) are to be displayed

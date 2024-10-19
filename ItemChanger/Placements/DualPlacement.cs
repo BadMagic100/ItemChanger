@@ -78,11 +78,17 @@
             bool mustSupportCost = Cost != null;
             bool mustSupportSceneChange = falseLocation.GetTags<Tags.ChangeSceneTag>().Any() 
                 || trueLocation.GetTags<Tags.ChangeSceneTag>().Any() || GetTags<Tags.ChangeSceneTag>().Any();
-            if (Container.SupportsAll(containerType, true, mustSupportCost, mustSupportSceneChange)) return;
+            if (Container.SupportsAll(containerType, true, mustSupportCost, mustSupportSceneChange))
+            {
+                return;
+            }
 
             if (falseLocation is Locations.ExistingContainerLocation fecl)
             {
-                if (containerType == fecl.ContainerType && Container.SupportsAll(containerType, false, mustSupportCost, mustSupportSceneChange)) return;
+                if (containerType == fecl.ContainerType && Container.SupportsAll(containerType, false, mustSupportCost, mustSupportSceneChange))
+                {
+                    return;
+                }
                 else
                 {
                     containerType = ExistingContainerPlacement.ChooseContainerType(this, fecl, Items);
@@ -91,7 +97,10 @@
             }
             else if (trueLocation is Locations.ExistingContainerLocation tecl)
             {
-                if (containerType == tecl.ContainerType && Container.SupportsAll(containerType, false, mustSupportCost, mustSupportSceneChange)) return;
+                if (containerType == tecl.ContainerType && Container.SupportsAll(containerType, false, mustSupportCost, mustSupportSceneChange))
+                {
+                    return;
+                }
                 else
                 {
                     containerType = ExistingContainerPlacement.ChooseContainerType(this, tecl, Items);
@@ -100,7 +109,11 @@
             }
 
             Locations.ContainerLocation? cl = (falseLocation as Locations.ContainerLocation) ?? (trueLocation as Locations.ContainerLocation);
-            if (cl == null) return;
+            if (cl == null)
+            {
+                return;
+            }
+
             containerType = MutablePlacement.ChooseContainerType(this, cl, Items); // container type already failed the initial test
         }
 

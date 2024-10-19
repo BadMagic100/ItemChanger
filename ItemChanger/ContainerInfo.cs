@@ -1,6 +1,4 @@
-﻿using ItemChanger.Components;
-
-namespace ItemChanger
+﻿namespace ItemChanger
 {
     /// <summary>
     /// Data for instructing a Container class to make changes. The ContainerGiveInfo field must not be null.
@@ -100,7 +98,11 @@ namespace ItemChanger
         public static ContainerInfo? FindContainerInfo(GameObject obj)
         {
             var cdc = obj.GetComponent<ContainerInfoComponent>();
-            if (cdc != null) return cdc.info;
+            if (cdc != null)
+            {
+                return cdc.info;
+            }
+
             return null;
         }
     }

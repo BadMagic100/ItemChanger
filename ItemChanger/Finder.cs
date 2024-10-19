@@ -33,8 +33,14 @@ namespace ItemChanger
         {
             GetItemEventArgs args = new(name);
             GetItemOverride?.Invoke(args);
-            if (args.Current != null) return args.Current;
-            else return GetItemInternal(name);
+            if (args.Current != null)
+            {
+                return args.Current;
+            }
+            else
+            {
+                return GetItemInternal(name);
+            }
         }
 
         /// <summary>
@@ -50,10 +56,17 @@ namespace ItemChanger
         /// </summary>
         public static AbstractItem? GetItemFromSheet(string name, IEnumerable<int> sheets)
         {
-            if (sheets == null) return null;
+            if (sheets == null)
+            {
+                return null;
+            }
+
             foreach (int i in sheets)
             {
-                if (Items[i].TryGetValue(name, out AbstractItem item)) return item.Clone();
+                if (Items[i].TryGetValue(name, out AbstractItem item))
+                {
+                    return item.Clone();
+                }
             }
             return null;
         }
@@ -82,7 +95,11 @@ namespace ItemChanger
         public static Dictionary<string, AbstractItem>[] GetItemLists()
         {
             Dictionary<string, AbstractItem>[] list = new Dictionary<string, AbstractItem>[Items.Length];
-            for (int i = 0; i < list.Length; i++) list[i] = GetItemList(i);
+            for (int i = 0; i < list.Length; i++)
+            {
+                list[i] = GetItemList(i);
+            }
+
             return list;
         }
 
@@ -93,8 +110,14 @@ namespace ItemChanger
         {
             GetLocationEventArgs args = new(name);
             GetLocationOverride?.Invoke(args);
-            if (args.Current != null) return args.Current;
-            else return GetLocationInternal(name);
+            if (args.Current != null)
+            {
+                return args.Current;
+            }
+            else
+            {
+                return GetLocationInternal(name);
+            }
         }
 
         /// <summary>
@@ -110,10 +133,17 @@ namespace ItemChanger
         /// </summary>
         public static AbstractLocation? GetLocationFromSheet(string name, IEnumerable<int> sheets)
         {
-            if (sheets == null) return null;
+            if (sheets == null)
+            {
+                return null;
+            }
+
             foreach (int i in sheets)
             {
-                if (Locations[i].TryGetValue(name, out AbstractLocation loc)) return loc.Clone();
+                if (Locations[i].TryGetValue(name, out AbstractLocation loc))
+                {
+                    return loc.Clone();
+                }
             }
             return null;
         }
@@ -142,14 +172,24 @@ namespace ItemChanger
         public static Dictionary<string, AbstractLocation>[] GetLocationLists()
         {
             Dictionary<string, AbstractLocation>[] list = new Dictionary<string, AbstractLocation>[Locations.Length];
-            for (int i = 0; i < list.Length; i++) list[i] = GetLocationList(i);
+            for (int i = 0; i < list.Length; i++)
+            {
+                list[i] = GetLocationList(i);
+            }
+
             return list;
         }
 
         public static void DefineCustomItem(AbstractItem item)
         {
-            if (Items[0].ContainsKey(item.name)) throw new ArgumentException($"Item {item.name} is already defined by ItemChanger.");
-            else if (CustomItems.ContainsKey(item.name)) throw new ArgumentException($"Item {item.name} is already defined as a custom item.");
+            if (Items[0].ContainsKey(item.name))
+            {
+                throw new ArgumentException($"Item {item.name} is already defined by ItemChanger.");
+            }
+            else if (CustomItems.ContainsKey(item.name))
+            {
+                throw new ArgumentException($"Item {item.name} is already defined as a custom item.");
+            }
 
             CustomItems.Add(item.name, item);
         }
@@ -158,8 +198,14 @@ namespace ItemChanger
 
         public static void DefineCustomLocation(AbstractLocation loc)
         {
-            if (Locations[0].ContainsKey(loc.name)) throw new ArgumentException($"Location {loc.name} is already defined by ItemChanger.");
-            else if (CustomLocations.ContainsKey(loc.name)) throw new ArgumentException($"Location {loc.name} is already defined as a custom location.");
+            if (Locations[0].ContainsKey(loc.name))
+            {
+                throw new ArgumentException($"Location {loc.name} is already defined by ItemChanger.");
+            }
+            else if (CustomLocations.ContainsKey(loc.name))
+            {
+                throw new ArgumentException($"Location {loc.name} is already defined as a custom location.");
+            }
 
             CustomLocations.Add(loc.name, loc);
         }

@@ -18,7 +18,11 @@
 
         public virtual void OnSceneChange(Scene to)
         {
-            if (Test != null && !Test.Value) return;
+            if (Test != null && !Test.Value)
+            {
+                return;
+            }
+
             Deploy();
         }
 

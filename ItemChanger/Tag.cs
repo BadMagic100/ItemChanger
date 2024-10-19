@@ -11,7 +11,10 @@ namespace ItemChanger
         /// <exception cref="InvalidOperationException">The tag is already loaded.</exception>
         public virtual void Load(object parent) 
         {
-            if (Loaded) throw new InvalidOperationException($"Tag {GetType().Name} is already loaded.");
+            if (Loaded)
+            {
+                throw new InvalidOperationException($"Tag {GetType().Name} is already loaded.");
+            }
         }
         /// <summary>
         /// Virtual method called on tags when their parent unloads. The base method checks and throws an exception if the tag is not loaded.
@@ -20,7 +23,10 @@ namespace ItemChanger
         /// <exception cref="InvalidOperationException">The tag is not loaded.</exception>
         public virtual void Unload(object parent) 
         {
-            if (!Loaded) throw new InvalidOperationException($"Tag {GetType().Name} was not loaded.");
+            if (!Loaded)
+            {
+                throw new InvalidOperationException($"Tag {GetType().Name} was not loaded.");
+            }
         }
         public virtual Tag Clone() => (Tag)MemberwiseClone();
 

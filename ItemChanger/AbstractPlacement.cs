@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.Text;
 
 namespace ItemChanger
 {
@@ -88,7 +87,11 @@ namespace ItemChanger
         {
             IEnumerable<string> itemNames = Items.Where(i => !i.IsObtained()).Select(i => i.GetPreviewName(this) ?? Language.Language.Get("UNKNOWN_ITEM", "IC"));
             string itemText = string.Join(Language.Language.Get("COMMA_SPACE", "IC"), itemNames.ToArray());
-            if (itemText.Length > maxLength) itemText = itemText.Substring(0, maxLength > 3 ? maxLength - 3 : 0) + "...";
+            if (itemText.Length > maxLength)
+            {
+                itemText = itemText.Substring(0, maxLength > 3 ? maxLength - 3 : 0) + "...";
+            }
+
             return itemText;
         }
 
@@ -140,7 +143,11 @@ namespace ItemChanger
         public void Load()
         {
             LoadTags();
-            foreach (AbstractItem item in Items) item.Load();
+            foreach (AbstractItem item in Items)
+            {
+                item.Load();
+            }
+
             OnLoad();
         }
 
@@ -151,7 +158,11 @@ namespace ItemChanger
         public void Unload()
         {
             UnloadTags();
-            foreach (AbstractItem item in Items) item.Unload();
+            foreach (AbstractItem item in Items)
+            {
+                item.Unload();
+            }
+
             OnUnload();
         }
 
@@ -218,7 +229,11 @@ namespace ItemChanger
         /// </summary>
         public AbstractPlacement Add(IEnumerable<AbstractItem> items)
         {
-            foreach (var i in items) Add(i);
+            foreach (var i in items)
+            {
+                Add(i);
+            }
+
             return this;
         }
 
@@ -227,7 +242,11 @@ namespace ItemChanger
         /// </summary>
         public AbstractPlacement Add(params AbstractItem[] items)
         {
-            foreach (AbstractItem item in items) Add(item);
+            foreach (AbstractItem item in items)
+            {
+                Add(item);
+            }
+
             return this;
         }
     }

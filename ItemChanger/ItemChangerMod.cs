@@ -1,6 +1,4 @@
 ﻿using ItemChanger.Internal;
-using ItemChanger.Util;
-using Modding;
 
 namespace ItemChanger
 {
@@ -13,7 +11,10 @@ namespace ItemChanger
 
         public ItemChangerMod()
         {
-            if (instance != null) throw new NotSupportedException("Cannot construct multiple instances of ItemChangerMod.");
+            if (instance != null)
+            {
+                throw new NotSupportedException("Cannot construct multiple instances of ItemChangerMod.");
+            }
 
             instance = this;
             Finder.Load();
@@ -31,8 +32,16 @@ namespace ItemChanger
             Log("Hooking ItemChanger.");
             try
             {
-                if (SET == null) throw new NullReferenceException("ItemChanger hooked with null settings.");
-                if (_hooked) throw new InvalidOperationException("Attempted to rehook ItemChanger.");
+                if (SET == null)
+                {
+                    throw new NullReferenceException("ItemChanger hooked with null settings.");
+                }
+
+                if (_hooked)
+                {
+                    throw new InvalidOperationException("Attempted to rehook ItemChanger.");
+                }
+
                 _hooked = true;
                 LanguageStringManager.Hook();
                 DialogueCenter.Hook();
@@ -56,7 +65,11 @@ namespace ItemChanger
             Log("Unhooking ItemChanger.");
             try
             {
-                if (!_hooked) throw new InvalidOperationException("Attempted to unhook ItemChanger before hooked.");
+                if (!_hooked)
+                {
+                    throw new InvalidOperationException("Attempted to unhook ItemChanger before hooked.");
+                }
+
                 _hooked = false;
                 LanguageStringManager.Unhook();
                 DialogueCenter.Unhook();
@@ -91,12 +104,18 @@ namespace ItemChanger
         /// <exception cref="InvalidOperationException">Settings have already been loaded.</exception>
         public static void CreateSettingsProfile(bool overwrite, bool createDefaultModules)
         {
-            if (overwrite && Settings.loaded) throw new InvalidOperationException("Cannot overwrite loaded settings.");
+            if (overwrite && Settings.loaded)
+            {
+                throw new InvalidOperationException("Cannot overwrite loaded settings.");
+            }
 
             if (SET == null || overwrite)
             {
                 SET = new(createDefaultModules);
-                if (!instance._hooked) instance.HookItemChanger();
+                if (!instance._hooked)
+                {
+                    instance.HookItemChanger();
+                }
             }
         }
 
@@ -107,10 +126,16 @@ namespace ItemChanger
         /// <exception cref="InvalidOperationException">Settings have already been loaded.</exception>
         public static void CreateSettingsProfile(Settings settings)
         {
-            if (Settings.loaded) throw new InvalidOperationException("Cannot overwrite loaded settings.");
+            if (Settings.loaded)
+            {
+                throw new InvalidOperationException("Cannot overwrite loaded settings.");
+            }
 
             SET = settings;
-            if (!instance._hooked) instance.HookItemChanger();
+            if (!instance._hooked)
+            {
+                instance.HookItemChanger();
+            }
         }
 
         public static ModuleCollection Modules => SET.mods;
@@ -134,7 +159,10 @@ namespace ItemChanger
         public static void AddDeployer(IDeployer deployer)
         {
             SET.Deployers.Add(deployer);
-            if (Settings.loaded) Events.AddSceneChangeEdit(deployer.SceneName, deployer.OnSceneChange);
+            if (Settings.loaded)
+            {
+                Events.AddSceneChangeEdit(deployer.SceneName, deployer.OnSceneChange);
+            }
         }
 
         public static void ChangeStartGame(StartDef start)
@@ -158,15 +186,30 @@ namespace ItemChanger
                         case PlacementConflictResolution.MergeKeepingNew:
                             p.Items.AddRange(existsP.Items);
                             SET.Placements[p.Name] = p;
-                            if (Settings.loaded) existsP.Unload();
+                            if (Settings.loaded)
+                            {
+                                existsP.Unload();
+                            }
+
                             break;
                         case PlacementConflictResolution.MergeKeepingOld:
                             existsP.Items.AddRange(p.Items);
-                            if (Settings.loaded) foreach (AbstractItem i in p.Items) i.Load();
+                            if (Settings.loaded)
+                            {
+                                foreach (AbstractItem i in p.Items)
+                                {
+                                    i.Load();
+                                }
+                            }
+
                             break;
                         case PlacementConflictResolution.Replace:
                             SET.Placements[p.Name] = p;
-                            if (Settings.loaded) existsP.Unload();
+                            if (Settings.loaded)
+                            {
+                                existsP.Unload();
+                            }
+
                             break;
                         case PlacementConflictResolution.Ignore:
                             break;
@@ -174,8 +217,15 @@ namespace ItemChanger
                             throw new ArgumentException($"A placement with name {p.Name} already exists.");
                     }
                 }
-                else SET.Placements.Add(p.Name, p);
-                if (Settings.loaded && p == SET.Placements[p.Name]) p.Load();
+                else
+                {
+                    SET.Placements.Add(p.Name, p);
+                }
+
+                if (Settings.loaded && p == SET.Placements[p.Name])
+                {
+                    p.Load();
+                }
             }
         }
 
@@ -205,7 +255,10 @@ namespace ItemChanger
                 {
                     hash1 = ((hash1 << 5) + hash1) ^ str[i];
                     if (i == str.Length - 1 || str[i + 1] == '\0')
+                    {
                         break;
+                    }
+
                     hash2 = ((hash2 << 5) + hash2) ^ str[i + 1];
                 }
 

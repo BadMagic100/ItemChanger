@@ -44,7 +44,10 @@ namespace ItemChanger.Placements
             {
                 this.containerType = containerType = ChooseContainerType(this, location as ContainerLocation, Items);
                 container = Container.GetContainer(containerType);
-                if (container == null) throw new InvalidOperationException($"Unable to resolve container type {containerType} for placement {Name}!");
+                if (container == null)
+                {
+                    throw new InvalidOperationException($"Unable to resolve container type {containerType} for placement {Name}!");
+                }
             }
 
             obj = container.GetNewContainer(new ContainerInfo(container.Name, this, location.flingType, Cost,

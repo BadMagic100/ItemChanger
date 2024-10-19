@@ -33,7 +33,10 @@
 
         public void ModifyItem(GiveEventArgs args)
         {
-            if (args.Item is null) return;
+            if (args.Item is null)
+            {
+                return;
+            }
 
             if (args.Item.Redundant())
             {
@@ -58,7 +61,10 @@
                     {
                         return;
                     }
-                    else args.Item = item;
+                    else
+                    {
+                        args.Item = item;
+                    }
                 }
                 return;
             }

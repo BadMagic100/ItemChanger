@@ -40,7 +40,10 @@
 
         public void ModifyItem(GiveEventArgs args)
         {
-            if (args.Item is null) return;
+            if (args.Item is null)
+            {
+                return;
+            }
 
             if (strictEvaluation)
             {
@@ -107,7 +110,10 @@
                             {
                                 args.Item = item;
                             }
-                            else return;
+                            else
+                            {
+                                return;
+                            }
                         }
                     }
                     // none redundant

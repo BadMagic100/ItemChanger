@@ -1,5 +1,5 @@
-﻿using System.Reflection;
-using System.Collections;
+﻿using System.Collections;
+using System.Reflection;
 
 namespace ItemChanger
 {
@@ -165,9 +165,14 @@ namespace ItemChanger
                     // HC.Respawn
                     self.IgnoreInput();
                     RespawnMarker rm = GetSpawnPoint().GetComponent<RespawnMarker>();
-                    if (rm && !rm.respawnFacingRight) self.FaceLeft();
-                    else self.FaceRight();
-                    (typeof(HeroController).GetField("heroInPosition", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(self) as HeroController.HeroInPosition)?.Invoke(false);
+                    if (rm && !rm.respawnFacingRight)
+                    {
+                        self.FaceLeft();
+                    }
+                    else
+                    {
+                        self.FaceRight();
+                    } (typeof(HeroController).GetField("heroInPosition", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(self) as HeroController.HeroInPosition)?.Invoke(false);
                     var hac = self.GetComponent<HeroAnimationController>();
                     float wakeUpTime = hac.GetClipDuration("Wake Up Ground"); // 46 frames, 18 fps, 2.55s
                     // break from HC.Respawn

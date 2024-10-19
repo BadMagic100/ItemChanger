@@ -12,7 +12,11 @@ namespace ItemChanger
         protected void LoadTags()
         {
             _tagsLoaded = true;
-            if (tags == null) return;
+            if (tags == null)
+            {
+                return;
+            }
+
             for (int i = 0; i < tags.Count; i++)
             {
                 tags[i].LoadOnce(this);
@@ -22,7 +26,11 @@ namespace ItemChanger
         protected void UnloadTags()
         {
             _tagsLoaded = false;
-            if (tags == null) return;
+            if (tags == null)
+            {
+                return;
+            }
+
             for (int i = 0; i < tags.Count; i++)
             {
                 tags[i].UnloadOnce(this);
@@ -33,7 +41,11 @@ namespace ItemChanger
         {
             tags ??= new();
             T t = new();
-            if (_tagsLoaded) t.LoadOnce(this);
+            if (_tagsLoaded)
+            {
+                t.LoadOnce(this);
+            }
+
             tags.Add(t);
             return t;
         }
@@ -41,14 +53,25 @@ namespace ItemChanger
         public void AddTag(Tag t)
         {
             tags ??= new();
-            if (_tagsLoaded) t.LoadOnce(this);
+            if (_tagsLoaded)
+            {
+                t.LoadOnce(this);
+            }
+
             tags.Add(t);
         }
 
         public void AddTags(IEnumerable<Tag> ts)
         {
             tags ??= new();
-            if (_tagsLoaded) foreach (Tag t in ts) t.LoadOnce(this);
+            if (_tagsLoaded)
+            {
+                foreach (Tag t in ts)
+                {
+                    t.LoadOnce(this);
+                }
+            }
+
             tags.AddRange(ts);
         }
 
@@ -83,7 +106,10 @@ namespace ItemChanger
         {
             if (_tagsLoaded && tags != null)
             {
-                foreach (Tag t in tags.Where(t => t is T)) t.UnloadOnce(this);
+                foreach (Tag t in tags.Where(t => t is T))
+                {
+                    t.UnloadOnce(this);
+                }
             }
             tags = tags?.Where(t => t is not T)?.ToList();
         }
@@ -122,7 +148,10 @@ namespace ItemChanger
             public override List<Tag>? ReadJson(JsonReader reader, Type objectType, List<Tag>? existingValue, bool hasExistingValue, JsonSerializer serializer)
             {
                 JToken jt = JToken.Load(reader);
-                if (jt.Type == JTokenType.Null) return null;
+                if (jt.Type == JTokenType.Null)
+                {
+                    return null;
+                }
                 else if (jt.Type == JTokenType.Array)
                 {
                     JArray ja = (JArray)jt;
@@ -145,7 +174,10 @@ namespace ItemChanger
                                     DeserializationError = e,
                                 };
                             }
-                            else throw;
+                            else
+                            {
+                                throw;
+                            }
                         }
                         list.Add(t);
                     }

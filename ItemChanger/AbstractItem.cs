@@ -151,7 +151,10 @@ namespace ItemChanger
                     info.Callback?.Invoke(item);
                 }
             }
-            else info.Callback?.Invoke(item);
+            else
+            {
+                info.Callback?.Invoke(item);
+            }
         }
 
         /// <summary>
@@ -162,7 +165,11 @@ namespace ItemChanger
         public string GetPreviewName(AbstractPlacement? placement = null)
         {
             if (HasTag<Tags.DisableItemPreviewTag>() 
-                || (placement != null && placement.HasTag<Tags.DisableItemPreviewTag>())) return Language.Language.Get("???", "IC");
+                || (placement != null && placement.HasTag<Tags.DisableItemPreviewTag>()))
+            {
+                return Language.Language.Get("???", "IC");
+            }
+
             UIDef? def = GetResolvedUIDef(placement);
             return def?.GetPreviewName() ?? Language.Language.Get("???", "IC"); ;
         }
@@ -170,7 +177,11 @@ namespace ItemChanger
         public Sprite? GetPreviewSprite(AbstractPlacement? placement = null)
         {
             if (HasTag<Tags.DisableItemPreviewTag>()
-                || (placement != null && placement.HasTag<Tags.DisableItemPreviewTag>())) return Modding.CanvasUtil.NullSprite();
+                || (placement != null && placement.HasTag<Tags.DisableItemPreviewTag>()))
+            {
+                return Modding.CanvasUtil.NullSprite();
+            }
+
             UIDef? def = GetResolvedUIDef(placement);
             return def?.GetSprite();
         }
@@ -205,7 +216,10 @@ namespace ItemChanger
         /// </summary>
         public void RefreshObtained()
         {
-            if (obtainState == ObtainState.Obtained) obtainState = ObtainState.Refreshed;
+            if (obtainState == ObtainState.Obtained)
+            {
+                obtainState = ObtainState.Refreshed;
+            }
         }
 
         /// <summary>

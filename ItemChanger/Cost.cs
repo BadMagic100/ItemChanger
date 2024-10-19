@@ -20,7 +20,11 @@ namespace ItemChanger
         public void Pay()
         {
             OnPay();
-            if (!Recurring) Paid = true;
+            if (!Recurring)
+            {
+                Paid = true;
+            }
+
             AfterPay();
         }
 
@@ -89,8 +93,15 @@ namespace ItemChanger
         /// </summary>
         public static Cost operator +(Cost a, Cost b)
         {
-            if (a == null) return b;
-            if (b == null) return a;
+            if (a == null)
+            {
+                return b;
+            }
+
+            if (b == null)
+            {
+                return a;
+            }
 
             return new MultiCost(a, b);
         }
@@ -159,7 +170,10 @@ namespace ItemChanger
         {
             foreach (Cost c in Costs)
             {
-                if (!c.Paid) c.Pay();
+                if (!c.Paid)
+                {
+                    c.Pay();
+                }
             }
         }
 
@@ -198,12 +212,18 @@ namespace ItemChanger
 
         public override void Load()
         {
-            foreach (Cost c in Costs) c.Load();
+            foreach (Cost c in Costs)
+            {
+                c.Load();
+            }
         }
 
         public override void Unload()
         {
-            foreach (Cost c in Costs) c.Unload();
+            foreach (Cost c in Costs)
+            {
+                c.Unload();
+            }
         }
 
         public int IndexOf(Cost item) => Costs.IndexOf(item);
@@ -227,8 +247,14 @@ namespace ItemChanger
         public override bool HasPayEffects() => false;
         public override bool Includes(Cost c)
         {
-            if (c is PDBoolCost pbc) return pbc.fieldName == fieldName;
-            else return base.Includes(c);
+            if (c is PDBoolCost pbc)
+            {
+                return pbc.fieldName == fieldName;
+            }
+            else
+            {
+                return base.Includes(c);
+            }
         }
         public override string GetCostText()
         {
@@ -246,7 +272,11 @@ namespace ItemChanger
         public override bool HasPayEffects() => false;
         public override bool Includes(Cost c)
         {
-            if (c is PDIntCost pic) return pic.amount <= amount && pic.op == op && pic.fieldName == fieldName;
+            if (c is PDIntCost pic)
+            {
+                return pic.amount <= amount && pic.op == op && pic.fieldName == fieldName;
+            }
+
             return base.Includes(c);
         }
         public override string GetCostText()
@@ -269,7 +299,11 @@ namespace ItemChanger
         public override bool HasPayEffects() => true;
         public override bool Includes(Cost c)
         {
-            if (c is ConsumablePDIntCost pic) return pic.amount <= amount && pic.fieldName == fieldName;
+            if (c is ConsumablePDIntCost pic)
+            {
+                return pic.amount <= amount && pic.fieldName == fieldName;
+            }
+
             return base.Includes(c);
         }
 
@@ -288,14 +322,21 @@ namespace ItemChanger
         public override void OnPay()
         {
             int amt = (int)(amount * DiscountRate);
-            if (amt > 0) HeroController.instance.TakeGeo(amt);
+            if (amt > 0)
+            {
+                HeroController.instance.TakeGeo(amt);
+            }
         }
 
         public override bool HasPayEffects() => true;
 
         public override bool Includes(Cost c)
         {
-            if (c is GeoCost gc) return gc.amount <= amount;
+            if (c is GeoCost gc)
+            {
+                return gc.amount <= amount;
+            }
+
             return base.Includes(c);
         }
 

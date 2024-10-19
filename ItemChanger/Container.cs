@@ -1,7 +1,4 @@
-﻿using ItemChanger.Components;
-using ItemChanger.Containers;
-
-namespace ItemChanger
+﻿namespace ItemChanger
 {
     /// <summary>
     /// Base class for types which implement creating and fsm-editing item containers.
@@ -30,8 +27,16 @@ namespace ItemChanger
         /// </summary>
         public static Container? GetContainer(string containerType)
         {
-            if (string.IsNullOrEmpty(containerType)) return null;
-            if (_containers.TryGetValue(containerType, out Container value)) return value;
+            if (string.IsNullOrEmpty(containerType))
+            {
+                return null;
+            }
+
+            if (_containers.TryGetValue(containerType, out Container value))
+            {
+                return value;
+            }
+
             return null;
         }
 

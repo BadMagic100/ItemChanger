@@ -31,9 +31,20 @@ namespace ItemChanger
         /// </summary>
         public static NamedFunction<T> Define(string name, Func<T> getter)
         {
-            if (name is null) throw new ArgumentNullException(nameof(name));
-            if (getter is null) throw new ArgumentNullException(nameof(getter));
-            if (lookupTable.ContainsKey(name)) throw new InvalidOperationException($"NamedFunction {name} for type {typeof(T).Name} is already defined.");
+            if (name is null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            if (getter is null)
+            {
+                throw new ArgumentNullException(nameof(getter));
+            }
+
+            if (lookupTable.ContainsKey(name))
+            {
+                throw new InvalidOperationException($"NamedFunction {name} for type {typeof(T).Name} is already defined.");
+            }
 
             lookupTable.Add(name, getter);
             return new NamedFunction<T>(name);
@@ -44,8 +55,15 @@ namespace ItemChanger
         /// </summary>
         public static NamedFunction<T> Redefine(string name, Func<T> getter)
         {
-            if (name is null) throw new ArgumentNullException(nameof(name));
-            if (getter is null) throw new ArgumentNullException(nameof(getter));
+            if (name is null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            if (getter is null)
+            {
+                throw new ArgumentNullException(nameof(getter));
+            }
 
             lookupTable[name] = getter;
             return new NamedFunction<T>(name);

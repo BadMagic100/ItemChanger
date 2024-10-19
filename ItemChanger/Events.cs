@@ -1,6 +1,4 @@
-﻿using ItemChanger.Extensions;
-using ItemChanger.Internal;
-using ItemChanger.Util;
+﻿using ItemChanger.Internal;
 
 namespace ItemChanger
 {
@@ -109,8 +107,14 @@ namespace ItemChanger
                 localOnEnable[sceneName] = dict = new();
             }
 
-            if (dict.ContainsKey(id)) dict[id] += action;
-            else dict[id] = action;
+            if (dict.ContainsKey(id))
+            {
+                dict[id] += action;
+            }
+            else
+            {
+                dict[id] = action;
+            }
         }
 
         /// <summary>
@@ -129,8 +133,14 @@ namespace ItemChanger
         /// </summary>
         public static void AddSceneChangeEdit(string sceneName, Action<Scene> action)
         {
-            if (activeSceneChangeEdits.ContainsKey(sceneName)) activeSceneChangeEdits[sceneName] += action;
-            else activeSceneChangeEdits[sceneName] = action;
+            if (activeSceneChangeEdits.ContainsKey(sceneName))
+            {
+                activeSceneChangeEdits[sceneName] += action;
+            }
+            else
+            {
+                activeSceneChangeEdits[sceneName] = action;
+            }
         }
 
         /// <summary>
@@ -159,8 +169,14 @@ namespace ItemChanger
         /// </summary>
         public static void AddLanguageEdit(LanguageKey key, LanguageEdit func)
         {
-            if (languageHooks.ContainsKey(key)) languageHooks[key] += func;
-            else languageHooks[key] =  func;
+            if (languageHooks.ContainsKey(key))
+            {
+                languageHooks[key] += func;
+            }
+            else
+            {
+                languageHooks[key] =  func;
+            }
         }
 
         /// <summary>
@@ -168,7 +184,10 @@ namespace ItemChanger
         /// </summary>
         public static void RemoveLanguageEdit(LanguageKey key, LanguageEdit func)
         {
-            if (languageHooks.ContainsKey(key)) languageHooks[key] -= func;
+            if (languageHooks.ContainsKey(key))
+            {
+                languageHooks[key] -= func;
+            }
         }
 
         /*
@@ -299,7 +318,10 @@ namespace ItemChanger
 
         private static void OnActiveSceneChanged(Scene from, Scene to)
         {
-            if (Ref.Settings == null) return; // Settings is nulled by the API on active scene change to Menu_Title.
+            if (Ref.Settings == null)
+            {
+                return; // Settings is nulled by the API on active scene change to Menu_Title.
+            }
 
             try
             {
@@ -406,7 +428,11 @@ namespace ItemChanger
 
             if (Ref.Settings.Start != null)
             {
-                if (permadeathMode) self.playerData.permadeathMode = 1;
+                if (permadeathMode)
+                {
+                    self.playerData.permadeathMode = 1;
+                }
+
                 Ref.Settings.Start.ApplyToPlayerData(self.playerData);
                 try
                 {
@@ -490,8 +516,14 @@ namespace ItemChanger
                 else
                 {
                     gateName = tp.name.Split(null)[0];
-                    if (sceneName == SceneNames.Fungus2_14 && gateName[0] == 'b') gateName = "bot3";
-                    else if (sceneName == SceneNames.Fungus2_15 && gateName[0] == 't') gateName = "top3";
+                    if (sceneName == SceneNames.Fungus2_14 && gateName[0] == 'b')
+                    {
+                        gateName = "bot3";
+                    }
+                    else if (sceneName == SceneNames.Fungus2_15 && gateName[0] == 't')
+                    {
+                        gateName = "top3";
+                    }
                 }
 
                 if (sceneName != null && gateName != null)
@@ -543,7 +575,10 @@ namespace ItemChanger
                 OnStringGet(args);
                 return args.Current;
             }
-            else return source.Value;
+            else
+            {
+                return source.Value;
+            }
         }
 
         internal static Sprite GetValue(this ISprite source)
@@ -554,7 +589,10 @@ namespace ItemChanger
                 OnSpriteGet(args);
                 return args.Current;
             }
-            else return source.Value;
+            else
+            {
+                return source.Value;
+            }
         }
     }
 }
