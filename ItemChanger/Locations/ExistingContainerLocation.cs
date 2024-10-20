@@ -28,7 +28,7 @@ public abstract class ExistingContainerLocation : AbstractLocation
 
     public override AbstractPlacement Wrap()
     {
-        return new Placements.ExistingContainerPlacement(name)
+        return new Placements.ExistingContainerPlacement(Name)
         {
             Location = this,
         };

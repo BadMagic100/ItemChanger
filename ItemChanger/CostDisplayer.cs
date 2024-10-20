@@ -1,4 +1,7 @@
-﻿namespace ItemChanger;
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace ItemChanger;
 
 /// <summary>
 /// A utility object which dictates how costs (and especially multicosts) are to be displayed
@@ -64,7 +67,7 @@ public abstract class CostDisplayer
         Cost baseCost = cost.GetBaseCost();
         if (baseCost is MultiCost mc)
         {
-            return string.Join(Language.Language.Get("COMMA_SPACE", "IC"), mc.Where(c => !SupportsCost(c.GetBaseCost()))
+            return string.Join(", ", mc.Where(c => !SupportsCost(c.GetBaseCost()))
                 .Select(c => c.GetCostText()).ToArray());
         }
         else if (!SupportsCost(baseCost))
@@ -97,72 +100,4 @@ public abstract class CostDisplayer
     /// <param name="cost"></param>
     /// <returns></returns>
     protected abstract int GetSingleCostDisplayAmount(Cost cost);
-}
-
-/// <summary>
-/// A noncumulative cost displayer which displays geo costs (as in vanilla shops).
-/// </summary>
-public class GeoCostDisplayer : CostDisplayer
-{
-    public override ISprite? CustomCostSprite => null;
-
-    public override bool Cumulative => false;
-
-    protected override bool SupportsCost(Cost cost) => cost is GeoCost;
-
-    protected override int GetSingleCostDisplayAmount(Cost cost)
-    {
-        GeoCost gc = (GeoCost)cost;
-        return (int)(gc.amount * gc.DiscountRate);
-    }
-}
-
-/// <summary>
-/// A cost displayer which displays PD int costs matching a provided PD variable name. When set
-/// set to cumulative, it will check for PDIntCost; when set to noncumulative it will check for
-/// ConsumablePDIntCost. Cost sprite is user-customizable and defaults to null.
-/// </summary>
-public class PDIntCostDisplayer : CostDisplayer
-{
-    public string FieldName { get; set; }
-
-    protected override bool SupportsCost(Cost cost)
-    {
-        if (Cumulative && cost is PDIntCost pdi && pdi.fieldName == FieldName)
-        {
-            return true;
-        }
-        else if (!Cumulative && cost is ConsumablePDIntCost cpdi && cpdi.fieldName == FieldName)
-        {
-            return true;
-        }
-        return false;
-    }
-
-    protected override int GetSingleCostDisplayAmount(Cost cost)
-    {
-        if (Cumulative)
-        {
-            return ((PDIntCost)cost).amount;
-        }
-        else
-        {
-            return ((ConsumablePDIntCost)cost).amount;
-        }
-    }
-}
-
-/// <summary>
-/// A cumulative cost displayer which displays rancid egg costs with a default cost sprite
-/// of a rancid egg
-/// </summary>
-public class EggCostDisplayer : CostDisplayer
-{
-    public override ISprite? CustomCostSprite { get; set; } = new ItemChangerSprite("ShopIcons.RancidEgg");
-
-    public override bool Cumulative => true;
-
-    protected override bool SupportsCost(Cost cost) => cost is CumulativeRancidEggCost;
-
-    protected override int GetSingleCostDisplayAmount(Cost cost) => ((CumulativeRancidEggCost)cost).Total;
 }

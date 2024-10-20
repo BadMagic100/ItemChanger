@@ -12,7 +12,7 @@ public abstract class AutoLocation : AbstractLocation
     {
         return new GiveInfo
         {
-            FlingType = flingType,
+            FlingType = FlingType,
             Callback = null,
             Container = Container.Unknown,
             MessageType = MessageType.Any,
@@ -41,7 +41,7 @@ public abstract class AutoLocation : AbstractLocation
 
     public override AbstractPlacement Wrap()
     {
-        return new Placements.AutoPlacement(name)
+        return new Placements.AutoPlacement(Name)
         {
             Location = this,
         };

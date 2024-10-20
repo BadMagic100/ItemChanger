@@ -1,4 +1,6 @@
-﻿namespace ItemChanger;
+﻿using System;
+
+namespace ItemChanger;
 
 public abstract class UIDef
 {

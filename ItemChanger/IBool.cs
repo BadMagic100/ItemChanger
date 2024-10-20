@@ -1,5 +1,7 @@
 ﻿using ItemChanger.Extensions;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ItemChanger;
 
@@ -33,119 +35,18 @@ public class BoxedBool : IWritableBool
 }
 
 /// <summary>
-/// IBool which represents a PlayerData bool.
-/// </summary>
-public class PDBool : IWritableBool
-{
-    public string boolName;
-
-    public PDBool(string boolName) => this.boolName = boolName;
-
-    [JsonIgnore]
-    public bool Value
-    {
-        get => PlayerData.instance.GetBool(boolName);
-        set => PlayerData.instance.SetBool(boolName, value);
-    }
-
-    public IBool Clone() => (IBool)MemberwiseClone();
-}
-
-/// <summary>
-/// IBool which represents the value of a PersistentBoolData in SceneData.
-/// </summary>
-public class SDBool : IWritableBool
-{
-    public string id;
-    public string sceneName;
-    public bool semiPersistent;
-
-    [JsonConstructor]
-    public SDBool(string id, string sceneName)
-    {
-        this.id = id;
-        this.sceneName = sceneName;
-        this.semiPersistent = false;
-    }
-
-    public SDBool(string id, string sceneName, bool semiPersistent)
-    {
-        this.id = id;
-        this.sceneName = sceneName;
-        this.semiPersistent = semiPersistent;
-    }
-
-    [JsonIgnore]
-    public bool Value
-    {
-        get
-        {
-            return SceneData.instance.FindMyState(new PersistentBoolData
-            {
-                id = id,
-                sceneName = sceneName,
-            })?.activated ?? false;
-        }
-        set
-        {
-            Util.SceneDataUtil.Save(sceneName, id, value, semiPersistent);
-        }
-    }
-
-    public IBool Clone() => (IBool)MemberwiseClone();
-}
-
-/// <summary>
 /// IBool which represents comparison on a PlayerData int.
 /// <br/>Supports IWritableBool in one direction only (direction depends on comparison operator).
 /// </summary>
-public class PDIntBool : IWritableBool
+public class IntComparisonBool(IInteger Int, int Amount, ComparisonOperator op = ComparisonOperator.Ge) : IBool
 {
-    public string intName;
-    public int amount;
-    public ComparisonOperator op;
-    
-
-    public PDIntBool(string intName, int amount, ComparisonOperator op = ComparisonOperator.Ge)
-    {
-        this.intName = intName;
-        this.amount = amount;
-        this.op = op;
-    }
-
+    /// <inheritdoc/>
     [JsonIgnore]
     public bool Value
     {
         get
         {
-            return PlayerData.instance.GetInt(intName).Compare(op, amount);
-        }
-        set
-        {
-            if (value)
-            {
-                switch (op)
-                {
-                    case ComparisonOperator.Ge:
-                    case ComparisonOperator.Eq:
-                    case ComparisonOperator.Le:
-                        PlayerData.instance.SetInt(intName, amount);
-                        break;
-                    default: throw new NotSupportedException($"Cannot set PDIntBool true with operator {op}.");
-                }
-            }
-            else
-            {
-                switch (op)
-                {
-                    case ComparisonOperator.Gt:
-                    case ComparisonOperator.Neq:
-                    case ComparisonOperator.Lt:
-                        PlayerData.instance.SetInt(intName, amount);
-                        break;
-                    default: throw new NotSupportedException($"Cannot set PDIntBool false with operator {op}.");
-                }
-            }
+            return Int.Value.Compare(op, Amount);
         }
     }
 
@@ -156,34 +57,28 @@ public class PDIntBool : IWritableBool
 /// IBool which searches for a placement by name and checks whether all items on the placement are obtained.
 /// <br/>If the placement does not exist, defaults to the value of missingPlacementTest, or true if missingPlacementTest is null.
 /// </summary>
-public class PlacementAllObtainedBool : IBool
+public class PlacementAllObtainedBool(string placementName, IBool? missingPlacementTest = null) : IBool
 {
-    public PlacementAllObtainedBool(string placementName, IBool missingPlacementTest)
-    {
-        this.placementName = placementName;
-        this.missingPlacementTest = missingPlacementTest;
-    }
-
-    public string placementName;
-    public IBool? missingPlacementTest;
+    public string PlacementName { get; } = placementName;
+    public IBool? MissingPlacementTest { get; private set; } = missingPlacementTest;
 
     [JsonIgnore]
     public bool Value
     {
         get
         {
-            if (placementName != null && Internal.Ref.Settings is Settings s && s.Placements != null && s.Placements.TryGetValue(placementName, out var p) && p != null)
+            if (PlacementName != null && Internal.Ref.Settings is Settings s && s.Placements != null && s.Placements.TryGetValue(PlacementName, out var p) && p != null)
             {
                 return p.AllObtained();
             }
-            return missingPlacementTest?.Value ?? true;
+            return MissingPlacementTest?.Value ?? true;
         }
     }
 
     public IBool Clone()
     {
         PlacementAllObtainedBool obj = (PlacementAllObtainedBool)MemberwiseClone();
-        obj.missingPlacementTest = obj.missingPlacementTest?.Clone();
+        obj.MissingPlacementTest = obj.MissingPlacementTest?.Clone();
         return obj;
     }
 }
@@ -251,7 +146,7 @@ public class Disjunction : IBool
         return new Disjunction(bools.Select(b => b.Clone()));
     }
 
-    public void OrWith(IBool b) => bools.Add(b);
+    public Disjunction OrWith(IBool b) => b is Disjunction d ? new([..bools, ..d.bools]) : new([..bools, b]);
 }
 
 public class Conjunction : IBool
@@ -267,30 +162,29 @@ public class Conjunction : IBool
         this.bools.AddRange(bools);
     }
 
+    /// <inheritdoc/>
     [JsonIgnore]
     public bool Value => bools.All(b => b.Value);
 
+    /// <inheritdoc/>
     public IBool Clone()
     {
         return new Conjunction(bools.Select(b => b.Clone()));
     }
 
-    public void AndWith(IBool b) => bools.Add(b);
+    public Conjunction AndWith(IBool b) => b is Conjunction c ? new([..bools, ..c.bools]) : new([..bools, b]);
 }
 
-public class Negation : IBool
+[method: JsonConstructor]
+public class Negation(IBool Bool) : IBool
 {
-    public IBool Bool;
+    public IBool Bool { get; } = Bool;
 
-    [JsonConstructor]
-    public Negation(IBool Bool)
-    {
-        this.Bool = Bool;
-    }
-
+    /// <inheritdoc/>
     [JsonIgnore]
     public bool Value => !Bool.Value;
 
+    /// <inheritdoc/>
     public IBool Clone()
     {
         return new Negation(Bool.Clone());

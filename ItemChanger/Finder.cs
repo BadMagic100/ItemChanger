@@ -1,4 +1,8 @@
 ﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace ItemChanger;
@@ -198,16 +202,16 @@ public static class Finder
 
     public static void DefineCustomLocation(AbstractLocation loc)
     {
-        if (Locations[0].ContainsKey(loc.name))
+        if (Locations[0].ContainsKey(loc.Name))
         {
-            throw new ArgumentException($"Location {loc.name} is already defined by ItemChanger.");
+            throw new ArgumentException($"Location {loc.Name} is already defined by ItemChanger.");
         }
-        else if (CustomLocations.ContainsKey(loc.name))
+        else if (CustomLocations.ContainsKey(loc.Name))
         {
-            throw new ArgumentException($"Location {loc.name} is already defined as a custom location.");
+            throw new ArgumentException($"Location {loc.Name} is already defined as a custom location.");
         }
 
-        CustomLocations.Add(loc.name, loc);
+        CustomLocations.Add(loc.Name, loc);
     }
 
     public static bool UndefineCustomLocation(string name) => CustomLocations.Remove(name);

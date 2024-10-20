@@ -19,12 +19,12 @@ public abstract class ContainerLocation : AbstractLocation
 
     public virtual bool Supports(string containerType)
     {
-        return containerType == Container.Shiny ? true : !ForceShiny;
+        return containerType == Container.GenericPickup ? true : !ForceShiny;
     }
 
     public override AbstractPlacement Wrap()
     {
-        return new MutablePlacement(name)
+        return new MutablePlacement(Name)
         {
             Location = this,
         };

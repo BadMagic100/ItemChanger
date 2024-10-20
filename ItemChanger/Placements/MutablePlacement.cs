@@ -50,7 +50,7 @@ public class MutablePlacement(string Name) : AbstractPlacement(Name), IContainer
             }
         }
 
-        obj = container.GetNewContainer(new ContainerInfo(container.Name, this, location.flingType, Cost,
+        obj = container.GetNewContainer(new ContainerInfo(container.Name, this, location.FlingType, Cost,
             location.GetTags<Tags.ChangeSceneTag>().FirstOrDefault()?.ToChangeSceneInfo()));
     }
 
@@ -58,7 +58,7 @@ public class MutablePlacement(string Name) : AbstractPlacement(Name), IContainer
     {
         if (location?.ForceShiny ?? true)
         {
-            return Container.Shiny;
+            return Container.GenericPickup;
         }
 
         bool mustSupportCost = placement.Cost != null;
@@ -88,7 +88,7 @@ public class MutablePlacement(string Name) : AbstractPlacement(Name), IContainer
             }
             else
             {
-                containerType = Container.Shiny;
+                containerType = Container.GenericPickup;
             }
         }
 

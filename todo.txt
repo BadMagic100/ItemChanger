@@ -7,6 +7,7 @@ Make Load and Unload protected in favor of LoadOnce and UnloadOnce
 Hide Loaded from serialization
 Need a way for default modules not dependent on being defined in the assembly with IC
 Game-agnostic container implementation
+    Get rid of static constructor please
 use :new() in type constraints throughout to enforce/encourage json-friendly construction
 Audit fields -> properties and usage of required throughout
 docs
@@ -14,6 +15,16 @@ move public APIs out of the "Internal" namespace
 see if there is a good way to dejank single/multicost placements
 object parent -> taggableobject parent
 does incompat warning need to warn about mutual incompat only, or should it always warn
+yeet item tree tag?
+user-facing error display (possibly via events?) replacing Internal.MessageController.OnError
+need some equivalent for VoidItem.Nothing? whatever you get if the item resolves to null
+Handle exceptions in user-facing hooks (e.g. modifyredundantitem)
+implement generic int/bool/consumableint costs akin to the ones in hk.ic
+check memberwiseclone actually works after the move to properties everywhere
+Deployer to unity shim package?
+revamp visitstate
+eeparate enums to different files
+allow callers to specify Finder sheets
 
 Unity stuff - is a unity shim package needed? How to deal with unity refs from nuget package?
 

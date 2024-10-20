@@ -1,26 +1,15 @@
-﻿namespace ItemChanger;
+﻿using System;
+using System.Collections.Generic;
+
+namespace ItemChanger;
 
 /// <summary>
 /// Base class for types which implement creating and fsm-editing item containers.
 /// </summary>
 public abstract class Container
 {
-    static Container()
-    {
-        ResetContainers();
-    }
-
     public const string Unknown = "Unknown";
-    public const string Shiny = "Shiny";
-    public const string GrubJar = "GrubJar";
-    public const string GeoRock = "GeoRock";
-    public const string Chest = "Chest";
-    public const string Tablet = "Tablet";
-    public const string Shop = "Shop";
-    public const string Enemy = "Enemy";
-    public const string Mimic = "Mimic";
-    public const string Totem = "Totem";
-    public const string Bluggsac = "Bluggsac";
+    public const string GenericPickup = "GenericPickup";
 
     /// <summary>
     /// Gets the container definition for the given string. Returns null if no such container has been defined.
@@ -59,18 +48,6 @@ public abstract class Container
 
 
     private readonly static Dictionary<string, Container> _containers = new();
-    internal static void ResetContainers()
-    {
-        _containers.Clear();
-        _containers.Add(Shiny, new ShinyContainer());
-        _containers.Add(GrubJar, new GrubJarContainer());
-        _containers.Add(GeoRock, new GeoRockContainer());
-        _containers.Add(Chest, new ChestContainer());
-        _containers.Add(Tablet, new TabletContainer());
-        _containers.Add(Mimic, new MimicContainer());
-        _containers.Add(Bluggsac, new BluggsacContainer());
-        _containers.Add(Totem, new SoulTotemContainer());
-    }
 
     public static bool SupportsAll(string containerName, bool mustSupportInstantiate, bool mustSupportCost, bool mustSupportSceneChange)
     {
@@ -149,21 +126,21 @@ public abstract class Container
         ContainerInfo? info = ContainerInfo.FindContainerInfo(fsm.gameObject);
         if (info != null)
         {
-            var container = GetContainer(info.containerType);
+            var container = GetContainer(info.ContainerType);
             if (container == null)
             {
-                LogError($"Unable to find Container definition for {info.containerType}!");
+                LogError($"Unable to find Container definition for {info.ContainerType}!");
                 return;
             }
 
-            var give = info.giveInfo;
-            var scene = info.changeSceneInfo;
-            var cost = info.costInfo;
+            var give = info.GiveInfo;
+            var scene = info.ChangeSceneInfo;
+            var cost = info.CostInfo;
 
-            if (give != null && !give.applied)
+            if (give != null && !give.Applied)
             {
                 container.AddGiveEffectToFsm(fsm, give);
-                give.applied = true;
+                give.Applied = true;
             }
 
             if (scene != null && !scene.applied)
@@ -172,10 +149,10 @@ public abstract class Container
                 scene.applied = true;
             }
 
-            if (cost != null && !cost.applied)
+            if (cost != null && !cost.Applied)
             {
                 container.AddCostToFsm(fsm, cost);
-                cost.applied = true;
+                cost.Applied = true;
             }
         }
     }

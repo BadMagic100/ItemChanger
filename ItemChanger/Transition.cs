@@ -1,4 +1,7 @@
 ﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ItemChanger;
 
@@ -8,7 +11,6 @@ public interface ITransition
     string GateName { get; }
 }
 
-//[TypeConverter(typeof(TransitionConverter))]
 public readonly struct Transition : ITransition, IEquatable<Transition>
 {
     public string SceneName { get; }
@@ -54,7 +56,7 @@ public readonly struct Transition : ITransition, IEquatable<Transition>
 
     public static bool operator !=(Transition t1, Transition t2) => !(t1 == t2);
 
-    public class TransitionDictConverter<TValue> : JsonConverter<Dictionary<Transition, TValue>>
+    private class TransitionDictConverter<TValue> : JsonConverter<Dictionary<Transition, TValue>>
     {
         public override Dictionary<Transition, TValue>? ReadJson(
             JsonReader reader, 
@@ -71,35 +73,4 @@ public readonly struct Transition : ITransition, IEquatable<Transition>
             serializer.Serialize(writer, value?.ToArray());
         }
     }
-
-    /*
-    public class TransitionConverter : TypeConverter
-    {
-        public static readonly Regex r = new(@"([^\[]*)\[([^\]]*)\]");
-
-        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
-        {
-            if (sourceType == typeof(string)) return true;
-            return base.CanConvertFrom(context, sourceType);
-        }
-
-        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
-        {
-            if (value is string s)
-            {
-                try
-                {
-                    Match m = r.Match(s);
-                    Transition t = new(m.Groups[1].Value, m.Groups[2].Value);
-                    return t;
-                }
-                catch (Exception e)
-                {
-                    Log(e);
-                }
-            }
-            return base.ConvertFrom(context, culture, value);
-        }
-    }
-    */
 }

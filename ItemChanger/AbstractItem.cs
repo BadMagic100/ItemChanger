@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace ItemChanger;
 
@@ -18,7 +19,7 @@ public class GiveInfo
     /// <summary>
     /// The transform to use for flinging and similar actions. May be null.
     /// </summary>
-    public Transform? Transform {get; set;}
+    public Transform? Transform { get; set; }
     /// <summary>
     /// A flag enumeration of the allowed message types for the UIDef after the item is given.
     /// </summary>
@@ -132,7 +133,7 @@ public abstract class AbstractItem : TaggableObject
         }
         catch (Exception e)
         {
-            LogError($"Error on GiveImmediate for item {item.name}:\n{e}");
+            LogHelper.LogError($"Error on GiveImmediate for item {item.name}:\n{e}");
             Internal.MessageController.Error();
         }
 
@@ -146,7 +147,7 @@ public abstract class AbstractItem : TaggableObject
             }
             catch (Exception e)
             {
-                LogError($"Error on SendMessage for item {item.name}:\n{e}");
+                LogHelper.LogError($"Error on SendMessage for item {item.name}:\n{e}");
                 Internal.MessageController.Error();
                 info.Callback?.Invoke(item);
             }
@@ -167,11 +168,11 @@ public abstract class AbstractItem : TaggableObject
         if (HasTag<Tags.DisableItemPreviewTag>() 
             || (placement != null && placement.HasTag<Tags.DisableItemPreviewTag>()))
         {
-            return Language.Language.Get("???", "IC");
+            return "???";
         }
 
         UIDef? def = GetResolvedUIDef(placement);
-        return def?.GetPreviewName() ?? Language.Language.Get("???", "IC"); ;
+        return def?.GetPreviewName() ?? "???";
     }
 
     public Sprite? GetPreviewSprite(AbstractPlacement? placement = null)
@@ -179,7 +180,7 @@ public abstract class AbstractItem : TaggableObject
         if (HasTag<Tags.DisableItemPreviewTag>()
             || (placement != null && placement.HasTag<Tags.DisableItemPreviewTag>()))
         {
-            return Modding.CanvasUtil.NullSprite();
+            return null;
         }
 
         UIDef? def = GetResolvedUIDef(placement);
@@ -281,11 +282,11 @@ public abstract class AbstractItem : TaggableObject
             string? placement = args?.Placement?.Name;
             if (placement != null)
             {
-                LogError($"Error invoking BeforeGive for item {name} at placement {placement}:\n{e}");
+                LogHelper.LogError($"Error invoking BeforeGive for item {name} at placement {placement}:\n{e}");
             }
             else
             {
-                LogError($"Error invoking BeforeGive for item {name} with placement unavailable:\n{e}");
+                LogHelper.LogError($"Error invoking BeforeGive for item {name} with placement unavailable:\n{e}");
             }
         }
     }
@@ -313,11 +314,11 @@ public abstract class AbstractItem : TaggableObject
             string? placement = args?.Placement?.Name;
             if (placement != null)
             {
-                LogError($"Error invoking ModifyItem for item {name} at placement {placement}:\n{e}");
+                LogHelper.LogError($"Error invoking ModifyItem for item {name} at placement {placement}:\n{e}");
             }
             else
             {
-                LogError($"Error invoking ModifyItem for item {name} with placement unavailable:\n{e}");
+                LogHelper.LogError($"Error invoking ModifyItem for item {name} with placement unavailable:\n{e}");
             }
         }
     }
@@ -345,11 +346,11 @@ public abstract class AbstractItem : TaggableObject
             string? placement = args?.Placement?.Name;
             if (placement != null)
             {
-                LogError($"Error invoking ModifyRedundantItem for item {name} at placement {placement}:\n{e}");
+                LogHelper.LogError($"Error invoking ModifyRedundantItem for item {name} at placement {placement}:\n{e}");
             }
             else
             {
-                LogError($"Error invoking ModifyRedundantItem for item {name} with placement unavailable:\n{e}");
+                LogHelper.LogError($"Error invoking ModifyRedundantItem for item {name} with placement unavailable:\n{e}");
             }
         }
     }
@@ -377,11 +378,11 @@ public abstract class AbstractItem : TaggableObject
             string? placement = args?.Placement?.Name;
             if (placement != null)
             {
-                LogError($"Error invoking OnGive for item {name} at placement {placement}:\n{e}");
+                LogHelper.LogError($"Error invoking OnGive for item {name} at placement {placement}:\n{e}");
             }
             else
             {
-                LogError($"Error invoking OnGive for item {name} with placement unavailable:\n{e}");
+                LogHelper.LogError($"Error invoking OnGive for item {name} with placement unavailable:\n{e}");
             }
         }
     }
@@ -409,11 +410,11 @@ public abstract class AbstractItem : TaggableObject
             string? placement = args?.Placement?.Name;
             if (placement != null)
             {
-                LogError($"Error invoking AfterGive for item {name} at placement {placement}:\n{e}");
+                LogHelper.LogError($"Error invoking AfterGive for item {name} at placement {placement}:\n{e}");
             }
             else
             {
-                LogError($"Error invoking AfterGive for item {name} with placement unavailable:\n{e}");
+                LogHelper.LogError($"Error invoking AfterGive for item {name} with placement unavailable:\n{e}");
             }
         }
     }

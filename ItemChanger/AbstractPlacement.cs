@@ -1,4 +1,7 @@
 ﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ItemChanger;
 
@@ -85,8 +88,8 @@ public abstract class AbstractPlacement : TaggableObject
     /// </summary>
     public string GetUIName(int maxLength)
     {
-        IEnumerable<string> itemNames = Items.Where(i => !i.IsObtained()).Select(i => i.GetPreviewName(this) ?? Language.Language.Get("UNKNOWN_ITEM", "IC"));
-        string itemText = string.Join(Language.Language.Get("COMMA_SPACE", "IC"), itemNames.ToArray());
+        IEnumerable<string> itemNames = Items.Where(i => !i.IsObtained()).Select(i => i.GetPreviewName(this) ?? "Unknown Item");
+        string itemText = string.Join(", ", itemNames.ToArray());
         if (itemText.Length > maxLength)
         {
             itemText = itemText.Substring(0, maxLength > 3 ? maxLength - 3 : 0) + "...";
@@ -197,7 +200,7 @@ public abstract class AbstractPlacement : TaggableObject
         }
         catch (Exception e)
         {
-            LogError($"Error invoking OnVisitStateChanged for placement {Name}:\n{e}");
+            LogHelper.LogError($"Error invoking OnVisitStateChanged for placement {Name}:\n{e}");
         }
     }
 

@@ -32,7 +32,7 @@ public class StartLocation : AutoLocation
             {
                 MessageType = MessageType,
                 Container = "Start",
-                FlingType = flingType,
+                FlingType = FlingType,
                 Transform = null,
                 Callback = null,
             });
@@ -42,7 +42,7 @@ public class StartLocation : AutoLocation
 
     public override AbstractPlacement Wrap()
     {
-        return new Placements.AutoPlacement(name)
+        return new Placements.AutoPlacement(Name)
         {
             Location = this,
         };

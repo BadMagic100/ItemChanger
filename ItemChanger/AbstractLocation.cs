@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace ItemChanger;
 
@@ -11,29 +12,30 @@ public abstract class AbstractLocation : TaggableObject
     /// <summary>
     /// The name of the location. Location names are often, but not always, distinct.
     /// </summary>
-    public string name;
+    public required string Name { get; init; }
 
     /// <summary>
     /// The scene name of the location. Locations can however make changes which affect more than one scene, and rarely may choose not to use this field, in which case it can be safely set null.
     /// </summary>
-    public string? sceneName;
+    public string? SceneName { get; init; }
 
     /// <summary>
     /// Fetches the sceneName field and produces an error if it is null.
     /// </summary>
     /// <exception cref="NullReferenceException"></exception>
-    [JsonIgnore] public string UnsafeSceneName => sceneName ?? throw new NullReferenceException($"Scene name of location {name} is not defined.");
+    [JsonIgnore]
+    public string UnsafeSceneName => SceneName ?? throw new NullReferenceException($"Scene name of location {Name} is not defined.");
 
     /// <summary>
     /// The flingType of the location, specifying how geo and similar objects are to be flung.
     /// </summary>
-    public FlingType flingType;
+    public FlingType FlingType { get; init; }
 
     /// <summary>
     /// The placement holding the location. This is usually set by the placement when the placement loads and before the location loads.
     /// </summary>
     [JsonIgnore]
-    public AbstractPlacement Placement { get; set; }
+    public AbstractPlacement? Placement { get; set; }
 
     /// <summary>
     /// Called on a location by its placement, usually during AbstractPlacement.Load().

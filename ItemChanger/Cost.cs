@@ -1,6 +1,9 @@
 ﻿using ItemChanger.Extensions;
 using Newtonsoft.Json;
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ItemChanger;
 
@@ -105,22 +108,6 @@ public abstract record Cost
 
         return new MultiCost(a, b);
     }
-
-    public static Cost NewGeoCost(int amount)
-    {
-        return new GeoCost(amount);
-    }
-
-    public static Cost NewEssenceCost(int amount)
-    {
-        return new PDIntCost(amount, nameof(PlayerData.dreamOrbs), string.Format(Language.Language.Get("REQUIRES_ESSENCE", "Fmt"), amount));
-    }
-
-    public static Cost NewGrubCost(int amount)
-    {
-        return new PDIntCost(amount, nameof(PlayerData.grubsCollected), amount == 1 ? Language.Language.Get("REQUIRES_GRUB", "IC")
-            : string.Format(Language.Language.Get("REQUIRES_GRUBS", "Fmt"), amount));
-    }
 }
 
 /// <summary>
@@ -192,7 +179,7 @@ public sealed record MultiCost : Cost, IReadOnlyList<Cost>
 
     public override string GetCostText()
     {
-        return string.Join(Language.Language.Get("COMMA_SPACE", "IC"), Costs.Select(c => c.GetCostText()).ToArray());
+        return string.Join(", ", Costs.Select(c => c.GetCostText()).ToArray());
     }
 
     public override bool Includes(Cost c)
@@ -235,113 +222,4 @@ public sealed record MultiCost : Cost, IReadOnlyList<Cost>
     public IEnumerator<Cost> GetEnumerator() => Costs.OfType<Cost>().GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => Costs.GetEnumerator();
-}
-
-/// <summary>
-/// Cost which has no pay effects, but can only be paid when the specified PlayerData bool is true.
-/// </summary>
-public sealed record PDBoolCost(string fieldName, string uiText) : Cost
-{
-    public override bool CanPay() => PlayerData.instance.GetBool(fieldName);
-    public override void OnPay() { }
-    public override bool HasPayEffects() => false;
-    public override bool Includes(Cost c)
-    {
-        if (c is PDBoolCost pbc)
-        {
-            return pbc.fieldName == fieldName;
-        }
-        else
-        {
-            return base.Includes(c);
-        }
-    }
-    public override string GetCostText()
-    {
-        return Language.Language.Get(uiText, "Exact");
-    }
-}
-
-/// <summary>
-/// Cost which has no pay effects, but can only be paid when the specified PlayerData int comparison succeeds.
-/// </summary>
-public sealed record PDIntCost(int amount, string fieldName, string uiText, ComparisonOperator op = ComparisonOperator.Ge) : Cost
-{
-    public override bool CanPay() => PlayerData.instance.GetInt(fieldName).Compare(op, amount);
-    public override void OnPay() { }
-    public override bool HasPayEffects() => false;
-    public override bool Includes(Cost c)
-    {
-        if (c is PDIntCost pic)
-        {
-            return pic.amount <= amount && pic.op == op && pic.fieldName == fieldName;
-        }
-
-        return base.Includes(c);
-    }
-    public override string GetCostText()
-    {
-        return Language.Language.Get(uiText, "Exact");
-    }
-}
-
-/// <summary>
-/// Cost which subtracts the specified amount from the specified PlayerData int. Can only be paid when the result of the subtraction would be nonnegative.
-/// </summary>
-public sealed record ConsumablePDIntCost(int amount, string fieldName, string uiText) : Cost
-{
-    public override bool CanPay() => PlayerData.instance.GetInt(fieldName) >= amount;
-    public override void OnPay()
-    {
-        PlayerData.instance.IntAdd(fieldName, -amount);
-    }
-
-    public override bool HasPayEffects() => true;
-    public override bool Includes(Cost c)
-    {
-        if (c is ConsumablePDIntCost pic)
-        {
-            return pic.amount <= amount && pic.fieldName == fieldName;
-        }
-
-        return base.Includes(c);
-    }
-
-    public override string GetCostText()
-    {
-        return Language.Language.Get(uiText, "Exact");
-    }
-}
-
-/// <summary>
-/// Cost which subtracts the specified amount from the GeoCounter. Can only be paid when the result of the subtraction would be nonnegative.
-/// </summary>
-public sealed record GeoCost(int amount) : Cost
-{
-    public override bool CanPay() => PlayerData.instance.GetInt(nameof(PlayerData.geo)) >= (int)(amount * DiscountRate);
-    public override void OnPay()
-    {
-        int amt = (int)(amount * DiscountRate);
-        if (amt > 0)
-        {
-            HeroController.instance.TakeGeo(amt);
-        }
-    }
-
-    public override bool HasPayEffects() => true;
-
-    public override bool Includes(Cost c)
-    {
-        if (c is GeoCost gc)
-        {
-            return gc.amount <= amount;
-        }
-
-        return base.Includes(c);
-    }
-
-    public override string GetCostText()
-    {
-        return string.Format(Language.Language.Get("PAY_GEO", "Fmt"), (int)(amount * DiscountRate));
-    }
 }

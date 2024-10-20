@@ -1,4 +1,6 @@
 ﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 
 namespace ItemChanger;
 
@@ -76,6 +78,12 @@ public class NamedBoolFunction : NamedFunction<bool>, IBool
 {
     [JsonConstructor] public NamedBoolFunction(string name) : base(name) { }
     public IBool Clone() => this;
+}
+
+public class NamedIntFunction : NamedFunction<int>, IInteger
+{
+    [JsonConstructor] public NamedIntFunction(string name) : base(name) { }
+    public IInteger Clone() => this;
 }
 
 public class NamedStringFunction : NamedFunction<string>, IString

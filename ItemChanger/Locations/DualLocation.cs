@@ -35,7 +35,7 @@ public class DualLocation : AbstractLocation
     /// <inheritdoc/>
     public override AbstractPlacement Wrap()
     {
-        return new Placements.DualPlacement(name)
+        return new Placements.DualPlacement(Name)
         {
             Test = Test,
             FalseLocation = FalseLocation,

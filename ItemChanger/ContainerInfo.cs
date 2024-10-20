@@ -1,15 +1,17 @@
-﻿namespace ItemChanger;
+﻿using System.Collections.Generic;
+
+namespace ItemChanger;
 
 /// <summary>
 /// Data for instructing a Container class to make changes. The ContainerGiveInfo field must not be null.
 /// </summary>
 public class ContainerInfo
 {
-    public string containerType;
+    public required string ContainerType { get; init; }
 
-    public ContainerGiveInfo giveInfo;
-    public ChangeSceneInfo? changeSceneInfo;
-    public CostInfo? costInfo;
+    public ContainerGiveInfo GiveInfo { get; init; }
+    public ChangeSceneInfo? ChangeSceneInfo { get; init; }
+    public CostInfo? CostInfo { get; init; }
 
     /// <summary>
     /// Creates ContainerInfo with standard ContainerGiveInfo.
@@ -25,12 +27,12 @@ public class ContainerInfo
     public ContainerInfo(string containerType, AbstractPlacement placement, IEnumerable<AbstractItem> items, FlingType flingType) 
         : this()
     {
-        this.containerType = containerType;
-        this.giveInfo = new()
+        this.ContainerType = containerType;
+        this.GiveInfo = new()
         {
             placement = placement,
-            items = items,
-            flingType = flingType,
+            Items = items,
+            FlingType = flingType,
         };
     }
 
@@ -50,11 +52,11 @@ public class ContainerInfo
     {
         if (cost is not null)
         {
-            this.costInfo = new()
+            this.CostInfo = new()
             {
-                placement = placement,
-                cost = cost,
-                previewItems = items,
+                Placement = placement,
+                Cost = cost,
+                PreviewItems = items,
             };
         }
     }
@@ -73,15 +75,15 @@ public class ContainerInfo
     public ContainerInfo(string containerType, AbstractPlacement placement, IEnumerable<AbstractItem> items, FlingType flingType, Cost? cost, ChangeSceneInfo? changeSceneInfo)
         : this(containerType, placement, items, flingType, cost)
     {
-        this.changeSceneInfo = changeSceneInfo;
+        this.ChangeSceneInfo = changeSceneInfo;
     }
 
     public ContainerInfo(string containerType, ContainerGiveInfo giveInfo, CostInfo? costInfo, ChangeSceneInfo? changeSceneInfo)
     {
-        this.containerType = containerType;
-        this.giveInfo = giveInfo;
-        this.costInfo = costInfo;
-        this.changeSceneInfo = changeSceneInfo;
+        this.ContainerType = containerType;
+        this.GiveInfo = giveInfo;
+        this.CostInfo = costInfo;
+        this.ChangeSceneInfo = changeSceneInfo;
     }
 
 
@@ -112,10 +114,10 @@ public class ContainerInfo
 /// </summary>
 public class ContainerGiveInfo
 {
-    public IEnumerable<AbstractItem> items;
-    public AbstractPlacement placement;
-    public FlingType flingType;
-    public bool applied;
+    public required IEnumerable<AbstractItem> Items { get; init; }
+    public required AbstractPlacement Placement { get; init; }
+    public required FlingType FlingType { get; init; }
+    public bool Applied { get; set; }
 }
 
 /// <summary>
@@ -161,8 +163,8 @@ public class ChangeSceneInfo
 /// </summary>
 public class CostInfo
 {
-    public Cost cost;
-    public IEnumerable<AbstractItem> previewItems;
-    public AbstractPlacement placement;
-    public bool applied;
+    public required Cost Cost { get; init; }
+    public required IEnumerable<AbstractItem> PreviewItems { get; init; }
+    public required AbstractPlacement Placement { get; init; }
+    public bool Applied { get; set; }
 }
