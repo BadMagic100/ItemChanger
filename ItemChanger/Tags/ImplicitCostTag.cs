@@ -7,11 +7,11 @@
 [PlacementTag]
 public class ImplicitCostTag : Tag
 {
-    public Cost Cost;
+    public required Cost Cost { get; init; }
     /// <summary>
     /// An inherent cost always applies. A non-inherent cost applies as a substitute when the placement does not have a (non-null) cost.
     /// </summary>
-    public bool Inherent;
+    public bool Inherent { get; init; }
 
     public override void Load(object parent)
     {

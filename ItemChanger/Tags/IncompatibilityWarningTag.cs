@@ -5,7 +5,8 @@
 /// </summary>
 public class IncompatibilityWarningTag : Tag
 {
-    public string IncompatiblePlacementName;
+    public required string IncompatiblePlacementName { get; init; }
+
     public override void Load(object parent)
     {
         base.Load(parent);
@@ -16,10 +17,10 @@ public class IncompatibilityWarningTag : Tag
             _ => null,
         };
 
-        if (Internal.Ref.Settings.Placements.TryGetValue(IncompatiblePlacementName, out AbstractPlacement p) 
+        if (Internal.Ref.Settings.Placements.TryGetValue(IncompatiblePlacementName, out AbstractPlacement? p) 
             && p.GetPlacementAndLocationTags().OfType<IncompatibilityWarningTag>().Any(t => t.IncompatiblePlacementName == parentPlacementName))
         {
-            ItemChangerMod.instance.LogWarn($"Placements {parentPlacementName} and {IncompatiblePlacementName} are marked as incompatible.");
+            LogHelper.LogWarn($"Placements {parentPlacementName} and {IncompatiblePlacementName} are marked as incompatible.");
         }
     }
 }

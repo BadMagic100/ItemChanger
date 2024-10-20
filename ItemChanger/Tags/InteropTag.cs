@@ -1,4 +1,7 @@
-﻿namespace ItemChanger.Tags;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+
+namespace ItemChanger.Tags;
 
 /// <summary>
 /// An interface implemented by tags for sharing information between assemblies that do not strongly reference each other.
@@ -12,7 +15,7 @@ public interface IInteropTag
     /// <summary>
     /// Returns true if the property name corresponds to a non-null value of the specified type, and outputs the casted value.
     /// </summary>
-    bool TryGetProperty<T>(string propertyName, out T? value);
+    bool TryGetProperty<T>(string propertyName, [NotNullWhen(true)] out T? value);
 }
 
 /// <summary>
@@ -20,10 +23,15 @@ public interface IInteropTag
 /// </summary>
 public class InteropTag : Tag, IInteropTag
 {
-    public string Message { get; set; }
+    /// <inheritdoc/>
+    public required string Message { get; init; }
+    /// <summary>
+    /// A read/writable dictionary of properties
+    /// </summary>
     public Dictionary<string, object?> Properties = new();
 
-    public bool TryGetProperty<T>(string propertyName, out T? value)
+    /// <inheritdoc/>
+    public bool TryGetProperty<T>(string propertyName, [NotNullWhen(true)] out T? value)
     {
         if (propertyName == null || Properties == null || !Properties.TryGetValue(propertyName, out object? val) || val is not T t)
         {

@@ -68,7 +68,7 @@ public abstract class AbstractPlacement : TaggableObject
 
     public virtual void OnPreview(string previewText)
     {
-        GetOrAddTag<Tags.PreviewRecordTag>().previewText = previewText;
+        GetOrAddTag<Tags.PreviewRecordTag>().PreviewText = previewText;
         AddVisitFlag(VisitState.Previewed);
     }
 

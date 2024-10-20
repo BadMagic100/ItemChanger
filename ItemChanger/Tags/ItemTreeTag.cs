@@ -1,4 +1,7 @@
-﻿namespace ItemChanger.Tags;
+﻿using System;
+using System.Linq;
+
+namespace ItemChanger.Tags;
 
 /// <summary>
 /// Tag which carries ordered lists of predecessors and successors item names.
@@ -6,10 +9,10 @@
 /// <br/> Note that unlike ItemChainTag, this does not recursively check tags of the predecessors and successors.
 /// </summary>
 [ItemTag]
-public class ItemTreeTag : Tag, IItemModifierTag
+public class ItemTreeTag : Tag
 {
-    public string[]? predecessors;
-    public string[]? successors;
+    public string[]? Predecessors { get; set; }
+    public string[]? Successors { get; set; }
     /// <summary>
     /// If true, the first nonredundant item starting from the first element in the list will be chosen.
     /// <br/>Otherwise, the search will begin at the parent item, and will assume that predecessors of a redundant item are redundant.
@@ -47,9 +50,9 @@ public class ItemTreeTag : Tag, IItemModifierTag
 
         if (strictEvaluation)
         {
-            if (predecessors != null)
+            if (Predecessors != null)
             {
-                foreach (string s in predecessors)
+                foreach (string s in Predecessors)
                 {
                     AbstractItem item = GetItem(s);
                     if (!item.Redundant())
@@ -63,9 +66,9 @@ public class ItemTreeTag : Tag, IItemModifierTag
             {
                 return;
             }
-            if (successors != null)
+            if (Successors != null)
             {
-                foreach (string s in successors)
+                foreach (string s in Successors)
                 {
                     AbstractItem item = GetItem(s);
                     if (!item.Redundant())
@@ -83,9 +86,9 @@ public class ItemTreeTag : Tag, IItemModifierTag
         {
             if (args.Item.Redundant())
             {
-                if (successors != null)
+                if (Successors != null)
                 {
-                    foreach (string s in successors)
+                    foreach (string s in Successors)
                     {
                         AbstractItem item = GetItem(s);
                         if (!item.Redundant())
@@ -101,9 +104,9 @@ public class ItemTreeTag : Tag, IItemModifierTag
             }
             else
             {
-                if (predecessors != null)
+                if (Predecessors != null)
                 {
-                    foreach (string s in predecessors.Reverse())
+                    foreach (string s in Predecessors.Reverse())
                     {
                         AbstractItem item = GetItem(s);
                         if (!item.Redundant())

@@ -1,4 +1,6 @@
-﻿namespace ItemChanger.Tags;
+﻿using System;
+
+namespace ItemChanger.Tags;
 
 /// <summary>
 /// Tag which triggers a recursive search through the AbstractItem.ModifyItem hook.
@@ -6,10 +8,16 @@
 /// <br />Selected item is first nonredundant item in the sequence, or null (handled by AbstractItem) if all items are redundant.
 /// </summary>
 [ItemTag]
-public class ItemChainTag : Tag, IItemModifierTag
+public class ItemChainTag : Tag
 {
-    public string? predecessor;
-    public string? successor;
+    /// <summary>
+    /// The previous item in the item chain
+    /// </summary>
+    public string? Predecessor { get; set; }
+    /// <summary>
+    /// The subsequent item in the item chain
+    /// </summary>
+    public string? Successor { get; set; }
 
     public override void Load(object parent)
     {
@@ -31,7 +39,7 @@ public class ItemChainTag : Tag, IItemModifierTag
         return Finder.GetItem(name) ?? throw new NullReferenceException("Could not find item " + name);
     }
 
-    public void ModifyItem(GiveEventArgs args)
+    private void ModifyItem(GiveEventArgs args)
     {
         if (args.Item is null)
         {
@@ -40,7 +48,7 @@ public class ItemChainTag : Tag, IItemModifierTag
 
         if (args.Item.Redundant())
         {
-            while (args.Item is not null && args.Item.GetTag<ItemChainTag>()?.successor is string succ && !string.IsNullOrEmpty(succ))
+            while (args.Item is not null && args.Item.GetTag<ItemChainTag>()?.Successor is string succ && !string.IsNullOrEmpty(succ))
             {
                 args.Item = GetItem(succ);
                 if (!args.Item.Redundant())
@@ -54,7 +62,7 @@ public class ItemChainTag : Tag, IItemModifierTag
         }
         else
         {
-            while (args.Item?.GetTag<ItemChainTag>()?.predecessor is string pred && !string.IsNullOrEmpty(pred))
+            while (args.Item?.GetTag<ItemChainTag>()?.Predecessor is string pred && !string.IsNullOrEmpty(pred))
             {
                 AbstractItem item = GetItem(pred);
                 if (item.Redundant())

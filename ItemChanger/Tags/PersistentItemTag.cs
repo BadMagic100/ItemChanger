@@ -6,5 +6,5 @@
 [ItemTag]
 public class PersistentItemTag : Tag, IPersistenceTag
 {
-    public Persistence Persistence { get; set; }
+    public required Persistence Persistence { get; set; }
 }

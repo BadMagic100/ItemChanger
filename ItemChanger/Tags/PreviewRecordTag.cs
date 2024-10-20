@@ -6,5 +6,5 @@
 [PlacementTag]
 public class PreviewRecordTag : Tag
 {
-    public string previewText;
+    public string? PreviewText { get; set; }
 }

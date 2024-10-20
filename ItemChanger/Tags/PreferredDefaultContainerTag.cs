@@ -8,5 +8,5 @@
 [PlacementTag]
 public class PreferredDefaultContainerTag : Tag
 {
-    public string containerType;
+    public required string ContainerType { get; init; }
 }

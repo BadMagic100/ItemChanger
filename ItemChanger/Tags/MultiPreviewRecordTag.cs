@@ -6,5 +6,5 @@
 [PlacementTag]
 public class MultiPreviewRecordTag : Tag
 {
-    public string[] previewTexts;
+    public string[] PreviewTexts { get; set; }
 }

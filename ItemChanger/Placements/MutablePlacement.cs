@@ -76,9 +76,9 @@ public class MutablePlacement(string Name) : AbstractPlacement(Name), IContainer
         {
             if (((placement as AbstractPlacement)?.GetPlacementAndLocationTags() ?? Enumerable.Empty<Tag>())
                 .OfType<Tags.PreferredDefaultContainerTag>().FirstOrDefault() is Tags.PreferredDefaultContainerTag t
-                && Container.SupportsAll(t.containerType, true, mustSupportCost, mustSupportSceneChange))
+                && Container.SupportsAll(t.ContainerType, true, mustSupportCost, mustSupportSceneChange))
             {
-                containerType = t.containerType;
+                containerType = t.ContainerType;
             }
             else if (!mustSupportCost && !mustSupportSceneChange && !unsupported.Contains(Container.Chest)
                 && items.Skip(1).Any()) // has more than 1 item, and can support Chest

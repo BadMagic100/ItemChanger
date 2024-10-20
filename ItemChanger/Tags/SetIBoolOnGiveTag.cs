@@ -6,8 +6,8 @@
 /// </summary>
 public class SetIBoolOnGiveTag : Tag
 {
-    public IWritableBool Bool;
-    public bool value = true;
+    public required IWritableBool Bool { get; init }
+    public required bool Value { get; init; }
 
     public override void Load(object parent)
     {
@@ -45,14 +45,14 @@ public class SetIBoolOnGiveTag : Tag
 
     private void OnGive(ReadOnlyGiveEventArgs obj)
     {
-        Bool.Value = value;
+        Bool.Value = Value;
     }
 
     private void OnVisitStateChanged(VisitStateChangedEventArgs obj)
     {
         if (obj.NewFlags.HasFlag(VisitState.ObtainedAnyItem) && !obj.Orig.HasFlag(VisitState.ObtainedAnyItem))
         {
-            Bool.Value = value;
+            Bool.Value = Value;
         }
     }
 }

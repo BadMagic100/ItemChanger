@@ -12,6 +12,8 @@ Audit fields -> properties and usage of required throughout
 docs
 move public APIs out of the "Internal" namespace
 see if there is a good way to dejank single/multicost placements
+object parent -> taggableobject parent
+does incompat warning need to warn about mutual incompat only, or should it always warn
 
 Unity stuff - is a unity shim package needed? How to deal with unity refs from nuget package?
 

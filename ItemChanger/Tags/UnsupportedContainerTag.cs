@@ -7,5 +7,5 @@
 [PlacementTag]
 public class UnsupportedContainerTag : Tag
 {
-    public string containerType;
+    public required string ContainerType { get; init; }
 }
