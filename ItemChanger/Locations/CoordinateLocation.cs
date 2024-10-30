@@ -14,12 +14,12 @@ public class CoordinateLocation : PlaceableLocation
 
     protected override void OnLoad()
     {
-        Events.AddSceneChangeEdit(UnsafeSceneName, OnActiveSceneChanged);
+        GameEvents.AddSceneChangeEdit(UnsafeSceneName, OnActiveSceneChanged);
     }
 
     protected override void OnUnload()
     {
-        Events.RemoveSceneChangeEdit(UnsafeSceneName, OnActiveSceneChanged);
+        GameEvents.RemoveSceneChangeEdit(UnsafeSceneName, OnActiveSceneChanged);
     }
 
     public void OnActiveSceneChanged(Scene to)

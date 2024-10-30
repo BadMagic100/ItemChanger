@@ -66,7 +66,7 @@ public class ExistingContainerPlacement(string Name) : AbstractPlacement(Name), 
 
         HashSet<string> unsupported = new(((placement as AbstractPlacement)?.GetPlacementAndLocationTags() ?? Enumerable.Empty<Tag>())
             .OfType<Tags.UnsupportedContainerTag>()
-            .Select(t => t.containerType));
+            .Select(t => t.ContainerType));
 
         string? containerType = items
             .Select(i => i.GetPreferredContainer())

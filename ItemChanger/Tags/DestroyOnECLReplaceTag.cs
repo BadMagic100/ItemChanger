@@ -1,4 +1,5 @@
-﻿using ItemChanger.Locations;
+﻿using ItemChanger.Extensions;
+using ItemChanger.Locations;
 using UnityEngine.SceneManagement;
 using UObject = UnityEngine.Object;
 
@@ -16,13 +17,13 @@ public class DestroyOnECLReplaceTag : Tag
     {
         base.Load(parent);
         location = (ExistingContainerLocation)parent;
-        Events.AddSceneChangeEdit(sceneName, OnSceneChange);
+        GameEvents.AddSceneChangeEdit(sceneName, OnSceneChange);
     }
 
     public override void Unload(object parent)
     {
         base.Unload(parent);
-        Events.RemoveSceneChangeEdit(sceneName, OnSceneChange);
+        GameEvents.RemoveSceneChangeEdit(sceneName, OnSceneChange);
     }
 
     private void OnSceneChange(Scene to)

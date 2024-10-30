@@ -44,6 +44,8 @@ ICMod.HookItemChanger equivalent (hooks when creating a profile or loading from 
 PolySharp configure included types explicitly per runtime
 Improve loading strategy so that modules can safely add other modules (and placements can do the same and so on)
 lock down load state to be accessible only to profile
+get OnBeginSceneTransition dependence out of dualplacement (tbd what is the meaningful difference between this and active scene changed)
+we hate change scene info and change scene tag
 
 Unity stuff - is a unity shim package needed? How to deal with unity refs from nuget package?
 Null sprite

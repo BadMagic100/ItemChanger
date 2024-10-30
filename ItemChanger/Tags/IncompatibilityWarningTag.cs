@@ -1,4 +1,6 @@
-﻿namespace ItemChanger.Tags;
+﻿using System.Linq;
+
+namespace ItemChanger.Tags;
 
 /// <summary>
 /// Tag which generates a warning message on load if a mutually incompatible placement exists.

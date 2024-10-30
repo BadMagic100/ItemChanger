@@ -1,4 +1,5 @@
 ﻿using ItemChanger.Components;
+using ItemChanger.Tags;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -151,6 +152,12 @@ public class ChangeSceneInfo
         this.transition = transition;
         this.dreamReturn = dreamReturn;
         this.deactivateNoCharms = deactivateNoCharms;
+    }
+    public ChangeSceneInfo(ChangeSceneTag tag)
+    {
+        this.transition = tag.changeTo;
+        this.dreamReturn= tag.dreamReturn;
+        this.deactivateNoCharms = tag.deactivateNoCharms;
     }
 }
 

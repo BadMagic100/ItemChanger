@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using ItemChanger.Events;
+using ItemChanger.Items;
+using Newtonsoft.Json;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -136,7 +138,7 @@ public abstract class AbstractItem : TaggableObject
         catch (Exception e)
         {
             LoggerProxy.LogError($"Error on GiveImmediate for item {item.name}:\n{e}");
-            Internal.MessageController.Error();
+            LifecycleEvents.NotifyError();
         }
 
         AfterGiveInvoke(readOnlyArgs);
@@ -150,7 +152,7 @@ public abstract class AbstractItem : TaggableObject
             catch (Exception e)
             {
                 LoggerProxy.LogError($"Error on SendMessage for item {item.name}:\n{e}");
-                Internal.MessageController.Error();
+                LifecycleEvents.NotifyError();
                 info.Callback?.Invoke(item);
             }
         }
@@ -217,7 +219,7 @@ public abstract class AbstractItem : TaggableObject
             ModifyRedundantItemInvoke(args);
         }
 
-        args.Item ??= Items.VoidItem.Nothing;
+        args.Item ??= NullItem.Create();
     }
 
     /// <summary>

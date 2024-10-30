@@ -35,14 +35,14 @@ public class DualPlacement : AbstractPlacement, IContainerPlacement, ISingleCost
         SetContainerType();
         Location.Load();
         Cost?.Load();
-        Events.OnBeginSceneTransition += OnBeginSceneTransition;
+        GameEvents.OnBeginSceneTransition += OnBeginSceneTransition;
     }
 
     protected override void OnUnload()
     {
         Location.Unload();
         Cost?.Unload();
-        Events.OnBeginSceneTransition -= OnBeginSceneTransition;
+        GameEvents.OnBeginSceneTransition -= OnBeginSceneTransition;
     }
 
     private void OnBeginSceneTransition(Transition obj)
