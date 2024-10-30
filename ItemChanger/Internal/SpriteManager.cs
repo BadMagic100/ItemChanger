@@ -45,36 +45,6 @@ public class SpriteManager
     }
 
     /// <summary>
-    /// The SpriteManager with access to embedded ItemChanger pngs, constructed with the ItemChanger assembly and prefix "ItemChanger.Resources."
-    /// </summary>
-    public static SpriteManager Instance { get; } = new(
-        typeof(SpriteManager).Assembly,
-        "ItemChanger.Resources.",
-        new Info()
-        {
-            defaultFilterMode = FilterMode.Bilinear,
-            defaultPixelsPerUnit = 100f,
-            overridePPUs = new()
-            {
-                { "ShopIcons.BenchPin", 64f },
-                { "ShopIcons.CocoonPin", 64f },
-                { "ShopIcons.DreamWarriorPin", 64f },
-                { "ShopIcons.HotSpringPin", 64f },
-                { "ShopIcons.StagPin", 64f },
-                { "ShopIcons.TramPin", 64f },
-                { "ShopIcons.VendorPin", 64f },
-                { "ShopIcons.WhisperingRootPin", 64f },
-
-                { "ShopIcons.Marker_B", 64f },
-                { "ShopIcons.Marker_R", 64f },
-                { "ShopIcons.Marker_W", 64f },
-                { "ShopIcons.Marker_Y", 64f },
-
-                { "ShopIcons.Geo", 64f },
-            },
-        });
-
-    /// <summary>
     /// Creates a SpriteManager to lazily load and cache Sprites from the embedded png files in the specified assembly.
     /// <br/>Only filepaths with the matching prefix are considered, and the prefix is removed to determine sprite names (e.g. "ItemChangerMod.Resources." is the prefix for Instance).
     /// <br/>Images will be loaded with default Bilinear filter mode and 100 pixels per unit.
@@ -112,8 +82,8 @@ public class SpriteManager
         }
         else
         {
-            LogHelper.LogError($"{name} did not correspond to an embedded image file.");
-            return Modding.CanvasUtil.NullSprite();
+            LoggerProxy.LogError($"{name} did not correspond to an embedded image file.");
+            return new EmptySprite().Value;
         }
     }
 

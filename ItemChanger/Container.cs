@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace ItemChanger;
 
@@ -106,7 +107,7 @@ public abstract class Container
         obj.transform.localPosition = target.transform.localPosition;
         obj.transform.Translate(new(0, -elevation));
         obj.SetActive(target.activeSelf);
-        obj.transform.SetPositionZ(0);
+        obj.transform.position = new Vector3(obj.transform.position.x, obj.transform.position.y, 0);
     }
 
     /// <summary>
@@ -117,58 +118,4 @@ public abstract class Container
         obj.transform.position = new Vector2(x, y - elevation);
         obj.SetActive(true);
     }
-
-    /// <summary>
-    /// Fsm hook for all container edits. Called on an item with the ContainerInfo component at the start and end of ItemChanger's PlayMakerFSM.OnEnable hook.
-    /// </summary>
-    public static void OnEnable(PlayMakerFSM fsm)
-    {
-        ContainerInfo? info = ContainerInfo.FindContainerInfo(fsm.gameObject);
-        if (info != null)
-        {
-            var container = GetContainer(info.ContainerType);
-            if (container == null)
-            {
-                LogError($"Unable to find Container definition for {info.ContainerType}!");
-                return;
-            }
-
-            var give = info.GiveInfo;
-            var scene = info.ChangeSceneInfo;
-            var cost = info.CostInfo;
-
-            if (give != null && !give.Applied)
-            {
-                container.AddGiveEffectToFsm(fsm, give);
-                give.Applied = true;
-            }
-
-            if (scene != null && !scene.applied)
-            {
-                container.AddChangeSceneToFsm(fsm, scene);
-                scene.applied = true;
-            }
-
-            if (cost != null && !cost.Applied)
-            {
-                container.AddCostToFsm(fsm, cost);
-                cost.Applied = true;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Called during the container fsm hook to set up the container to give items.
-    /// </summary>
-    public virtual void AddGiveEffectToFsm(PlayMakerFSM fsm, ContainerGiveInfo info) { }
-
-    /// <summary>
-    /// Called during the container fsm hook to set up the container to change scene.
-    /// </summary>
-    public virtual void AddChangeSceneToFsm(PlayMakerFSM fsm, ChangeSceneInfo info) { }
-
-    /// <summary>
-    /// Called during the container fsm hook to set up the container to have a cost.
-    /// </summary>
-    public virtual void AddCostToFsm(PlayMakerFSM fsm, CostInfo info) { }
 }

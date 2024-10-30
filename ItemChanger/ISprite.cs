@@ -34,25 +34,27 @@ public abstract class EmbeddedSprite : ISprite
     public ISprite Clone() => (ISprite)MemberwiseClone();
 }
 
-/// <summary>
-/// An EmbeddedSprite which retrieves its sprite from SpriteManager.Instance.
-/// </summary>
-[Serializable]
-public class ItemChangerSprite : EmbeddedSprite
-{
-    public ItemChangerSprite(string key)
-    {
-        this.key = key;
-    }
-
-    public override SpriteManager SpriteManager => SpriteManager.Instance;
-}
-
 [Serializable]
 public class EmptySprite : ISprite
 {
-    [JsonIgnore] public Sprite Value => Modding.CanvasUtil.NullSprite();
-    public ISprite Clone() => (ISprite)MemberwiseClone();
+    private Sprite? cachedSprite;
+    [JsonIgnore] 
+    public Sprite Value
+    {
+        get
+        {
+            if (cachedSprite == null)
+            {
+                Texture2D tex = new Texture2D(1, 1);
+                byte[] date = [0, 0, 0, 0];
+                tex.LoadRawTextureData(date);
+                tex.Apply();
+                cachedSprite = Sprite.Create(tex, new Rect(0, 0, 1, 1), Vector2.zero);
+            }
+            return cachedSprite;
+        }
+    }
+    public ISprite Clone() => new EmptySprite();
 }
 
 [Serializable]

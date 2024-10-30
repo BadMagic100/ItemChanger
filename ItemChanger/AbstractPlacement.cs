@@ -200,7 +200,7 @@ public abstract class AbstractPlacement : TaggableObject
         }
         catch (Exception e)
         {
-            LogHelper.LogError($"Error invoking OnVisitStateChanged for placement {Name}:\n{e}");
+            LoggerProxy.LogError($"Error invoking OnVisitStateChanged for placement {Name}:\n{e}");
         }
     }
 

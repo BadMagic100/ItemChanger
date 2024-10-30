@@ -45,7 +45,7 @@ public abstract class Tag
             }
             catch (Exception e)
             {
-                LogHelper.LogError($"Error loading {GetType().Name}:\n{e}");
+                LoggerProxy.LogError($"Error loading {GetType().Name}:\n{e}");
             }
             Loaded = true;
         }
@@ -65,7 +65,7 @@ public abstract class Tag
             }
             catch (Exception e)
             {
-                LogHelper.LogError($"Error unloading {GetType().Name}:\n{e}");
+                LoggerProxy.LogError($"Error unloading {GetType().Name}:\n{e}");
             }
             Loaded = false;
         }

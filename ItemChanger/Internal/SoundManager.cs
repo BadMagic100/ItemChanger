@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace ItemChanger.Internal;
 
@@ -15,11 +17,6 @@ public class SoundManager
     private readonly Assembly _assembly;
     private readonly Dictionary<string, string> _resourcePaths;
     private readonly Dictionary<string, AudioClip> _cachedClips = new();
-
-    /// <summary>
-    /// The SoundManager with access to embedded ItemChanger wavs.
-    /// </summary>
-    public static SoundManager Instance { get; } = new(typeof(SoundManager).Assembly, "ItemChanger.Resources.Audio.");
 
     /// <summary>
     /// Creates a SoundManager to lazily load and cache AudioClips from the embedded wav files in the specified assembly.
@@ -81,7 +78,7 @@ public class SoundManager
         }
         catch (Exception e)
         {
-            LogError(e);
+            LoggerProxy.LogError(e.ToString());
         }
     }
 

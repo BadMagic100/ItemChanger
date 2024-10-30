@@ -26,7 +26,7 @@ public abstract class Module
             }
             catch (Exception e)
             {
-                LogHelper.LogError($"Error initializing module {Name}:\n{e}");
+                LoggerProxy.LogError($"Error initializing module {Name}:\n{e}");
             }
             Loaded = true;
         }
@@ -46,7 +46,7 @@ public abstract class Module
             }
             catch (Exception e)
             {
-                LogHelper.LogError($"Error unloading module {Name}:\n{e}");
+                LoggerProxy.LogError($"Error unloading module {Name}:\n{e}");
             }
             Loaded = false;
         }

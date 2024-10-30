@@ -4,6 +4,7 @@ Rename AbstractX to X and renamespace them to appropriate homes
 Move Cost stuff to a namespace
 Make ModuleCollection a real collection and hide the Modules field
 Make Load and Unload protected in favor of LoadOnce and UnloadOnce
+LoadOnce for placements, locations(?), items, and tags.
 Hide Loaded from serialization
 Need a way for default modules not dependent on being defined in the assembly with IC
 Game-agnostic container implementation
@@ -20,11 +21,29 @@ user-facing error display (possibly via events?) replacing Internal.MessageContr
 Handle exceptions in user-facing hooks (e.g. modifyredundantitem)
 implement generic int/bool/consumableint costs akin to the ones in hk.ic
 check memberwiseclone actually works after the move to properties everywhere
-Deployer to unity shim package?
 revamp visitstate
 eeparate enums to different files
 allow callers to specify Finder sheets
 almost all of start location logic is HK specific so let it be a game specific module
+revamp event hooking
+* Game lifecycle
+  * Semipersistent reset
+  * Persistent reset
+  * Scene change
+* IC lifecycle
+  * Before new game (start locations would be applied here probably)
+  * Start new game
+  * Continue game
+  * Enter game (profile loaded here)
+  * Safe to begin giving items
+  * Exit game (profile unloaded here)
+save and load profiles from file/stream
+singleton profiles
+ICMod.HookItemChanger equivalent (hooks when creating a profile or loading from file, unhooks when exiting). Maybe this is just load/unload?
+    Essentially this is just where Events get hooked now.
+PolySharp configure included types explicitly per runtime
+Improve loading strategy so that modules can safely add other modules (and placements can do the same and so on)
+lock down load state to be accessible only to profile
 
 Unity stuff - is a unity shim package needed? How to deal with unity refs from nuget package?
 Null sprite

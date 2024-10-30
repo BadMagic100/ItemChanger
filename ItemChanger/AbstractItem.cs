@@ -135,7 +135,7 @@ public abstract class AbstractItem : TaggableObject
         }
         catch (Exception e)
         {
-            LogHelper.LogError($"Error on GiveImmediate for item {item.name}:\n{e}");
+            LoggerProxy.LogError($"Error on GiveImmediate for item {item.name}:\n{e}");
             Internal.MessageController.Error();
         }
 
@@ -149,7 +149,7 @@ public abstract class AbstractItem : TaggableObject
             }
             catch (Exception e)
             {
-                LogHelper.LogError($"Error on SendMessage for item {item.name}:\n{e}");
+                LoggerProxy.LogError($"Error on SendMessage for item {item.name}:\n{e}");
                 Internal.MessageController.Error();
                 info.Callback?.Invoke(item);
             }
@@ -290,11 +290,11 @@ public abstract class AbstractItem : TaggableObject
             string? placement = args?.Placement?.Name;
             if (placement != null)
             {
-                LogHelper.LogError($"Error invoking BeforeGive for item {name} at placement {placement}:\n{e}");
+                LoggerProxy.LogError($"Error invoking BeforeGive for item {name} at placement {placement}:\n{e}");
             }
             else
             {
-                LogHelper.LogError($"Error invoking BeforeGive for item {name} with placement unavailable:\n{e}");
+                LoggerProxy.LogError($"Error invoking BeforeGive for item {name} with placement unavailable:\n{e}");
             }
         }
     }
@@ -322,11 +322,11 @@ public abstract class AbstractItem : TaggableObject
             string? placement = args?.Placement?.Name;
             if (placement != null)
             {
-                LogHelper.LogError($"Error invoking ModifyItem for item {name} at placement {placement}:\n{e}");
+                LoggerProxy.LogError($"Error invoking ModifyItem for item {name} at placement {placement}:\n{e}");
             }
             else
             {
-                LogHelper.LogError($"Error invoking ModifyItem for item {name} with placement unavailable:\n{e}");
+                LoggerProxy.LogError($"Error invoking ModifyItem for item {name} with placement unavailable:\n{e}");
             }
         }
     }
@@ -354,11 +354,11 @@ public abstract class AbstractItem : TaggableObject
             string? placement = args?.Placement?.Name;
             if (placement != null)
             {
-                LogHelper.LogError($"Error invoking ModifyRedundantItem for item {name} at placement {placement}:\n{e}");
+                LoggerProxy.LogError($"Error invoking ModifyRedundantItem for item {name} at placement {placement}:\n{e}");
             }
             else
             {
-                LogHelper.LogError($"Error invoking ModifyRedundantItem for item {name} with placement unavailable:\n{e}");
+                LoggerProxy.LogError($"Error invoking ModifyRedundantItem for item {name} with placement unavailable:\n{e}");
             }
         }
     }
@@ -386,11 +386,11 @@ public abstract class AbstractItem : TaggableObject
             string? placement = args?.Placement?.Name;
             if (placement != null)
             {
-                LogHelper.LogError($"Error invoking OnGive for item {name} at placement {placement}:\n{e}");
+                LoggerProxy.LogError($"Error invoking OnGive for item {name} at placement {placement}:\n{e}");
             }
             else
             {
-                LogHelper.LogError($"Error invoking OnGive for item {name} with placement unavailable:\n{e}");
+                LoggerProxy.LogError($"Error invoking OnGive for item {name} with placement unavailable:\n{e}");
             }
         }
     }
@@ -418,11 +418,11 @@ public abstract class AbstractItem : TaggableObject
             string? placement = args?.Placement?.Name;
             if (placement != null)
             {
-                LogHelper.LogError($"Error invoking AfterGive for item {name} at placement {placement}:\n{e}");
+                LoggerProxy.LogError($"Error invoking AfterGive for item {name} at placement {placement}:\n{e}");
             }
             else
             {
-                LogHelper.LogError($"Error invoking AfterGive for item {name} with placement unavailable:\n{e}");
+                LoggerProxy.LogError($"Error invoking AfterGive for item {name} with placement unavailable:\n{e}");
             }
         }
     }

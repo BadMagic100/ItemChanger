@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ItemChanger.Components;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ItemChanger;
@@ -31,7 +32,7 @@ public class ContainerInfo
         this.ContainerType = containerType;
         this.GiveInfo = new()
         {
-            placement = placement,
+            Placement = placement,
             Items = items,
             FlingType = flingType,
         };
@@ -135,12 +136,6 @@ public class ChangeSceneInfo
     public bool applied;
 
     public ChangeSceneInfo() { }
-    public ChangeSceneInfo(Tags.ChangeSceneTag cst)
-    {
-        transition = cst.changeTo;
-        dreamReturn = cst.dreamReturn;
-        deactivateNoCharms = cst.deactivateNoCharms;
-    }
     public ChangeSceneInfo(Transition transition)
     {
         this.transition = transition;

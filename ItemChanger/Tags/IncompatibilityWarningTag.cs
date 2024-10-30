@@ -20,7 +20,7 @@ public class IncompatibilityWarningTag : Tag
         if (Internal.Ref.Settings.Placements.TryGetValue(IncompatiblePlacementName, out AbstractPlacement? p) 
             && p.GetPlacementAndLocationTags().OfType<IncompatibilityWarningTag>().Any(t => t.IncompatiblePlacementName == parentPlacementName))
         {
-            LogHelper.LogWarn($"Placements {parentPlacementName} and {IncompatiblePlacementName} are marked as incompatible.");
+            LoggerProxy.LogWarn($"Placements {parentPlacementName} and {IncompatiblePlacementName} are marked as incompatible.");
         }
     }
 }

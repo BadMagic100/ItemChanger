@@ -14,19 +14,16 @@
         https://nuget.bepinex.dev/v3/index.json
     </RestoreAdditionalProjectSources>
   </PropertyGroup>
-    
-  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+
+  <ItemGroup>
     <PackageReference Include="PolySharp" Version="1.14.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
-    <PackageReference Include="UnityEngine.Modules" Version="$(UnityVersion)"/>
-    <PackageReference Include="MonoMod.RuntimeDetour" Version="25.2.0"/>
-    <PackageReference Include="MonoMod.Utils" Version="25.0.7"/>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="UnityEngine.Modules" Version="$(UnityVersion)" />
+    <PackageReference Include="MonoMod.RuntimeDetour" Version="25.2.0" />
+    <PackageReference Include="MonoMod.Utils" Version="25.0.7" />
   </ItemGroup>
 
   <ItemGroup>

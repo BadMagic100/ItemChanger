@@ -10,8 +10,15 @@ namespace ItemChanger.Internal;
 
 public class ModuleCollection
 {
+
     [JsonConverter(typeof(ModuleListDeserializer))]
     public List<Module> Modules = new();
+
+    private readonly ItemChangerProfile backingProfile;
+    internal ModuleCollection(ItemChangerProfile backingProfile)
+    {
+        this.backingProfile = backingProfile;
+    }
 
     public void Initialize()
     {
@@ -37,7 +44,7 @@ public class ModuleCollection
         }
 
         Modules.Add(m);
-        if (Settings.loaded)
+        if (backingProfile.state >= ItemChangerProfile.LoadState.ModuleLoadCompleted)
         {
             m.LoadOnce();
         }
@@ -60,7 +67,7 @@ public class ModuleCollection
         }
         catch (Exception e)
         {
-            LogHelper.LogError($"Unable to instantiate module of type {T.Name} through reflection:\n{e}");
+            LoggerProxy.LogError($"Unable to instantiate module of type {T.Name} through reflection:\n{e}");
             throw;
         }
     }
@@ -97,7 +104,7 @@ public class ModuleCollection
 
     public void Remove(Module m)
     {
-        if (Modules.Remove(m) && Settings.loaded)
+        if (Modules.Remove(m) && backingProfile.state >= ItemChangerProfile.LoadState.ModuleLoadCompleted)
         {
             m.UnloadOnce();
         }
@@ -113,7 +120,7 @@ public class ModuleCollection
 
     public void Remove(Type T)
     {
-        if (Settings.loaded)
+        if (backingProfile.state >= ItemChangerProfile.LoadState.ModuleLoadCompleted)
         {
             foreach (Module m in Modules.Where(m => m.GetType() == T))
             {
@@ -129,22 +136,6 @@ public class ModuleCollection
         {
             Remove(m);
         }
-    }
-
-    /// <summary>
-    /// Creates a new module collection with default modules loaded
-    /// </summary>
-    public static ModuleCollection Create()
-    {
-        ModuleCollection mc = new();
-
-        foreach (Type T in typeof(Module).Assembly.GetTypes()
-            .Where(t => t.IsSubclassOf(typeof(Module)) && !t.IsAbstract && Attribute.IsDefined(t, typeof(DefaultModuleAttribute))))
-        {
-            mc.Modules.Add((Module)Activator.CreateInstance(T)!);
-        }
-
-        return mc;
     }
 
     internal class ModuleListSerializer : JsonConverter<List<Module>>
