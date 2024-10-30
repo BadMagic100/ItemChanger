@@ -1,6 +1,7 @@
 ﻿using ItemChanger.Locations;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace ItemChanger.Placements;
 
@@ -66,7 +67,7 @@ public class MutablePlacement(string Name) : AbstractPlacement(Name), IContainer
 
         HashSet<string> unsupported = new(((placement as AbstractPlacement)?.GetPlacementAndLocationTags() ?? Enumerable.Empty<Tag>())
             .OfType<Tags.UnsupportedContainerTag>()
-            .Select(t => t.containerType));
+            .Select(t => t.ContainerType));
 
         string? containerType = items
             .Select(i => i.GetPreferredContainer())

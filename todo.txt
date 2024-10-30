@@ -17,7 +17,6 @@ object parent -> taggableobject parent
 does incompat warning need to warn about mutual incompat only, or should it always warn
 yeet item tree tag?
 user-facing error display (possibly via events?) replacing Internal.MessageController.OnError
-need some equivalent for VoidItem.Nothing? whatever you get if the item resolves to null
 Handle exceptions in user-facing hooks (e.g. modifyredundantitem)
 implement generic int/bool/consumableint costs akin to the ones in hk.ic
 check memberwiseclone actually works after the move to properties everywhere
@@ -25,7 +24,9 @@ Deployer to unity shim package?
 revamp visitstate
 eeparate enums to different files
 allow callers to specify Finder sheets
+almost all of start location logic is HK specific so let it be a game specific module
 
 Unity stuff - is a unity shim package needed? How to deal with unity refs from nuget package?
-
-Serialization - Do we need to support reflectionless serialization (system.text.json)? How do we not make it a major pain for users?
+Null sprite
+VoidItem implementation https://github.com/homothetyhk/HollowKnight.ItemChanger/commit/b0cd2759804b34e742a745377d184e9de2ab8f3b#diff-16c1eb3b5d162965ceb06081c26439940ec1ebb8aebffc2a9ab274a3f84151e6
+ObjectLocation https://github.com/homothetyhk/HollowKnight.ItemChanger/commit/a21ef4f582a22cf72eff92ed3a5ea14ddae1a175#diff-7e44b7af206242e36a693694039d7ac18d3e68239efc19db3b19272b13aaaaae

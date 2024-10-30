@@ -1,6 +1,8 @@
-﻿using ItemChanger.Internal;
+﻿using ItemChanger.Extensions;
+using ItemChanger.Internal;
 using System;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 namespace ItemChanger;
 
@@ -9,16 +11,6 @@ namespace ItemChanger;
 /// </summary>
 public static class Events
 {
-    /// <summary>
-    /// Universal hook for editing ItemChanger text.
-    /// </summary>
-    public static event Action<StringGetArgs>? OnStringGet;
-
-    /// <summary>
-    /// Universal hook for editing ItemChanger sprites.
-    /// </summary>
-    public static event Action<SpriteGetArgs>? OnSpriteGet;
-
     /// <summary>
     /// Called immediately prior to the BeginSceneTransition routine. If transition overrides take place through ItemChanger, these are applied before the event is invoked.
     /// </summary>
@@ -257,33 +249,5 @@ public static class Events
     {
         DoOnEnterGame();
         orig(self);
-    }
-
-    internal static string GetValue(this IString source)
-    {
-        if (OnStringGet != null)
-        {
-            StringGetArgs args = new(source);
-            OnStringGet(args);
-            return args.Current;
-        }
-        else
-        {
-            return source.Value;
-        }
-    }
-
-    internal static Sprite GetValue(this ISprite source)
-    {
-        if (OnSpriteGet != null)
-        {
-            SpriteGetArgs args = new(source);
-            OnSpriteGet(args);
-            return args.Current;
-        }
-        else
-        {
-            return source.Value;
-        }
     }
 }

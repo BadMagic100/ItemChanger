@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Linq;
+using UnityEngine;
 
 namespace ItemChanger;
 
@@ -163,6 +165,9 @@ public abstract class AbstractItem : TaggableObject
     /// </summary>
     public abstract void GiveImmediate(GiveInfo info);
 
+    /// <summary>
+    /// Gets the display name of the item for display
+    /// </summary>
     public string GetPreviewName(AbstractPlacement? placement = null)
     {
         if (HasTag<Tags.DisableItemPreviewTag>() 
@@ -175,6 +180,9 @@ public abstract class AbstractItem : TaggableObject
         return def?.GetPreviewName() ?? "???";
     }
 
+    /// <summary>
+    /// Gets the display sprite of the item for display
+    /// </summary>
     public Sprite? GetPreviewSprite(AbstractPlacement? placement = null)
     {
         if (HasTag<Tags.DisableItemPreviewTag>()

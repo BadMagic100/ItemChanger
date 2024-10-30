@@ -1,4 +1,6 @@
-﻿namespace ItemChanger;
+﻿using UnityEngine.SceneManagement;
+
+namespace ItemChanger;
 
 /// <summary>
 /// Interface for very simple scene change actions, which can be added directly to settings.

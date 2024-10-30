@@ -1,6 +1,7 @@
 ﻿using ItemChanger.Internal;
 using Newtonsoft.Json;
 using System;
+using UnityEngine;
 
 namespace ItemChanger;
 
@@ -68,6 +69,6 @@ public class DualSprite : ISprite
         this.FalseSprite = FalseSprite;
     }
 
-    [JsonIgnore] public Sprite Value => Test.Value ? TrueSprite.GetValue() : FalseSprite.GetValue();
+    [JsonIgnore] public Sprite Value => Test.Value ? TrueSprite.Value : FalseSprite.Value;
     public ISprite Clone() => (ISprite)MemberwiseClone();
 }

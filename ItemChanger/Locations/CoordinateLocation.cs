@@ -1,4 +1,7 @@
-﻿namespace ItemChanger.Locations;
+﻿using UnityEngine;
+using UnityEngine.SceneManagement;
+
+namespace ItemChanger.Locations;
 
 /// <summary>
 /// Location which places a container at a specified coordinate position.

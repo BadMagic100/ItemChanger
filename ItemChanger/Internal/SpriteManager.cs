@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using UnityEngine;
 
 namespace ItemChanger.Internal;
 
@@ -99,18 +101,18 @@ public class SpriteManager
     /// </summary>
     public Sprite GetSprite(string name)
     {
-        if (_cachedSprites.TryGetValue(name, out Sprite sprite))
+        if (_cachedSprites.TryGetValue(name, out Sprite? sprite))
         {
             return sprite;
         }
-        else if (_resourcePaths.TryGetValue(name, out string path))
+        else if (_resourcePaths.TryGetValue(name, out string? path))
         {
             using Stream s = _assembly.GetManifestResourceStream(path);
             return _cachedSprites[name] = Load(ToArray(s), _info.GetFilterMode(name), _info.GetPixelsPerUnit(name));
         }
         else
         {
-            LogError($"{name} did not correspond to an embedded image file.");
+            LogHelper.LogError($"{name} did not correspond to an embedded image file.");
             return Modding.CanvasUtil.NullSprite();
         }
     }

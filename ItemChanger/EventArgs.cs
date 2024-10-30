@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace ItemChanger;
 
@@ -73,22 +74,6 @@ public class ReadOnlyGiveEventArgs : EventArgs
     public MessageType MessageType => info.MessageType;
     public Action<AbstractItem>? Callback => info.Callback;
     public ObtainState OriginalState { get; }
-}
-
-// Encapsulate the ModHook arguments to make it easier to deal with breaking API changes.
-public class LanguageGetArgs
-{
-    public readonly string convo;
-    public readonly string sheet;
-    public readonly string orig;
-    public string current;
-
-    public LanguageGetArgs(string convo, string sheet, string orig)
-    {
-        this.convo = convo;
-        this.sheet = sheet;
-        this.current = this.orig = orig;
-    }
 }
 
 public class StringGetArgs

@@ -10,6 +10,18 @@ namespace ItemChanger.Extensions;
 /// </summary>
 public static class Extensions
 {
+    /// <summary>
+    /// An implementation of GetValueOrDefault, which apparently does not exist pre-.net6
+    /// </summary>
+    public static TValue? GetOrDefault<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, TValue? defaultValue = default)
+    {
+        if (dict.TryGetValue(key, out TValue? value))
+        {
+            return value;
+        }
+        return defaultValue;
+    }
+
     public static string CapLength(this string s, int length) => s.Length > length ? s.Substring(0, length) : s;
 
     /// <summary>

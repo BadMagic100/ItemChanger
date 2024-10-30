@@ -32,9 +32,6 @@ public class Settings
     
     public Dictionary<string, AbstractPlacement> Placements = new();
     
-    [JsonConverter(typeof(Transition.TransitionDictConverter<ITransition>))]
-    public Dictionary<Transition, ITransition> TransitionOverrides = new();
-    
     public List<IDeployer> Deployers = new();
 
     public StartDef? Start = null;

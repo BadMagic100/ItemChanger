@@ -6,7 +6,7 @@
 /// </summary>
 public class SetIBoolOnGiveTag : Tag
 {
-    public required IWritableBool Bool { get; init }
+    public required IWritableBool Bool { get; init; }
     public required bool Value { get; init; }
 
     public override void Load(object parent)

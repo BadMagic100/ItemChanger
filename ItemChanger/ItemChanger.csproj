@@ -8,6 +8,11 @@
     <LangVersion>latest</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Nullable>enable</Nullable>
+    <UnityVersion>2017.1.0</UnityVersion>
+    
+    <RestoreAdditionalProjectSources>
+        https://nuget.bepinex.dev/v3/index.json
+    </RestoreAdditionalProjectSources>
   </PropertyGroup>
     
   <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
@@ -19,6 +24,9 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
+    <PackageReference Include="UnityEngine.Modules" Version="$(UnityVersion)"/>
+    <PackageReference Include="MonoMod.RuntimeDetour" Version="25.2.0"/>
+    <PackageReference Include="MonoMod.Utils" Version="25.0.7"/>
   </ItemGroup>
 
   <ItemGroup>

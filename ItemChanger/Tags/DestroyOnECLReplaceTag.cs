@@ -1,4 +1,6 @@
 ﻿using ItemChanger.Locations;
+using UnityEngine.SceneManagement;
+using UObject = UnityEngine.Object;
 
 namespace ItemChanger.Tags;
 
