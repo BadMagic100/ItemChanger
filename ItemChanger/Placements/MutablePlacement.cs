@@ -53,14 +53,15 @@ public class MutablePlacement(string Name) : AbstractPlacement(Name), IContainer
         }
 
         obj = container.GetNewContainer(new ContainerInfo(container.Name, this, location.FlingType, Cost,
-            location.GetTags<Tags.ChangeSceneTag>().FirstOrDefault()?.ToChangeSceneInfo()));
+            location.GetTags<Tags.ChangeSceneTag>().FirstOrDefault()?.ToChangeSceneInfo())
+        { ContainerType = containerType });
     }
 
     public static string ChooseContainerType(ISingleCostPlacement placement, ContainerLocation? location, IEnumerable<AbstractItem> items)
     {
         if (location?.ForceShiny ?? true)
         {
-            return Container.GenericPickup;
+            return Container.GetDefaultSingleItemContainer().Name;
         }
 
         bool mustSupportCost = placement.Cost != null;
@@ -82,15 +83,15 @@ public class MutablePlacement(string Name) : AbstractPlacement(Name), IContainer
             {
                 containerType = t.ContainerType;
             }
-            else if (!mustSupportCost && !mustSupportSceneChange && !unsupported.Contains(Container.Chest)
+            else if (!mustSupportCost && !mustSupportSceneChange && !unsupported.Contains(Container.GetDefaultMultiItemContainer().Name)
                 && items.Skip(1).Any()) // has more than 1 item, and can support Chest
 
             {
-                containerType = Container.Chest;
+                containerType = Container.GetDefaultMultiItemContainer().Name;
             }
             else
             {
-                containerType = Container.GenericPickup;
+                containerType = Container.GetDefaultSingleItemContainer().Name;
             }
         }
 

@@ -76,7 +76,7 @@ public class ExistingContainerPlacement(string Name) : AbstractPlacement(Name), 
 
         if (string.IsNullOrEmpty(containerType))
         {
-            return mustSupportCost ? Container.GenericPickup : location.ContainerType;
+            return mustSupportCost ? Container.GetDefaultSingleItemContainer().Name : location.ContainerType;
         }
 
         return containerType;

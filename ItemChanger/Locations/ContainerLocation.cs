@@ -20,7 +20,7 @@ public abstract class ContainerLocation : AbstractLocation
 
     public virtual bool Supports(string containerType)
     {
-        return containerType == Container.GenericPickup ? true : !ForceShiny;
+        return containerType == Container.GetDefaultSingleItemContainer().Name ? true : !ForceShiny;
     }
 
     public override AbstractPlacement Wrap()

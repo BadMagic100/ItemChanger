@@ -71,12 +71,13 @@ public class DualPlacement : AbstractPlacement, IContainerPlacement, ISingleCost
             // this means that the container that was chosen on load isn't valid
             // most likely due from switching from a noninstantiatable ECL to a CL
             // so, we make a shiny but we don't modify the saved container type
-            containerType = Container.GenericPickup;
+            containerType = Container.GetDefaultSingleItemContainer().Name;
             container = Container.GetContainer(containerType)!;
         }
 
         obj = container.GetNewContainer(new ContainerInfo(container.Name, this, location.FlingType, Cost, 
-            location.GetTags<Tags.ChangeSceneTag>().FirstOrDefault()?.ToChangeSceneInfo()));
+            location.GetTags<Tags.ChangeSceneTag>().FirstOrDefault()?.ToChangeSceneInfo())
+        { ContainerType = containerType });
     }
 
     private void SetContainerType()

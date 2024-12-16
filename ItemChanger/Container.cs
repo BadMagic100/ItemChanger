@@ -10,7 +10,9 @@ namespace ItemChanger;
 public abstract class Container
 {
     public const string Unknown = "Unknown";
-    public const string GenericPickup = "GenericPickup";
+
+    private static string? defaultSingleItemContainerType;
+    private static string? defaultMultiItemContainerType;
 
     /// <summary>
     /// Gets the container definition for the given string. Returns null if no such container has been defined.
@@ -22,7 +24,7 @@ public abstract class Container
             return null;
         }
 
-        if (_containers.TryGetValue(containerType, out Container value))
+        if (_containers.TryGetValue(containerType, out Container? value))
         {
             return value;
         }
@@ -41,10 +43,28 @@ public abstract class Container
     /// <summary>
     /// Adds or overwrites the container definition in the internal dictionary.
     /// </summary>
+    /// <returns>The the created container definition</returns>
     public static Container DefineContainer<T>() where T : Container, new()
     {
         Container c = new T();
-        return _containers[c.Name] = c;
+        DefineContainer(c);
+        return c;
+    }
+
+    /// <summary>
+    /// Gets the defined container for placements with a single item when no preference is specified.
+    /// </summary>
+    public static Container GetDefaultSingleItemContainer()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Gets the defined container for placements with multiple items when no preference is specified.
+    /// </summary>
+    public static Container GetDefaultMultiItemContainer() 
+    { 
+        throw new NotImplementedException(); 
     }
 
 
