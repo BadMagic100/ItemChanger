@@ -2,6 +2,7 @@ Things to change
 
 Rename AbstractX to X and renamespace them to appropriate homes
 Move Cost stuff to a namespace
+Move Container stuff to a namespace
 Make ModuleCollection a real collection and hide the Modules field
 Make Load and Unload protected in favor of LoadOnce and UnloadOnce
 LoadOnce for placements, locations(?), items, and tags.
