@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using ItemChanger.Internal;
+using System.Linq;
 
 namespace ItemChanger.Tags;
 
@@ -19,7 +20,7 @@ public class IncompatibilityWarningTag : Tag
             _ => null,
         };
 
-        if (Internal.Ref.Settings.Placements.TryGetValue(IncompatiblePlacementName, out AbstractPlacement? p) 
+        if (ItemChangerProfile.ActiveProfile.TryGetPlacement(IncompatiblePlacementName, out AbstractPlacement? p) 
             && p.GetPlacementAndLocationTags().OfType<IncompatibilityWarningTag>().Any(t => t.IncompatiblePlacementName == parentPlacementName))
         {
             LoggerProxy.LogWarn($"Placements {parentPlacementName} and {IncompatiblePlacementName} are marked as incompatible.");

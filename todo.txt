@@ -22,7 +22,7 @@ Handle exceptions in user-facing hooks (e.g. modifyredundantitem)
 implement generic int/bool/consumableint costs akin to the ones in hk.ic
 check memberwiseclone actually works after the move to properties everywhere
 revamp visitstate
-eeparate enums to different files
+separate enums to different files
 allow callers to specify Finder sheets
 almost all of start location logic is HK specific so let it be a game specific module
 revamp event hooking
@@ -38,7 +38,6 @@ revamp event hooking
   * Safe to begin giving items
   * Exit game (profile unloaded here)
 save and load profiles from file/stream
-singleton profiles
 ICMod.HookItemChanger equivalent (hooks when creating a profile or loading from file, unhooks when exiting). Maybe this is just load/unload?
     Essentially this is just where Events get hooked now.
 PolySharp configure included types explicitly per runtime
@@ -46,6 +45,8 @@ Improve loading strategy so that modules can safely add other modules (and place
 lock down load state to be accessible only to profile
 get OnBeginSceneTransition dependence out of dualplacement (tbd what is the meaningful difference between this and active scene changed)
 we hate change scene info and change scene tag
+preferred container/container selection carries a lot of hk specific baggage (e.g. if a cost or TP is needed only a shiny is allowed)
+incompatibility warning tag has some weird timing related edge cases (ie if I add something incompatible after load it doesn't get caught)
 
 Unity stuff - is a unity shim package needed? How to deal with unity refs from nuget package?
 Null sprite

@@ -1,4 +1,5 @@
 ﻿using ItemChanger.Extensions;
+using ItemChanger.Internal;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,15 +60,15 @@ public class IntComparisonBool(IInteger Int, int Amount, ComparisonOperator op =
 /// </summary>
 public class PlacementAllObtainedBool(string placementName, IBool? missingPlacementTest = null) : IBool
 {
-    public string PlacementName { get; } = placementName;
-    public IBool? MissingPlacementTest { get; private set; } = missingPlacementTest;
+    public string PlacementName => placementName;
+    public IBool? MissingPlacementTest => missingPlacementTest;
 
     [JsonIgnore]
     public bool Value
     {
         get
         {
-            if (PlacementName != null && Internal.Ref.Settings is Settings s && s.Placements != null && s.Placements.TryGetValue(PlacementName, out var p) && p != null)
+            if (ItemChangerProfile.ActiveProfile.TryGetPlacement(placementName, out AbstractPlacement? p) && p != null)
             {
                 return p.AllObtained();
             }
@@ -78,7 +79,6 @@ public class PlacementAllObtainedBool(string placementName, IBool? missingPlacem
     public IBool Clone()
     {
         PlacementAllObtainedBool obj = (PlacementAllObtainedBool)MemberwiseClone();
-        obj.MissingPlacementTest = obj.MissingPlacementTest?.Clone();
         return obj;
     }
 }
@@ -109,7 +109,7 @@ public class PlacementVisitStateBool : IBool
     {
         get
         {
-            if (placementName != null && Internal.Ref.Settings is Settings s && s.Placements != null && s.Placements.TryGetValue(placementName, out var p) && p != null)
+            if (ItemChangerProfile.ActiveProfile.TryGetPlacement(placementName, out AbstractPlacement? p) && p != null)
             {
                 return requireAny ? p.CheckVisitedAny(requiredFlags) : p.CheckVisitedAll(requiredFlags);
             }

@@ -9,6 +9,16 @@ namespace ItemChanger.Internal;
 
 public class ItemChangerProfile
 {
+    private static ItemChangerProfile? activeProfile;
+
+    /// <summary>
+    /// The active ItemChanger profile. Will throw if no profile is loaded.
+    /// </summary>
+    public static ItemChangerProfile ActiveProfile
+    {
+        get => activeProfile ?? throw new InvalidOperationException("Attempted to access active profile while no profile was loaded");
+    }
+
     internal enum LoadState : uint
     {
         Unloaded = 0,
@@ -73,7 +83,12 @@ public class ItemChangerProfile
         {
             throw new InvalidOperationException($"Cannot load an already loaded profile. Current state is {state}");
         }
+        if (activeProfile != null)
+        {
+            throw new InvalidOperationException("Cannot load profile while another profile is active");
+        }
 
+        activeProfile = this;
         state = LoadState.LoadStarted;
 
         state = LoadState.ModuleLoadStarted;
@@ -109,6 +124,7 @@ public class ItemChangerProfile
         state = LoadState.ModuleLoadStarted;
 
         state = LoadState.Unloaded;
+        activeProfile = null;
     }
 
     public void AddPlacement(AbstractPlacement placement, PlacementConflictResolution conflictResolution = PlacementConflictResolution.MergeKeepingNew)
