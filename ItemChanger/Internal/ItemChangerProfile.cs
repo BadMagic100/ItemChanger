@@ -31,7 +31,7 @@ public class ItemChangerProfile
     }
 
     [JsonProperty]
-    private Dictionary<string, AbstractPlacement> placements = new();
+    private readonly Dictionary<string, AbstractPlacement> placements = new();
 
     [JsonProperty]
     public ModuleCollection Modules { get; }
@@ -186,7 +186,7 @@ public class ItemChangerProfile
     {
         foreach (AbstractPlacement placement in placements)
         {
-            AddPlacement(placement);
+            AddPlacement(placement, conflictResolution);
         }
     }
 }

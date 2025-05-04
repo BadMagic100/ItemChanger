@@ -26,11 +26,9 @@ public interface IWritableBool : IBool
 /// <summary>
 /// IBool which represents a constant value.
 /// </summary>
-public class BoxedBool : IWritableBool
+public class BoxedBool(bool value) : IWritableBool
 {
-    public bool Value { get; set; }
-
-    public BoxedBool(bool Value) => this.Value = Value;
+    public bool Value { get; set; } = value;
 
     public IBool Clone() => (IBool)MemberwiseClone();
 }
@@ -87,22 +85,15 @@ public class PlacementAllObtainedBool(string placementName, IBool? missingPlacem
 /// IBool which searches for a placement by name and checks whether its VisitState includes specified flags.
 /// <br/>If the placement does not exist, defaults to the value of missingPlacementTest, or true if missingPlacementTest is null.
 /// </summary>
-public class PlacementVisitStateBool : IBool
+public class PlacementVisitStateBool(string placementName, VisitState requiredFlags, IBool missingPlacementTest) : IBool
 {
-    public PlacementVisitStateBool(string placementName, VisitState requiredFlags, IBool missingPlacementTest)
-    {
-        this.placementName = placementName;
-        this.requiredFlags = requiredFlags;
-        this.missingPlacementTest = missingPlacementTest;
-    }
-
-    public string placementName;
-    public VisitState requiredFlags;
+    public string placementName = placementName;
+    public VisitState requiredFlags = requiredFlags;
     /// <summary>
     /// If true, requires any flag in requiredFlags to be contained in the VisitState. If false, requires all flags in requiredFlags to be contained in VisitState. Defaults to false.
     /// </summary>
     public bool requireAny;
-    public IBool? missingPlacementTest;
+    public IBool? missingPlacementTest = missingPlacementTest;
 
     [JsonIgnore]
     public bool Value

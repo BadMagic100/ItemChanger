@@ -77,7 +77,7 @@ public class SpriteManager
         }
         else if (_resourcePaths.TryGetValue(name, out string? path))
         {
-            using Stream s = _assembly.GetManifestResourceStream(path);
+            using Stream s = _assembly.GetManifestResourceStream(path)!;
             return _cachedSprites[name] = Load(ToArray(s), _info.GetFilterMode(name), _info.GetPixelsPerUnit(name));
         }
         else

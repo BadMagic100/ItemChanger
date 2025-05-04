@@ -12,36 +12,30 @@ namespace ItemChanger.Internal;
 /// <summary>
 /// Class for managing loading and caching of AudioClips from wav files.
 /// </summary>
-public class SoundManager
+/// <remarks>
+/// Creates a SoundManager to lazily load and cache AudioClips from the embedded wav files in the specified assembly.
+/// <br/>Only filepaths with the matching prefix are considered, and the prefix is removed to determine clip names (e.g. "ItemChanger.Resources.Audio." is the prefix for Instance).
+/// </remarks>
+public class SoundManager(Assembly a, string resourcePrefix)
 {
-    private readonly Assembly _assembly;
-    private readonly Dictionary<string, string> _resourcePaths;
-    private readonly Dictionary<string, AudioClip> _cachedClips = new();
-
-    /// <summary>
-    /// Creates a SoundManager to lazily load and cache AudioClips from the embedded wav files in the specified assembly.
-    /// <br/>Only filepaths with the matching prefix are considered, and the prefix is removed to determine clip names (e.g. "ItemChanger.Resources.Audio." is the prefix for Instance).
-    /// </summary>
-    public SoundManager(Assembly a, string resourcePrefix)
-    {
-        _assembly = a;
-        _resourcePaths = a.GetManifestResourceNames()
+    private readonly Assembly _assembly = a;
+    private readonly Dictionary<string, string> _resourcePaths = a.GetManifestResourceNames()
             .Where(n => n.EndsWith(".wav") && n.StartsWith(resourcePrefix))
             .ToDictionary(n => n.Substring(resourcePrefix.Length, n.Length - resourcePrefix.Length - ".wav".Length));
-    }
+    private readonly Dictionary<string, AudioClip> _cachedClips = new();
 
     /// <summary>
     /// Fetches the AudioClip with the specified name. If it has not yet been loaded, loads it from embedded resources and caches the result.
     /// </summary>
     public AudioClip GetAudioClip(string name)
     {
-        if (_cachedClips.TryGetValue(name, out AudioClip clip))
+        if (_cachedClips.TryGetValue(name, out AudioClip? clip))
         {
             return clip;
         }
-        else if (_resourcePaths.TryGetValue(name, out string path))
+        else if (_resourcePaths.TryGetValue(name, out string? path))
         {
-            using Stream s = _assembly.GetManifestResourceStream(path);
+            using Stream s = _assembly.GetManifestResourceStream(path)!;
             return _cachedClips[name] = FromStream(s, name);
         }
         else
@@ -87,7 +81,7 @@ public class SoundManager
     /// </summary>
     public static void SaveAs(AudioClip clip, string fileName)
     {
-        using FileStream fs = File.Create(Path.Combine(Path.GetDirectoryName(typeof(SoundManager).Assembly.Location), fileName));
+        using FileStream fs = File.Create(Path.Combine(Path.GetDirectoryName(typeof(SoundManager).Assembly.Location)!, fileName));
         using BinaryWriter bw = new(fs, Encoding.ASCII);
 
         const short bitsPerSample = 16;
