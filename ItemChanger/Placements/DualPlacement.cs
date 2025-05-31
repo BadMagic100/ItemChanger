@@ -15,7 +15,7 @@ public class DualPlacement : AbstractPlacement, IContainerPlacement, ISingleCost
     public required AbstractLocation TrueLocation { get; init; }
     public required AbstractLocation FalseLocation { get; init; }
 
-    public required IBool Test {  get; init; }
+    public required IBool Test { get; init; }
 
     private bool cachedValue;
 
@@ -24,7 +24,7 @@ public class DualPlacement : AbstractPlacement, IContainerPlacement, ISingleCost
 
     [JsonIgnore]
     public AbstractLocation Location => cachedValue ? TrueLocation : FalseLocation;
-    
+
     public Cost? Cost { get; set; }
 
     protected override void OnLoad()
@@ -75,7 +75,7 @@ public class DualPlacement : AbstractPlacement, IContainerPlacement, ISingleCost
             container = Container.GetContainer(containerType)!;
         }
 
-        obj = container.GetNewContainer(new ContainerInfo(container.Name, this, location.FlingType, Cost, 
+        obj = container.GetNewContainer(new ContainerInfo(container.Name, this, location.FlingType, Cost,
             location.GetTags<Tags.ChangeSceneTag>().FirstOrDefault()?.ToChangeSceneInfo())
         { ContainerType = containerType });
     }
@@ -83,36 +83,11 @@ public class DualPlacement : AbstractPlacement, IContainerPlacement, ISingleCost
     private void SetContainerType()
     {
         bool mustSupportCost = Cost != null;
-        bool mustSupportSceneChange = FalseLocation.GetTags<Tags.ChangeSceneTag>().Any() 
+        bool mustSupportSceneChange = FalseLocation.GetTags<Tags.ChangeSceneTag>().Any()
             || TrueLocation.GetTags<Tags.ChangeSceneTag>().Any() || GetTags<Tags.ChangeSceneTag>().Any();
         if (Container.SupportsAll(ContainerType, true, mustSupportCost, mustSupportSceneChange))
         {
             return;
-        }
-
-        if (FalseLocation is Locations.ExistingContainerLocation fecl)
-        {
-            if (ContainerType == fecl.ContainerType && Container.SupportsAll(ContainerType, false, mustSupportCost, mustSupportSceneChange))
-            {
-                return;
-            }
-            else
-            {
-                ContainerType = ExistingContainerPlacement.ChooseContainerType(this, fecl, Items);
-                return;
-            }
-        }
-        else if (TrueLocation is Locations.ExistingContainerLocation tecl)
-        {
-            if (ContainerType == tecl.ContainerType && Container.SupportsAll(ContainerType, false, mustSupportCost, mustSupportSceneChange))
-            {
-                return;
-            }
-            else
-            {
-                ContainerType = ExistingContainerPlacement.ChooseContainerType(this, tecl, Items);
-                return;
-            }
         }
 
         Locations.ContainerLocation? cl = (FalseLocation as Locations.ContainerLocation) ?? (TrueLocation as Locations.ContainerLocation);
