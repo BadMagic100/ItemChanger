@@ -27,6 +27,9 @@ separate enums to different files
 allow callers to specify Finder sheets
 almost all of start location logic is HK specific so let it be a game specific module
 revamp event hooking
+  * explore using sceneLoaded instead of activeSceneChanged
+  * actually trigger all the lifecycle events
+Bring back objectlocation (see https://github.com/BadMagic100/ItemChanger/commit/a21ef4f582a22cf72eff92ed3a5ea14ddae1a175)
 * Game lifecycle
   * Semipersistent reset
   * Persistent reset
