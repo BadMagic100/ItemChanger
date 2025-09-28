@@ -1,6 +1,7 @@
 ﻿using ItemChanger.Containers;
 using ItemChanger.Items;
 using ItemChanger.Locations;
+using ItemChanger.Tags;
 using System;
 using System.Collections.Generic;
 using System.Linq;

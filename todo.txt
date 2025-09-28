@@ -17,8 +17,6 @@ does incompat warning need to warn about mutual incompat only, or should it alwa
 yeet item tree tag?
 user-facing error display (possibly via events?) replacing Internal.MessageController.OnError
 Handle exceptions in user-facing hooks (e.g. modifyredundantitem)
-implement generic int/bool/consumableint costs akin to the ones in hk.ic
-check memberwiseclone actually works after the move to properties everywhere
 revamp visitstate
 separate enums to different files
 allow callers to specify Finder sheets

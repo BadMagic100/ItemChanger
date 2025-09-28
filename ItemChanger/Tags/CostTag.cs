@@ -1,4 +1,6 @@
-﻿namespace ItemChanger;
+﻿using ItemChanger.Tags;
+
+namespace ItemChanger;
 
 /// <summary>
 /// Tag used for carrying information about costs, particularly for items in a shop or other multicost placement.

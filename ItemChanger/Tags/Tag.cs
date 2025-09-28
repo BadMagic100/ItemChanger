@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace ItemChanger;
+namespace ItemChanger.Tags;
 
 public abstract class Tag
 {
@@ -10,7 +10,7 @@ public abstract class Tag
     /// <br/>This should not be called directly. Instead, use "LoadOnce" to load and set the Loaded property.
     /// </summary>
     /// <exception cref="InvalidOperationException">The tag is already loaded.</exception>
-    public virtual void Load(object parent) 
+    public virtual void Load(object parent)
     {
         if (Loaded)
         {
@@ -22,7 +22,7 @@ public abstract class Tag
     /// <br/>This should not be called directly. Instead, use "UnloadOnce" to unload and set the Loaded property.
     /// </summary>
     /// <exception cref="InvalidOperationException">The tag is not loaded.</exception>
-    public virtual void Unload(object parent) 
+    public virtual void Unload(object parent)
     {
         if (!Loaded)
         {
@@ -71,6 +71,7 @@ public abstract class Tag
         }
     }
 
+    [JsonIgnore]
     public bool Loaded { get; private set; }
 
     /// <summary>

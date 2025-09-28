@@ -9,7 +9,10 @@ namespace ItemChanger;
 
 public class TaggableObject
 {
-    [JsonProperty] [JsonConverter(typeof(TagListDeserializer))] public List<Tag>? tags;
+    [JsonProperty]
+    [JsonConverter(typeof(TagListDeserializer))]
+    public List<Tag>? tags;
+
     private bool _tagsLoaded;
 
     protected void LoadTags()
@@ -116,7 +119,7 @@ public class TaggableObject
         }
         tags = tags?.Where(t => t is not T)?.ToList();
     }
-    
+
     public class TagListSerializer : JsonConverter<List<Tag>>
     {
         public override bool CanRead => false;
