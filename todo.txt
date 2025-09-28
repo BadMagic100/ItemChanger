@@ -1,8 +1,5 @@
 Things to change
 
-concept of a plan: force game implementations to provide a "host" to create profiles which
-handles default containers, game lifecycle event setup, etc
-
 Need a way for default modules not dependent on being defined in the assembly with IC
 Game-agnostic container implementation
     Get rid of static constructor please
@@ -12,40 +9,24 @@ docs
 move public APIs out of the "Internal" namespace
 make taggableobject.tags private, it's unsafe
 see if there is a good way to dejank single/multicost placements
-yeet item tree tag?
-user-facing error display (possibly via events?) replacing Internal.MessageController.OnError
-  * actually this exists (LifecycleEvents.NotifyError) but maybe it belongs in the per game host
 revamp visitstate
 separate enums to different files
 allow callers to specify Finder sheets
 almost all of start location logic is HK specific so let it be a game specific module
-revamp event hooking
-  * explore using sceneLoaded instead of activeSceneChanged
-  * actually trigger all the lifecycle events
 Bring back objectlocation (see https://github.com/BadMagic100/ItemChanger/commit/a21ef4f582a22cf72eff92ed3a5ea14ddae1a175)
-* Game lifecycle
-  * Semipersistent reset
-  * Persistent reset
-  * Scene change
-* IC lifecycle
-  * Before new game (start locations would be applied here probably)
-  * Start new game
-  * Continue game
-  * Enter game (profile loaded here)
-  * Safe to begin giving items
-  * Exit game (profile unloaded here)
 save and load profiles from file/stream
-ICMod.HookItemChanger equivalent (hooks when creating a profile or loading from file, unhooks when exiting). Maybe this is just load/unload?
-    Essentially this is just where Events get hooked now.
 PolySharp configure included types explicitly per runtime
 Improve loading strategy so that modules can safely add other modules (and placements can do the same and so on)
 lock down load state to be accessible only to profile
-get OnBeginSceneTransition dependence out of dualplacement (tbd what is the meaningful difference between this and active scene changed)
+get OnBeginSceneTransition dependence out of dualplacement
+  the difference is that the scene loaded event may be called multiple times per active scene. However not all games have discrete scenes
+  so some plan is needed still.
 we hate change scene info and change scene tag
 preferred container/container selection carries a lot of hk specific baggage (e.g. if a cost or TP is needed only a shiny is allowed)
 incompatibility warning tag has some weird timing related edge cases (ie if I add something incompatible after load it doesn't get caught)
 consistent interface for replacable locations
 Consider de-staticting some things and associate to profile.
+find sane places for exception handling
 
 Unity stuff - is a unity shim package needed? How to deal with unity refs from nuget package?
 Null sprite

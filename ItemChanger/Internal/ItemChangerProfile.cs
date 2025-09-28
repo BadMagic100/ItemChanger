@@ -1,4 +1,5 @@
-﻿using ItemChanger.Items;
+﻿using ItemChanger.Events;
+using ItemChanger.Items;
 using ItemChanger.Tags;
 using Newtonsoft.Json;
 using System;
@@ -8,9 +9,14 @@ using System.Linq;
 
 namespace ItemChanger.Internal;
 
-public class ItemChangerProfile
+public class ItemChangerProfile : IDisposable
 {
     private static ItemChangerProfile? activeProfile;
+
+    /// <summary>
+    /// The active ItemChanger profile, or null if no profile is loaded.
+    /// </summary>
+    public static ItemChangerProfile? ActiveProfileOrNull => activeProfile;
 
     /// <summary>
     /// The active ItemChanger profile. Will throw if no profile is loaded.
@@ -37,11 +43,45 @@ public class ItemChangerProfile
     [JsonProperty]
     public ModuleCollection Modules { get; }
 
+    private bool hooked = false;
     internal LoadState state = LoadState.Unloaded;
 
-    public ItemChangerProfile()
+    private readonly IItemChangerHost host;
+    private readonly LifecycleEvents.Invoker lifecycleInvoker;
+    private readonly GameEvents.Invoker gameInvoker;
+
+    [JsonConstructor]
+    private ItemChangerProfile()
+    {
+        lifecycleInvoker = new LifecycleEvents.Invoker();
+        gameInvoker = new GameEvents.Invoker();
+    }
+
+    public ItemChangerProfile(IItemChangerHost host) : this()
     {
         Modules = new(this);
+        this.host = host;
+
+        DoHook();
+    }
+
+    /// <summary>
+    /// Ensures that the profile is unloaded and unhooked when garbage-collected
+    /// </summary>
+    ~ItemChangerProfile()
+    {
+        Dispose();
+    }
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        if (state == LoadState.LoadCompleted)
+        {
+            Unload();
+        }
+        DoUnhook();
+        GC.SuppressFinalize(this);
     }
 
     public IEnumerable<Placement> GetPlacements() => placements.Values;
@@ -189,5 +229,35 @@ public class ItemChangerProfile
         {
             AddPlacement(placement, conflictResolution);
         }
+    }
+
+    private void DoHook()
+    {
+        if (hooked)
+        {
+            return;
+        }
+
+        GameEvents.Hook();
+        host.PrepareEvents(lifecycleInvoker, gameInvoker);
+
+        lifecycleInvoker.NotifyHooked();
+
+        hooked = true;
+    }
+
+    private void DoUnhook()
+    {
+        if (!hooked)
+        {
+            return;
+        }
+
+        host.UnhookEvents(lifecycleInvoker, gameInvoker);
+        GameEvents.Unhook();
+
+        lifecycleInvoker.NotifyUnhooked();
+
+        hooked = false;
     }
 }

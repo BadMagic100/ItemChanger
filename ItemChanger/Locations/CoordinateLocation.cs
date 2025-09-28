@@ -15,7 +15,7 @@ public class CoordinateLocation : PlaceableLocation
 
     protected override void DoLoad()
     {
-        GameEvents.AddSceneChangeEdit(UnsafeSceneName, OnActiveSceneChanged);
+        GameEvents.AddSceneEdit(UnsafeSceneName, OnActiveSceneChanged);
     }
 
     protected override void DoUnload()

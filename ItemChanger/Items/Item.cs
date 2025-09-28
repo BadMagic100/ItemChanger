@@ -1,5 +1,4 @@
 ﻿using ItemChanger.Containers;
-using ItemChanger.Events;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
@@ -131,7 +130,6 @@ public abstract class Item : TaggableObject
         catch (Exception e)
         {
             LoggerProxy.LogError($"Error on GiveImmediate for item {item.name}:\n{e}");
-            LifecycleEvents.NotifyError();
         }
 
         AfterGiveInvoke(readOnlyArgs);
@@ -145,7 +143,6 @@ public abstract class Item : TaggableObject
             catch (Exception e)
             {
                 LoggerProxy.LogError($"Error on SendMessage for item {item.name}:\n{e}");
-                LifecycleEvents.NotifyError();
                 info.Callback?.Invoke(item);
             }
         }
