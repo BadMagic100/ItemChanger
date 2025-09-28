@@ -1,5 +1,4 @@
-﻿using ItemChanger.Extensions;
-using System;
+﻿using System;
 
 namespace ItemChanger.Events;
 
@@ -15,6 +14,6 @@ public static class LifecycleEvents
 
     internal static void NotifyError()
     {
-        OnErrorMessageRequested?.GetInvocationList().InvokeAllSafely();
+        OnErrorMessageRequested?.Invoke();
     }
 }

@@ -99,19 +99,4 @@ public static class Extensions
 
         return uiname.ToString();
     }
-
-    internal static void InvokeAllSafely(this Delegate[] delegates, params object[] args)
-    {
-        foreach (Delegate d in delegates)
-        {
-            try
-            {
-                d.DynamicInvoke(args);
-            }
-            catch (Exception e)
-            {
-                LoggerProxy.LogError($"Caught error in delegate subscriber {d.ToString()}: {e}");
-            }
-        }
-    }
 }
