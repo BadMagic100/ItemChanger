@@ -1,11 +1,10 @@
 ﻿using ItemChanger.Events;
-using ItemChanger.Items;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
 using UnityEngine;
 
-namespace ItemChanger;
+namespace ItemChanger.Items;
 
 /// <summary>
 /// The parameters included when an item is given. May be null.
@@ -31,7 +30,7 @@ public class GiveInfo
     /// <summary>
     /// A callback set by the location or placement to be executed by the UIDef when its message is complete.
     /// </summary>
-    public Action<AbstractItem>? Callback { get; set; }
+    public Action<Item>? Callback { get; set; }
 
     /// <summary>
     /// Returns a shallow clone of the GiveInfo.
@@ -45,11 +44,11 @@ public class GiveInfo
 /// <summary>
 /// The base class for all items.
 /// </summary>
-public abstract class AbstractItem : TaggableObject
+public abstract class Item : TaggableObject
 {
     [JsonProperty]
     private ObtainState obtainState;
-    
+
     /// <summary>
     /// The name of the item. Item names are not guaranteed to be unique.
     /// </summary>
@@ -113,7 +112,7 @@ public abstract class AbstractItem : TaggableObject
     /// <summary>
     /// The method called to give an item.
     /// </summary>
-    public void Give(AbstractPlacement? placement, GiveInfo info)
+    public void Give(Placement? placement, GiveInfo info)
     {
         ObtainState originalState = obtainState;
         ReadOnlyGiveEventArgs readOnlyArgs = new(this, this, placement, info, originalState);
@@ -125,7 +124,7 @@ public abstract class AbstractItem : TaggableObject
         SetObtained();
         placement?.OnObtainedItem(this);
 
-        AbstractItem item = giveArgs.Item!;
+        Item item = giveArgs.Item!;
         info = giveArgs.Info!;
 
         readOnlyArgs = new(giveArgs.Orig, item, placement, info, originalState);
@@ -170,10 +169,10 @@ public abstract class AbstractItem : TaggableObject
     /// <summary>
     /// Gets the display name of the item for display
     /// </summary>
-    public string GetPreviewName(AbstractPlacement? placement = null)
+    public string GetPreviewName(Placement? placement = null)
     {
-        if (HasTag<Tags.DisableItemPreviewTag>() 
-            || (placement != null && placement.HasTag<Tags.DisableItemPreviewTag>()))
+        if (HasTag<Tags.DisableItemPreviewTag>()
+            || placement != null && placement.HasTag<Tags.DisableItemPreviewTag>())
         {
             return "???";
         }
@@ -185,10 +184,10 @@ public abstract class AbstractItem : TaggableObject
     /// <summary>
     /// Gets the display sprite of the item for display
     /// </summary>
-    public Sprite? GetPreviewSprite(AbstractPlacement? placement = null)
+    public Sprite? GetPreviewSprite(Placement? placement = null)
     {
         if (HasTag<Tags.DisableItemPreviewTag>()
-            || (placement != null && placement.HasTag<Tags.DisableItemPreviewTag>()))
+            || placement != null && placement.HasTag<Tags.DisableItemPreviewTag>())
         {
             return null;
         }
@@ -200,7 +199,7 @@ public abstract class AbstractItem : TaggableObject
     /// <summary>
     /// Returns the UIDef of the item yielded after all of the events for modifying items.
     /// </summary>
-    public UIDef? GetResolvedUIDef(AbstractPlacement? placement = null)
+    public UIDef? GetResolvedUIDef(Placement? placement = null)
     {
         GiveEventArgs args = new(this, this, placement, null, obtainState);
         ResolveItem(args);
@@ -261,9 +260,9 @@ public abstract class AbstractItem : TaggableObject
     /// <summary>
     /// Returns a deep clone of the current item.
     /// </summary>
-    public virtual AbstractItem Clone()
+    public virtual Item Clone()
     {
-        AbstractItem item = (AbstractItem)MemberwiseClone();
+        Item item = (Item)MemberwiseClone();
         item.UIDef = UIDef?.Clone();
         item.tags = tags?.Select(t => t.Clone())?.ToList();
         return item;
@@ -279,7 +278,7 @@ public abstract class AbstractItem : TaggableObject
     /// Event invoked by each item at the start of Give(), giving access to the initial give parameters.
     /// </summary>
     public static event Action<ReadOnlyGiveEventArgs>? BeforeGiveGlobal;
-    
+
     private void BeforeGiveInvoke(ReadOnlyGiveEventArgs args)
     {
         try
@@ -343,7 +342,7 @@ public abstract class AbstractItem : TaggableObject
     /// Event invoked by each item after the ModifyItem events, if the resulting item is null or redundant.
     /// </summary>
     public static event Action<GiveEventArgs>? ModifyRedundantItemGlobal;
-    
+
     private void ModifyRedundantItemInvoke(GiveEventArgs args)
     {
         try
@@ -351,7 +350,7 @@ public abstract class AbstractItem : TaggableObject
             ModifyRedundantItemGlobal?.Invoke(args);
             ModifyRedundantItem?.Invoke(args);
         }
-        catch (Exception e) 
+        catch (Exception e)
         {
             string? placement = args?.Placement?.Name;
             if (placement != null)
@@ -375,7 +374,7 @@ public abstract class AbstractItem : TaggableObject
     /// Event invoked by each item just before GiveImmediate(), giving access to the final give parameters.
     /// </summary>
     public static event Action<ReadOnlyGiveEventArgs>? OnGiveGlobal;
-    
+
     private void OnGiveInvoke(ReadOnlyGiveEventArgs args)
     {
         try
@@ -383,7 +382,7 @@ public abstract class AbstractItem : TaggableObject
             OnGiveGlobal?.Invoke(args);
             OnGive?.Invoke(args);
         }
-        catch (Exception e) 
+        catch (Exception e)
         {
             string? placement = args?.Placement?.Name;
             if (placement != null)
@@ -407,7 +406,7 @@ public abstract class AbstractItem : TaggableObject
     /// Event invoked by each item just after GiveImmediate(), giving access to the final give parameters.
     /// </summary>
     public static event Action<ReadOnlyGiveEventArgs>? AfterGiveGlobal;
-    
+
     private void AfterGiveInvoke(ReadOnlyGiveEventArgs args)
     {
         try
@@ -415,7 +414,7 @@ public abstract class AbstractItem : TaggableObject
             AfterGiveGlobal?.Invoke(args);
             AfterGive?.Invoke(args);
         }
-        catch (Exception e) 
+        catch (Exception e)
         {
             string? placement = args?.Placement?.Name;
             if (placement != null)

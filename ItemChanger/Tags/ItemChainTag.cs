@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ItemChanger.Items;
+using System;
 
 namespace ItemChanger.Tags;
 
@@ -22,19 +23,19 @@ public class ItemChainTag : Tag
     public override void Load(object parent)
     {
         base.Load(parent);
-        AbstractItem item = (AbstractItem)parent;
+        Item item = (Item)parent;
         item.ModifyItem += ModifyItem;
     }
 
     public override void Unload(object parent)
     {
         base.Unload(parent);
-        AbstractItem item = (AbstractItem)parent;
+        Item item = (Item)parent;
         item.ModifyItem -= ModifyItem;
     }
 
 
-    protected virtual AbstractItem GetItem(string name)
+    protected virtual Item GetItem(string name)
     {
         return Finder.GetItem(name) ?? throw new NullReferenceException("Could not find item " + name);
     }
@@ -64,7 +65,7 @@ public class ItemChainTag : Tag
         {
             while (args.Item?.GetTag<ItemChainTag>()?.Predecessor is string pred && !string.IsNullOrEmpty(pred))
             {
-                AbstractItem item = GetItem(pred);
+                Item item = GetItem(pred);
                 if (item.Redundant())
                 {
                     return;

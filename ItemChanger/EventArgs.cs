@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ItemChanger.Items;
+using System;
 using UnityEngine;
 
 namespace ItemChanger;
@@ -6,7 +7,7 @@ namespace ItemChanger;
 public class GetItemEventArgs : EventArgs
 {
     public string ItemName { get; }
-    public AbstractItem? Current { get; set; }
+    public Item? Current { get; set; }
 
     public GetItemEventArgs(string itemName) => this.ItemName = itemName;
 }
@@ -14,21 +15,21 @@ public class GetItemEventArgs : EventArgs
 public class GetLocationEventArgs : EventArgs
 {
     public string LocationName { get; }
-    public AbstractLocation? Current { get; set; }
+    public Location? Current { get; set; }
 
     public GetLocationEventArgs(string locationName) => this.LocationName = locationName;
 }
 
 public class VisitStateChangedEventArgs : EventArgs
 {
-    public VisitStateChangedEventArgs(AbstractPlacement placement, VisitState newFlags)
+    public VisitStateChangedEventArgs(Placement placement, VisitState newFlags)
     {
         Placement = placement;
         NewFlags = newFlags;
         Orig = placement.Visited;
     }
 
-    public AbstractPlacement Placement { get; }
+    public Placement Placement { get; }
     public VisitState Orig { get; }
     public VisitState NewFlags { get; }
     public bool NoChange => (NewFlags & Orig) == NewFlags;
@@ -36,7 +37,7 @@ public class VisitStateChangedEventArgs : EventArgs
 
 public class GiveEventArgs : EventArgs
 {
-    public GiveEventArgs(AbstractItem orig, AbstractItem item, AbstractPlacement? placement, GiveInfo? info, ObtainState state)
+    public GiveEventArgs(Item orig, Item item, Placement? placement, GiveInfo? info, ObtainState state)
     {
         this.Orig = orig;
         this.Item = item;
@@ -45,9 +46,9 @@ public class GiveEventArgs : EventArgs
         this.OriginalState = state;
     }
 
-    public AbstractItem Orig { get; }
-    public AbstractItem? Item { get; set; }
-    public AbstractPlacement? Placement { get; }
+    public Item Orig { get; }
+    public Item? Item { get; set; }
+    public Placement? Placement { get; }
     public GiveInfo? Info { get; set; }
     public ObtainState OriginalState { get; }
 }
@@ -56,7 +57,7 @@ public class ReadOnlyGiveEventArgs : EventArgs
 {
     private readonly GiveInfo info;
 
-    public ReadOnlyGiveEventArgs(AbstractItem orig, AbstractItem item, AbstractPlacement? placement, GiveInfo info, ObtainState state)
+    public ReadOnlyGiveEventArgs(Item orig, Item item, Placement? placement, GiveInfo info, ObtainState state)
     {
         this.Orig = orig;
         this.Item = item;
@@ -65,14 +66,14 @@ public class ReadOnlyGiveEventArgs : EventArgs
         this.OriginalState = state;
     }
 
-    public AbstractItem Orig { get; }
-    public AbstractItem Item { get; }
-    public AbstractPlacement? Placement { get; }
+    public Item Orig { get; }
+    public Item Item { get; }
+    public Placement? Placement { get; }
     public string? Container => info.Container;
     public FlingType Fling => info.FlingType;
     public Transform? Transform => info.Transform;
     public MessageType MessageType => info.MessageType;
-    public Action<AbstractItem>? Callback => info.Callback;
+    public Action<Item>? Callback => info.Callback;
     public ObtainState OriginalState { get; }
 }
 

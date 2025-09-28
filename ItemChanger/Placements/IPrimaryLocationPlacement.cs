@@ -5,5 +5,5 @@
 /// </summary>
 public interface IPrimaryLocationPlacement
 {
-    AbstractLocation Location { get; }
+    Location Location { get; }
 }

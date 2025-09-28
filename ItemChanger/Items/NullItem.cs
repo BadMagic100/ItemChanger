@@ -1,6 +1,6 @@
 ﻿namespace ItemChanger.Items;
 
-public class NullItem : AbstractItem
+public class NullItem : Item
 {
     public static NullItem Create()
     {

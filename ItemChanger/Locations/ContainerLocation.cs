@@ -6,7 +6,7 @@ namespace ItemChanger.Locations;
 /// <summary>
 /// Location type which supports placing multiple kinds of objects.
 /// </summary>
-public abstract class ContainerLocation : AbstractLocation
+public abstract class ContainerLocation : Location
 {
     /// <summary>
     /// Whether to force a shiny at the location.
@@ -23,7 +23,7 @@ public abstract class ContainerLocation : AbstractLocation
         return containerType == Container.GetDefaultSingleItemContainer().Name ? true : !ForceShiny;
     }
 
-    public override AbstractPlacement Wrap()
+    public override Placement Wrap()
     {
         return new MutablePlacement(Name)
         {

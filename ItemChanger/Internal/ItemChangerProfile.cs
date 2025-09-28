@@ -1,4 +1,5 @@
-﻿using ItemChanger.Tags;
+﻿using ItemChanger.Items;
+using ItemChanger.Tags;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ public class ItemChangerProfile
     }
 
     [JsonProperty]
-    private readonly Dictionary<string, AbstractPlacement> placements = new();
+    private readonly Dictionary<string, Placement> placements = new();
 
     [JsonProperty]
     public ModuleCollection Modules { get; }
@@ -43,20 +44,20 @@ public class ItemChangerProfile
         Modules = new(this);
     }
 
-    public IEnumerable<AbstractPlacement> GetPlacements() => placements.Values;
+    public IEnumerable<Placement> GetPlacements() => placements.Values;
 
-    public IEnumerable<AbstractItem> GetItems() => placements.Values.SelectMany(x => x.Items);
+    public IEnumerable<Item> GetItems() => placements.Values.SelectMany(x => x.Items);
 
-    public AbstractPlacement GetPlacement(string name)
+    public Placement GetPlacement(string name)
     {
-        if (!placements.TryGetValue(name, out AbstractPlacement? placement))
+        if (!placements.TryGetValue(name, out Placement? placement))
         {
             throw new KeyNotFoundException($"No placement with name {name} found");
         }
         return placement;
     }
 
-    public bool TryGetPlacement(string name, [NotNullWhen(true)] out AbstractPlacement? placement)
+    public bool TryGetPlacement(string name, [NotNullWhen(true)] out Placement? placement)
     {
         return placements.TryGetValue(name, out placement);
     }
@@ -96,7 +97,7 @@ public class ItemChangerProfile
         state = LoadState.ModuleLoadCompleted;
 
         state = LoadState.PlacementsLoadStarted;
-        foreach (AbstractPlacement placement in placements.Values)
+        foreach (Placement placement in placements.Values)
         {
             placement.Load();
         }
@@ -113,7 +114,7 @@ public class ItemChangerProfile
         }
 
         state = LoadState.PlacementsLoadCompleted;
-        foreach (AbstractPlacement placement in placements.Values)
+        foreach (Placement placement in placements.Values)
         {
             placement.Unload();
         }
@@ -127,14 +128,14 @@ public class ItemChangerProfile
         activeProfile = null;
     }
 
-    public void AddPlacement(AbstractPlacement placement, PlacementConflictResolution conflictResolution = PlacementConflictResolution.MergeKeepingNew)
+    public void AddPlacement(Placement placement, PlacementConflictResolution conflictResolution = PlacementConflictResolution.MergeKeepingNew)
     {
         if (state == LoadState.PlacementsLoadStarted)
         {
             throw new InvalidOperationException("Cannot add a placement while placement loading is in progress");
         }
 
-        if (placements.TryGetValue(placement.Name, out AbstractPlacement? existP))
+        if (placements.TryGetValue(placement.Name, out Placement? existP))
         {
             switch (conflictResolution)
             {
@@ -150,7 +151,7 @@ public class ItemChangerProfile
                     existP.Items.AddRange(placement.Items);
                     if (state >= LoadState.PlacementsLoadCompleted)
                     {
-                        foreach (AbstractItem item in placement.Items)
+                        foreach (Item item in placement.Items)
                         {
                             item.Load();
                         }
@@ -182,9 +183,9 @@ public class ItemChangerProfile
         }
     }
 
-    public void AddPlacements(IEnumerable<AbstractPlacement> placements, PlacementConflictResolution conflictResolution = PlacementConflictResolution.MergeKeepingNew)
+    public void AddPlacements(IEnumerable<Placement> placements, PlacementConflictResolution conflictResolution = PlacementConflictResolution.MergeKeepingNew)
     {
-        foreach (AbstractPlacement placement in placements)
+        foreach (Placement placement in placements)
         {
             AddPlacement(placement, conflictResolution);
         }

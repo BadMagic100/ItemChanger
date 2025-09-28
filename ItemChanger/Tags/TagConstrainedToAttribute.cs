@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ItemChanger.Items;
+using System;
 
 namespace ItemChanger.Tags;
 
@@ -18,14 +19,14 @@ public class TagConstrainedToAttribute<T> : Attribute where T : TaggableObject
 /// <summary>
 /// Convenience implementation of <see cref="TagConstrainedToAttribute{T}"/> for items.
 /// </summary>
-public class ItemTagAttribute : TagConstrainedToAttribute<AbstractItem> { }
+public class ItemTagAttribute : TagConstrainedToAttribute<Item> { }
 
 /// <summary>
 /// Convenience implementation of <see cref="TagConstrainedToAttribute{T}"/> for locations.
 /// </summary>
-public class LocationTagAttribute : TagConstrainedToAttribute<AbstractLocation> { }
+public class LocationTagAttribute : TagConstrainedToAttribute<Location> { }
 
 /// <summary>
 /// Convenience implementation of <see cref="TagConstrainedToAttribute{T}"/> for placements.
 /// </summary>
-public class PlacementTagAttribute : TagConstrainedToAttribute<AbstractPlacement> { }
+public class PlacementTagAttribute : TagConstrainedToAttribute<Placement> { }

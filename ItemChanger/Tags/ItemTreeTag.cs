@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ItemChanger.Items;
+using System;
 using System.Linq;
 
 namespace ItemChanger.Tags;
@@ -23,19 +24,19 @@ public class ItemTreeTag : Tag
     public override void Load(object parent)
     {
         base.Load(parent);
-        AbstractItem item = (AbstractItem)parent;
+        Item item = (Item)parent;
         item.ModifyItem += ModifyItem;
     }
 
     public override void Unload(object parent)
     {
         base.Unload(parent);
-        AbstractItem item = (AbstractItem)parent;
+        Item item = (Item)parent;
         item.ModifyItem -= ModifyItem;
     }
 
 
-    protected virtual AbstractItem GetItem(string name)
+    protected virtual Item GetItem(string name)
     {
         return Finder.GetItem(name) ?? throw new NullReferenceException("Could not find item " + name);
     }
@@ -54,7 +55,7 @@ public class ItemTreeTag : Tag
             {
                 foreach (string s in Predecessors)
                 {
-                    AbstractItem item = GetItem(s);
+                    Item item = GetItem(s);
                     if (!item.Redundant())
                     {
                         args.Item = item;
@@ -70,7 +71,7 @@ public class ItemTreeTag : Tag
             {
                 foreach (string s in Successors)
                 {
-                    AbstractItem item = GetItem(s);
+                    Item item = GetItem(s);
                     if (!item.Redundant())
                     {
                         args.Item = item;
@@ -90,7 +91,7 @@ public class ItemTreeTag : Tag
                 {
                     foreach (string s in Successors)
                     {
-                        AbstractItem item = GetItem(s);
+                        Item item = GetItem(s);
                         if (!item.Redundant())
                         {
                             args.Item = item;
@@ -108,7 +109,7 @@ public class ItemTreeTag : Tag
                 {
                     foreach (string s in Predecessors.Reverse())
                     {
-                        AbstractItem item = GetItem(s);
+                        Item item = GetItem(s);
                         if (!item.Redundant())
                         {
                             args.Item = item;

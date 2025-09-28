@@ -1,4 +1,5 @@
 ﻿using ItemChanger.Events;
+using ItemChanger.Items;
 
 namespace ItemChanger.Locations;
 
@@ -41,7 +42,7 @@ public class StartLocation : AutoLocation
     }
 
 
-    public override AbstractPlacement Wrap()
+    public override Placement Wrap()
     {
         return new Placements.AutoPlacement(Name)
         {

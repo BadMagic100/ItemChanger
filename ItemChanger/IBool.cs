@@ -66,7 +66,7 @@ public class PlacementAllObtainedBool(string placementName, IBool? missingPlacem
     {
         get
         {
-            if (ItemChangerProfile.ActiveProfile.TryGetPlacement(placementName, out AbstractPlacement? p) && p != null)
+            if (ItemChangerProfile.ActiveProfile.TryGetPlacement(placementName, out Placement? p) && p != null)
             {
                 return p.AllObtained();
             }
@@ -100,7 +100,7 @@ public class PlacementVisitStateBool(string placementName, VisitState requiredFl
     {
         get
         {
-            if (ItemChangerProfile.ActiveProfile.TryGetPlacement(placementName, out AbstractPlacement? p) && p != null)
+            if (ItemChangerProfile.ActiveProfile.TryGetPlacement(placementName, out Placement? p) && p != null)
             {
                 return requireAny ? p.CheckVisitedAny(requiredFlags) : p.CheckVisitedAll(requiredFlags);
             }

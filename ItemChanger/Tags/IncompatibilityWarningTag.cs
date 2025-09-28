@@ -15,12 +15,12 @@ public class IncompatibilityWarningTag : Tag
         base.Load(parent);
         string? parentPlacementName = parent switch
         {
-            AbstractPlacement parentPlacement => parentPlacement.Name,
-            AbstractLocation parentLocation => parentLocation.Placement.Name,
+            Placement parentPlacement => parentPlacement.Name,
+            Location parentLocation => parentLocation.Placement.Name,
             _ => null,
         };
 
-        if (ItemChangerProfile.ActiveProfile.TryGetPlacement(IncompatiblePlacementName, out AbstractPlacement? p) 
+        if (ItemChangerProfile.ActiveProfile.TryGetPlacement(IncompatiblePlacementName, out Placement? p) 
             && p.GetPlacementAndLocationTags().OfType<IncompatibilityWarningTag>().Any(t => t.IncompatiblePlacementName == parentPlacementName))
         {
             LoggerProxy.LogWarn($"Placements {parentPlacementName} and {IncompatiblePlacementName} are marked as incompatible.");

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using ItemChanger.Items;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,12 +9,12 @@ namespace ItemChanger;
 /// <summary>
 /// The base class for all placements. Placements carry a list of items and specify how to implement those items, often using locations.
 /// </summary>
-public abstract class AbstractPlacement : TaggableObject
+public abstract class Placement : TaggableObject
 {
     /// <summary>
     /// Creates a placement with the given name.
     /// </summary>
-    public AbstractPlacement(string Name)
+    public Placement(string Name)
     {
         this.Name = Name;
     }
@@ -26,7 +27,7 @@ public abstract class AbstractPlacement : TaggableObject
     /// <summary>
     /// The items attached to the placement.
     /// </summary>
-    public List<AbstractItem> Items { get; } = new();
+    public List<Item> Items { get; } = new();
 
     /// <summary>
     /// An enumeration of visit flags accrued by the placement. Which flags may be set depends on the placement type and other factors.
@@ -41,11 +42,11 @@ public abstract class AbstractPlacement : TaggableObject
     /// </summary>
     public void GiveAll(GiveInfo info, Action? callback = null)
     {
-        IEnumerator<AbstractItem> enumerator = Items.GetEnumerator();
+        IEnumerator<Item> enumerator = Items.GetEnumerator();
         
         GiveRecursive();
 
-        void GiveRecursive(AbstractItem? _ = null)
+        void GiveRecursive(Item? _ = null)
         {
             while (enumerator.MoveNext())
             {
@@ -64,7 +65,7 @@ public abstract class AbstractPlacement : TaggableObject
         }
     }
 
-    public virtual void OnObtainedItem(AbstractItem item)
+    public virtual void OnObtainedItem(Item item)
     {
         AddVisitFlag(VisitState.ObtainedAnyItem);
     }
@@ -146,7 +147,7 @@ public abstract class AbstractPlacement : TaggableObject
     public void Load()
     {
         LoadTags();
-        foreach (AbstractItem item in Items)
+        foreach (Item item in Items)
         {
             item.Load();
         }
@@ -161,7 +162,7 @@ public abstract class AbstractPlacement : TaggableObject
     public void Unload()
     {
         UnloadTags();
-        foreach (AbstractItem item in Items)
+        foreach (Item item in Items)
         {
             item.Unload();
         }
@@ -221,7 +222,7 @@ public abstract class AbstractPlacement : TaggableObject
     /// <summary>
     /// Adds an item to the item list.
     /// </summary>
-    public virtual AbstractPlacement Add(AbstractItem item)
+    public virtual Placement Add(Item item)
     {
         Items.Add(item);
         return this;
@@ -230,7 +231,7 @@ public abstract class AbstractPlacement : TaggableObject
     /// <summary>
     /// Adds a range of items to the item list.
     /// </summary>
-    public AbstractPlacement Add(IEnumerable<AbstractItem> items)
+    public Placement Add(IEnumerable<Item> items)
     {
         foreach (var i in items)
         {
@@ -243,9 +244,9 @@ public abstract class AbstractPlacement : TaggableObject
     /// <summary>
     /// Adds a range of items to the item list.
     /// </summary>
-    public AbstractPlacement Add(params AbstractItem[] items)
+    public Placement Add(params Item[] items)
     {
-        foreach (AbstractItem item in items)
+        foreach (Item item in items)
         {
             Add(item);
         }

@@ -1,4 +1,6 @@
-﻿namespace ItemChanger;
+﻿using ItemChanger.Items;
+
+namespace ItemChanger;
 
 /// <summary>
 /// Interface used to select a cost displayer for a given shop
@@ -9,7 +11,7 @@ public interface ICostDisplayerSelectionStrategy
     /// Gets a cost displayer for a given item based on the chosen strategy.
     /// </summary>
     /// <param name="item">The item to use to choose the correct type of cost displayer</param>
-    public CostDisplayer GetCostDisplayer(AbstractItem item);
+    public CostDisplayer GetCostDisplayer(Item item);
 }
 
 /// <summary>
@@ -23,5 +25,5 @@ public class SingleCostDisplayerSelectionStrategy : ICostDisplayerSelectionStrat
     public required CostDisplayer CostDisplayer { get; set; }
 
     /// <inheritdoc/>
-    public CostDisplayer GetCostDisplayer(AbstractItem item) => CostDisplayer;
+    public CostDisplayer GetCostDisplayer(Item item) => CostDisplayer;
 }

@@ -5,7 +5,7 @@ namespace ItemChanger.Locations;
 /// <summary>
 /// Helper location representing a binary choice of locations based on a condition.
 /// </summary>
-public class DualLocation : AbstractLocation
+public class DualLocation : Location
 {
     /// <inheritdoc/>
     protected override void OnLoad()
@@ -26,14 +26,14 @@ public class DualLocation : AbstractLocation
     /// <summary>
     /// The location to use when <see cref="Test"/> is <code>false</code>
     /// </summary>
-    public required AbstractLocation FalseLocation { get; init; }
+    public required Location FalseLocation { get; init; }
     /// <summary>
     /// The location to use when <see cref="Test"/> is <code>true</code>
     /// </summary>
-    public required AbstractLocation TrueLocation { get; init; }
+    public required Location TrueLocation { get; init; }
 
     /// <inheritdoc/>
-    public override AbstractPlacement Wrap()
+    public override Placement Wrap()
     {
         return new Placements.DualPlacement(Name)
         {

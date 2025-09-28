@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ItemChanger.Items;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,7 +28,7 @@ public static class Extensions
     /// <summary>
     /// Returns true when the collection has a previously given item, or is null or empty.
     /// </summary>
-    public static bool AnyEverObtained(this IEnumerable<AbstractItem> items)
+    public static bool AnyEverObtained(this IEnumerable<Item> items)
     {
         return items == null || !items.Any() || items.Any(i => i.WasEverObtained());
     }

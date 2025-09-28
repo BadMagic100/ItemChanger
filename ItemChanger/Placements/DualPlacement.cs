@@ -8,12 +8,12 @@ namespace ItemChanger.Placements;
 /// <summary>
 /// Placement which handles switching between two possible locations according to a test.
 /// </summary>
-public class DualPlacement : AbstractPlacement, IContainerPlacement, ISingleCostPlacement, IPrimaryLocationPlacement
+public class DualPlacement : Placement, IContainerPlacement, ISingleCostPlacement, IPrimaryLocationPlacement
 {
     public DualPlacement(string Name) : base(Name) { }
 
-    public required AbstractLocation TrueLocation { get; init; }
-    public required AbstractLocation FalseLocation { get; init; }
+    public required Location TrueLocation { get; init; }
+    public required Location FalseLocation { get; init; }
 
     public required IBool Test { get; init; }
 
@@ -23,7 +23,7 @@ public class DualPlacement : AbstractPlacement, IContainerPlacement, ISingleCost
     public override string MainContainerType => ContainerType;
 
     [JsonIgnore]
-    public AbstractLocation Location => cachedValue ? TrueLocation : FalseLocation;
+    public Location Location => cachedValue ? TrueLocation : FalseLocation;
 
     public Cost? Cost { get; set; }
 
@@ -57,7 +57,7 @@ public class DualPlacement : AbstractPlacement, IContainerPlacement, ISingleCost
     }
 
     // MutablePlacement implementation of GetContainer
-    public void GetContainer(AbstractLocation location, out GameObject obj, out string containerType)
+    public void GetContainer(Location location, out GameObject obj, out string containerType)
     {
         if (this.ContainerType == Container.Unknown)
         {

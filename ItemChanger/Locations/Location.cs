@@ -8,7 +8,7 @@ namespace ItemChanger;
 /// The base class for all locations. Locations are used by placements to place items.
 /// <br/>Usually the location contains raw data and an implementation that may be customizable to an extent by the placement.
 /// </summary>
-public abstract class AbstractLocation : TaggableObject
+public abstract class Location : TaggableObject
 {
     /// <summary>
     /// The name of the location. Location names are often, but not always, distinct.
@@ -36,7 +36,7 @@ public abstract class AbstractLocation : TaggableObject
     /// The placement holding the location. This is usually set by the placement when the placement loads and before the location loads.
     /// </summary>
     [JsonIgnore]
-    public AbstractPlacement? Placement { get; set; }
+    public Placement? Placement { get; set; }
 
     /// <summary>
     /// Called on a location by its placement, usually during AbstractPlacement.Load().
@@ -71,14 +71,14 @@ public abstract class AbstractLocation : TaggableObject
     /// <summary>
     /// Creates a default placement for this location.
     /// </summary>
-    public abstract AbstractPlacement Wrap();
+    public abstract Placement Wrap();
 
     /// <summary>
     /// Performs a deep clone of the location.
     /// </summary>
-    public virtual AbstractLocation Clone()
+    public virtual Location Clone()
     {
-        AbstractLocation location = (AbstractLocation)MemberwiseClone();
+        Location location = (Location)MemberwiseClone();
         location.tags = location.tags?.Select(t => t.Clone())?.ToList();
         return location;
     }

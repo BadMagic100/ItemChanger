@@ -1,4 +1,6 @@
-﻿namespace ItemChanger.Tags;
+﻿using ItemChanger.Items;
+
+namespace ItemChanger.Tags;
 
 /// <summary>
 /// Tag which sets an IWriteableBool when its parent item is given.
@@ -12,13 +14,13 @@ public class SetIBoolOnGiveTag : Tag
     public override void Load(object parent)
     {
         base.Load(parent);
-        if (parent is AbstractItem item)
+        if (parent is Item item)
         {
             item.OnGive += OnGive;
         }
         else
         {
-            AbstractPlacement? placement = parent as AbstractPlacement ?? (parent as AbstractLocation)?.Placement;
+            Placement? placement = parent as Placement ?? (parent as Location)?.Placement;
             if (placement is not null)
             {
                 placement.OnVisitStateChanged += OnVisitStateChanged;
@@ -29,13 +31,13 @@ public class SetIBoolOnGiveTag : Tag
     public override void Unload(object parent)
     {
         base.Unload(parent);
-        if (parent is AbstractItem item)
+        if (parent is Item item)
         {
             item.OnGive -= OnGive;
         }
         else
         {
-            AbstractPlacement? placement = parent as AbstractPlacement ?? (parent as AbstractLocation)?.Placement;
+            Placement? placement = parent as Placement ?? (parent as Location)?.Placement;
             if (placement is not null)
             {
                 placement.OnVisitStateChanged -= OnVisitStateChanged;

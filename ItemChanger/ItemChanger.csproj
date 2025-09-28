@@ -1,10 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net472;net6.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;net472;net6.0;net8.0</TargetFrameworks>
     <RootNamespace>ItemChanger</RootNamespace>
     <AssemblyTitle>ItemChanger</AssemblyTitle>
     <Version>0.0.1</Version>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <LangVersion>latest</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Nullable>enable</Nullable>
@@ -22,8 +21,6 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="UnityEngine.Modules" Version="$(UnityVersion)" />
-    <PackageReference Include="MonoMod.RuntimeDetour" Version="25.2.0" />
-    <PackageReference Include="MonoMod.Utils" Version="25.0.7" />
   </ItemGroup>
 
   <ItemGroup>

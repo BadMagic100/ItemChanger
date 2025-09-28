@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using ItemChanger.Items;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,8 +19,8 @@ public static class Finder
     /// </summary>
     public static event Action<GetLocationEventArgs>? GetLocationOverride;
 
-    private static readonly Dictionary<string, AbstractItem> Items = new();
-    private static readonly Dictionary<string, AbstractLocation> Locations = new();
+    private static readonly Dictionary<string, Item> Items = new();
+    private static readonly Dictionary<string, Location> Locations = new();
 
     public static IEnumerable<string> ItemNames => Items.Keys;
     public static IEnumerable<string> LocationNames => Locations.Keys;
@@ -27,7 +28,7 @@ public static class Finder
     /// <summary>
     /// The most general method for looking up an item. Invokes an event to allow subscribers to modify the search result. Return value defaults to that of GetItemInternal.
     /// </summary>
-    public static AbstractItem? GetItem(string name)
+    public static Item? GetItem(string name)
     {
         GetItemEventArgs args = new(name);
         GetItemOverride?.Invoke(args);
@@ -44,16 +45,16 @@ public static class Finder
     /// <summary>
     /// Searches for the item by name, first in the CustomItems list, then in the list of extra sheets held by GlobalSettings, and finally in the default item sheet. Returns null if not found.
     /// </summary>
-    public static AbstractItem? GetItemInternal(string name)
+    public static Item? GetItemInternal(string name)
     {
-        Items.TryGetValue(name, out AbstractItem? item);
+        Items.TryGetValue(name, out Item? item);
         return item;
     }
 
     /// <summary>
     /// The most general method for looking up a location. Invokes an event to allow subscribers to modify the search result. Return value defaults to that of GetLocationInternal.
     /// </summary>
-    public static AbstractLocation? GetLocation(string name)
+    public static Location? GetLocation(string name)
     {
         GetLocationEventArgs args = new(name);
         GetLocationOverride?.Invoke(args);
@@ -70,13 +71,13 @@ public static class Finder
     /// <summary>
     /// Searches for the location by name, first in the CustomLocations list, then in the list of extra sheets held by GlobalSettings, and finally in the default location sheet. Returns null if not found.
     /// </summary>
-    public static AbstractLocation? GetLocationInternal(string name)
+    public static Location? GetLocationInternal(string name)
     {
-        Locations.TryGetValue(name, out AbstractLocation? location);
+        Locations.TryGetValue(name, out Location? location);
         return location;
     }
 
-    public static void DefineItem(AbstractItem item, bool overwrite = false)
+    public static void DefineItem(Item item, bool overwrite = false)
     {
         if (Items.ContainsKey(item.name) && !overwrite)
         {
@@ -88,7 +89,7 @@ public static class Finder
 
     public static bool UndefineItem(string name) => Items.Remove(name);
 
-    public static void DefineLocation(AbstractLocation loc, bool overwrite = false)
+    public static void DefineLocation(Location loc, bool overwrite = false)
     {
         if (Locations.ContainsKey(loc.Name) && !overwrite)
         {

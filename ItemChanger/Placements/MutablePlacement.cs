@@ -1,4 +1,5 @@
-﻿using ItemChanger.Locations;
+﻿using ItemChanger.Items;
+using ItemChanger.Locations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,10 @@ namespace ItemChanger.Placements;
 /// The default placement for most use cases.
 /// Chooses an item container for its location based on its item list.
 /// </summary>
-public class MutablePlacement(string Name) : AbstractPlacement(Name), IContainerPlacement, ISingleCostPlacement, IPrimaryLocationPlacement
+public class MutablePlacement(string Name) : Placement(Name), IContainerPlacement, ISingleCostPlacement, IPrimaryLocationPlacement
 {
     public required ContainerLocation Location { get; init; }
-    AbstractLocation IPrimaryLocationPlacement.Location => Location;
+    Location IPrimaryLocationPlacement.Location => Location;
 
     public override string MainContainerType => ContainerType;
     public string ContainerType { get; set; } = Container.Unknown;
@@ -33,7 +34,7 @@ public class MutablePlacement(string Name) : AbstractPlacement(Name), IContainer
         Cost?.Unload();
     }
 
-    public void GetContainer(AbstractLocation location, out GameObject obj, out string containerType)
+    public void GetContainer(Location location, out GameObject obj, out string containerType)
     {
         if (this.ContainerType == Container.Unknown)
         {
@@ -57,7 +58,7 @@ public class MutablePlacement(string Name) : AbstractPlacement(Name), IContainer
         { ContainerType = containerType });
     }
 
-    public static string ChooseContainerType(ISingleCostPlacement placement, ContainerLocation? location, IEnumerable<AbstractItem> items)
+    public static string ChooseContainerType(ISingleCostPlacement placement, ContainerLocation? location, IEnumerable<Item> items)
     {
         if (location?.ForceShiny ?? true)
         {
@@ -65,9 +66,9 @@ public class MutablePlacement(string Name) : AbstractPlacement(Name), IContainer
         }
 
         bool mustSupportCost = placement.Cost != null;
-        bool mustSupportSceneChange = location.GetTags<Tags.ChangeSceneTag>().Any() || ((AbstractPlacement)placement).GetTags<Tags.ChangeSceneTag>().Any();
+        bool mustSupportSceneChange = location.GetTags<Tags.ChangeSceneTag>().Any() || ((Placement)placement).GetTags<Tags.ChangeSceneTag>().Any();
 
-        HashSet<string> unsupported = new(((placement as AbstractPlacement)?.GetPlacementAndLocationTags() ?? Enumerable.Empty<Tag>())
+        HashSet<string> unsupported = new(((placement as Placement)?.GetPlacementAndLocationTags() ?? Enumerable.Empty<Tag>())
             .OfType<Tags.UnsupportedContainerTag>()
             .Select(t => t.ContainerType));
 
@@ -77,7 +78,7 @@ public class MutablePlacement(string Name) : AbstractPlacement(Name), IContainer
 
         if (string.IsNullOrEmpty(containerType))
         {
-            if (((placement as AbstractPlacement)?.GetPlacementAndLocationTags() ?? Enumerable.Empty<Tag>())
+            if (((placement as Placement)?.GetPlacementAndLocationTags() ?? Enumerable.Empty<Tag>())
                 .OfType<Tags.PreferredDefaultContainerTag>().FirstOrDefault() is Tags.PreferredDefaultContainerTag t
                 && Container.SupportsAll(t.ContainerType, true, mustSupportCost, mustSupportSceneChange))
             {

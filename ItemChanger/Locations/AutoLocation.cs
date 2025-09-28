@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using ItemChanger.Items;
+using Newtonsoft.Json;
 using System;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ namespace ItemChanger.Locations;
 /// <summary>
 /// Location type which cannot accept a container, and thus must implement itself. Examples include items given in dialogue, etc.
 /// </summary>
-public abstract class AutoLocation : AbstractLocation
+public abstract class AutoLocation : Location
 {
     public virtual GiveInfo GetGiveInfo()
     {
@@ -40,7 +41,7 @@ public abstract class AutoLocation : AbstractLocation
     [JsonIgnore]
     public virtual bool SupportsCost => false;
 
-    public override AbstractPlacement Wrap()
+    public override Placement Wrap()
     {
         return new Placements.AutoPlacement(Name)
         {

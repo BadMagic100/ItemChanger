@@ -1,4 +1,5 @@
 ﻿using ItemChanger.Components;
+using ItemChanger.Items;
 using ItemChanger.Tags;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,7 +20,7 @@ public class ContainerInfo
     /// <summary>
     /// Creates ContainerInfo with standard ContainerGiveInfo.
     /// </summary>
-    public ContainerInfo(string containerType, AbstractPlacement placement, FlingType flingType) 
+    public ContainerInfo(string containerType, Placement placement, FlingType flingType) 
         : this(containerType, placement, placement.Items, flingType)
     {
     }
@@ -27,7 +28,7 @@ public class ContainerInfo
     /// <summary>
     /// Creates ContainerInfo with standard ContainerGiveInfo.
     /// </summary>
-    public ContainerInfo(string containerType, AbstractPlacement placement, IEnumerable<AbstractItem> items, FlingType flingType) 
+    public ContainerInfo(string containerType, Placement placement, IEnumerable<Item> items, FlingType flingType) 
         : this()
     {
         this.ContainerType = containerType;
@@ -42,7 +43,7 @@ public class ContainerInfo
     /// <summary>
     /// Creates ContainerInfo with standard ContainerGiveInfo. If the cost parameter is not null, initializes costInfo with the cost.
     /// </summary>
-    public ContainerInfo(string containerType, AbstractPlacement placement, FlingType flingType, Cost? cost) 
+    public ContainerInfo(string containerType, Placement placement, FlingType flingType, Cost? cost) 
         : this(containerType, placement, placement.Items, flingType, cost)
     {
     }
@@ -50,7 +51,7 @@ public class ContainerInfo
     /// <summary>
     /// Creates ContainerInfo with standard ContainerGiveInfo. If the cost parameter is not null, initializes costInfo with the cost.
     /// </summary>
-    public ContainerInfo(string containerType, AbstractPlacement placement, IEnumerable<AbstractItem> items, FlingType flingType, Cost? cost) 
+    public ContainerInfo(string containerType, Placement placement, IEnumerable<Item> items, FlingType flingType, Cost? cost) 
         : this(containerType, placement, items, flingType)
     {
         if (cost is not null)
@@ -67,7 +68,7 @@ public class ContainerInfo
     /// <summary>
     /// Creates ContainerInfo with standard ContainerGiveInfo and the provided ChangeSceneInfo. If the cost parameter is not null, initializes costInfo with the cost.
     /// </summary>
-    public ContainerInfo(string containerType, AbstractPlacement placement, FlingType flingType, Cost? cost, ChangeSceneInfo? changeSceneInfo) 
+    public ContainerInfo(string containerType, Placement placement, FlingType flingType, Cost? cost, ChangeSceneInfo? changeSceneInfo) 
         : this(containerType, placement, placement.Items, flingType, cost, changeSceneInfo)
     {
     }
@@ -75,7 +76,7 @@ public class ContainerInfo
     /// <summary>
     /// Creates ContainerInfo with standard ContainerGiveInfo and the provided ChangeSceneInfo. If the cost parameter is not null, initializes costInfo with the cost.
     /// </summary>
-    public ContainerInfo(string containerType, AbstractPlacement placement, IEnumerable<AbstractItem> items, FlingType flingType, Cost? cost, ChangeSceneInfo? changeSceneInfo)
+    public ContainerInfo(string containerType, Placement placement, IEnumerable<Item> items, FlingType flingType, Cost? cost, ChangeSceneInfo? changeSceneInfo)
         : this(containerType, placement, items, flingType, cost)
     {
         this.ChangeSceneInfo = changeSceneInfo;
@@ -117,8 +118,8 @@ public class ContainerInfo
 /// </summary>
 public class ContainerGiveInfo
 {
-    public required IEnumerable<AbstractItem> Items { get; init; }
-    public required AbstractPlacement Placement { get; init; }
+    public required IEnumerable<Item> Items { get; init; }
+    public required Placement Placement { get; init; }
     public required FlingType FlingType { get; init; }
     public bool Applied { get; set; }
 }
@@ -167,7 +168,7 @@ public class ChangeSceneInfo
 public class CostInfo
 {
     public required Cost Cost { get; init; }
-    public required IEnumerable<AbstractItem> PreviewItems { get; init; }
-    public required AbstractPlacement Placement { get; init; }
+    public required IEnumerable<Item> PreviewItems { get; init; }
+    public required Placement Placement { get; init; }
     public bool Applied { get; set; }
 }
