@@ -10,8 +10,6 @@ docs
 move public APIs out of the "Internal" namespace
 make taggableobject.tags private, it's unsafe
 see if there is a good way to dejank single/multicost placements
-object parent -> taggableobject parent
-does incompat warning need to warn about mutual incompat only, or should it always warn
 yeet item tree tag?
 user-facing error display (possibly via events?) replacing Internal.MessageController.OnError
 Handle exceptions in user-facing hooks (e.g. modifyredundantitem)
