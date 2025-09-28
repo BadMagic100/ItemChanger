@@ -1,4 +1,5 @@
-﻿using ItemChanger.Locations;
+﻿using ItemChanger.Costs;
+using ItemChanger.Locations;
 using ItemChanger.Tags;
 using System.Collections.Generic;
 using System.Linq;

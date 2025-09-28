@@ -7,7 +7,6 @@
     <LangVersion>latest</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Nullable>enable</Nullable>
-    <UnityVersion>2017.1.0</UnityVersion>
     
     <RestoreAdditionalProjectSources>
         https://nuget.bepinex.dev/v3/index.json
@@ -20,7 +19,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="UnityEngine.Modules" Version="$(UnityVersion)" />
+    <PackageReference Include="UnityEngine" Version="5.6.1"/>
   </ItemGroup>
 
   <ItemGroup>

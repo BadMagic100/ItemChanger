@@ -1,4 +1,5 @@
-﻿using ItemChanger.Tags;
+﻿using ItemChanger.Costs;
+using ItemChanger.Tags;
 
 namespace ItemChanger;
 

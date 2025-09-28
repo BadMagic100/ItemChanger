@@ -1,4 +1,5 @@
 ﻿using ItemChanger.Containers;
+using ItemChanger.Costs;
 using ItemChanger.Items;
 using ItemChanger.Locations;
 using ItemChanger.Tags;
@@ -42,9 +43,9 @@ public class MutablePlacement(string Name) : Placement(Name), IContainerPlacemen
         {
             this.ContainerType = ChooseContainerType(this, location as ContainerLocation, Items);
         }
-        
+
         containerType = this.ContainerType;
-        var container = Container.GetContainer(containerType);
+        Container? container = Container.GetContainer(containerType);
         if (container == null || !container.SupportsInstantiate)
         {
             this.ContainerType = containerType = ChooseContainerType(this, location as ContainerLocation, Items);

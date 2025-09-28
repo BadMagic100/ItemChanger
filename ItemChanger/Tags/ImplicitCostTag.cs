@@ -1,4 +1,6 @@
-﻿namespace ItemChanger.Tags;
+﻿using ItemChanger.Costs;
+
+namespace ItemChanger.Tags;
 
 /// <summary>
 /// A tag which does not modify behavior, but provides information about the implicit costs of a placement or location.
