@@ -6,34 +6,25 @@ namespace ItemChanger.Tags;
 public abstract class Tag
 {
     /// <summary>
-    /// Virtual method called on tags when their parent loads. The base method checks and throws an exception if the tag is already loaded.
-    /// <br/>This should not be called directly. Instead, use "LoadOnce" to load and set the Loaded property.
+    /// Whether the tag has been loaded
     /// </summary>
-    /// <exception cref="InvalidOperationException">The tag is already loaded.</exception>
-    public virtual void Load(object parent)
-    {
-        if (Loaded)
-        {
-            throw new InvalidOperationException($"Tag {GetType().Name} is already loaded.");
-        }
-    }
-    /// <summary>
-    /// Virtual method called on tags when their parent unloads. The base method checks and throws an exception if the tag is not loaded.
-    /// <br/>This should not be called directly. Instead, use "UnloadOnce" to unload and set the Loaded property.
-    /// </summary>
-    /// <exception cref="InvalidOperationException">The tag is not loaded.</exception>
-    public virtual void Unload(object parent)
-    {
-        if (!Loaded)
-        {
-            throw new InvalidOperationException($"Tag {GetType().Name} was not loaded.");
-        }
-    }
-    public virtual Tag Clone() => (Tag)MemberwiseClone();
+    [JsonIgnore]
+    public bool Loaded { get; private set; }
 
     /// <summary>
-    /// Loads the tag and sets the Loaded property. If the tag is already loaded, does nothing.
-    /// <br/>Preferred to "Load", which does not set the Loaded property.
+    /// Method to implement optional loading logic, called once during loading.
+    /// </summary>
+    /// <param name="parent">The object this tag is applied to</param>
+    protected virtual void DoLoad(TaggableObject parent) { }
+
+    /// <summary>
+    /// Method to implement optional unloading logic, called once during unloading.
+    /// </summary>
+    /// <param name="parent">The object this tag is applied to</param>
+    protected virtual void DoUnload(TaggableObject parent) { }
+
+    /// <summary>
+    /// Loads the tag. If the tag is already loaded, does nothing.
     /// </summary>
     public void LoadOnce(TaggableObject parent)
     {
@@ -41,7 +32,7 @@ public abstract class Tag
         {
             try
             {
-                Load(parent);
+                DoLoad(parent);
             }
             catch (Exception e)
             {
@@ -52,8 +43,7 @@ public abstract class Tag
     }
 
     /// <summary>
-    /// Unloads the tag and sets the Loaded property. If the tag is not loaded, does nothing.
-    /// <br/>Preferred to "Unload", which does not set the Loaded property.
+    /// Unloads the tag. If the tag is not loaded, does nothing.
     /// </summary>
     public void UnloadOnce(TaggableObject parent)
     {
@@ -61,7 +51,7 @@ public abstract class Tag
         {
             try
             {
-                Unload(parent);
+                DoUnload(parent);
             }
             catch (Exception e)
             {
@@ -71,12 +61,11 @@ public abstract class Tag
         }
     }
 
-    [JsonIgnore]
-    public bool Loaded { get; private set; }
-
     /// <summary>
     /// Additional information for serialization and other tag handling purposes.
     /// </summary>
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
     public virtual TagHandlingFlags TagHandlingProperties { get; set; }
+
+    public virtual Tag Clone() => (Tag)MemberwiseClone();
 }

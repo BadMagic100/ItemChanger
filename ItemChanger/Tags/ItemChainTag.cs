@@ -1,4 +1,5 @@
 ﻿using ItemChanger.Items;
+using ItemChanger.Tags.Constraints;
 using System;
 
 namespace ItemChanger.Tags;
@@ -20,16 +21,14 @@ public class ItemChainTag : Tag
     /// </summary>
     public string? Successor { get; set; }
 
-    public override void Load(object parent)
+    protected override void DoLoad(TaggableObject parent)
     {
-        base.Load(parent);
         Item item = (Item)parent;
         item.ModifyItem += ModifyItem;
     }
 
-    public override void Unload(object parent)
+    protected override void DoUnload(TaggableObject parent)
     {
-        base.Unload(parent);
         Item item = (Item)parent;
         item.ModifyItem -= ModifyItem;
     }

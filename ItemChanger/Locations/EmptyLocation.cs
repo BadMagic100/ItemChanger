@@ -6,8 +6,8 @@
 public class EmptyLocation : AutoLocation
 {
     /// <inheritdoc/>
-    protected override void OnLoad() { }
+    protected override void DoLoad() { }
 
     /// <inheritdoc/>
-    protected override void OnUnload() { }
+    protected override void DoUnload() { }
 }

@@ -1,4 +1,5 @@
 ﻿using ItemChanger.Items;
+using ItemChanger.Tags.Constraints;
 using System;
 using System.Linq;
 
@@ -21,16 +22,15 @@ public class ItemTreeTag : Tag
     /// </summary>
     public bool strictEvaluation;
 
-    public override void Load(object parent)
+    protected override void DoLoad(TaggableObject parent)
     {
-        base.Load(parent);
         Item item = (Item)parent;
         item.ModifyItem += ModifyItem;
     }
 
-    public override void Unload(object parent)
+    protected override void DoUnload(TaggableObject parent)
     {
-        base.Unload(parent);
+        base.DoUnload(parent);
         Item item = (Item)parent;
         item.ModifyItem -= ModifyItem;
     }

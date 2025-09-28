@@ -13,12 +13,12 @@ public class CoordinateLocation : PlaceableLocation
     public required float Y { get; init; }
     public required float Z { get; init; }
 
-    protected override void OnLoad()
+    protected override void DoLoad()
     {
         GameEvents.AddSceneChangeEdit(UnsafeSceneName, OnActiveSceneChanged);
     }
 
-    protected override void OnUnload()
+    protected override void DoUnload()
     {
         GameEvents.RemoveSceneChangeEdit(UnsafeSceneName, OnActiveSceneChanged);
     }

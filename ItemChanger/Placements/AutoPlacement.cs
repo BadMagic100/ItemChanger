@@ -18,15 +18,15 @@ public class AutoPlacement(string Name) : Placement(Name), IPrimaryLocationPlace
     public Cost? Cost { get; set; }
     public virtual bool SupportsCost => Location.SupportsCost;
 
-    protected override void OnLoad()
+    protected override void DoLoad()
     {
         Location.Placement = this;
-        Location.Load();
+        Location.LoadOnce();
     }
 
-    protected override void OnUnload()
+    protected override void DoUnload()
     {
-        Location.Unload();
+        Location.UnloadOnce();
     }
 
     public override IEnumerable<Tag> GetPlacementAndLocationTags()

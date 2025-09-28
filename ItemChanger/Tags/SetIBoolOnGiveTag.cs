@@ -11,9 +11,8 @@ public class SetIBoolOnGiveTag : Tag
     public required IWritableBool Bool { get; init; }
     public required bool Value { get; init; }
 
-    public override void Load(object parent)
+    protected override void DoLoad(TaggableObject parent)
     {
-        base.Load(parent);
         if (parent is Item item)
         {
             item.OnGive += OnGive;
@@ -28,9 +27,8 @@ public class SetIBoolOnGiveTag : Tag
         }
     }
 
-    public override void Unload(object parent)
+    protected override void DoUnload(TaggableObject parent)
     {
-        base.Unload(parent);
         if (parent is Item item)
         {
             item.OnGive -= OnGive;

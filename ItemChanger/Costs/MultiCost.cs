@@ -114,20 +114,20 @@ public sealed record MultiCost : Cost, IReadOnlyList<Cost>
     }
 
     /// <inheritdoc/>
-    public override void Load()
+    protected override void DoLoad()
     {
         foreach (Cost c in Costs)
         {
-            c.Load();
+            c.LoadOnce();
         }
     }
 
     /// <inheritdoc/>
-    public override void Unload()
+    protected override void DoUnload()
     {
         foreach (Cost c in Costs)
         {
-            c.Unload();
+            c.UnloadOnce();
         }
     }
 

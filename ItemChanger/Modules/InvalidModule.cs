@@ -19,8 +19,10 @@ public sealed class InvalidModule : Module
     /// </summary>
     public Exception DeserializationError { get; init; }
 
-    public override void Initialize() { }
-    public override void Unload() { }
+    /// <inheritdoc/>
+    protected override void DoLoad() { }
+    /// <inheritdoc/>
+    protected override void DoUnload() { }
 
     /// <summary>
     /// Converter which erases the InvalidModule during serialization and writes the JSON which it wraps.

@@ -8,13 +8,13 @@ namespace ItemChanger.Locations;
 public class DualLocation : Location
 {
     /// <inheritdoc/>
-    protected override void OnLoad()
+    protected override void DoLoad()
     {
         throw new NotImplementedException();
     }
 
     /// <inheritdoc/>
-    protected override void OnUnload()
+    protected override void DoUnload()
     {
         throw new NotImplementedException();
     }

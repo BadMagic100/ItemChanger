@@ -99,7 +99,7 @@ public class ItemChangerProfile
         state = LoadState.PlacementsLoadStarted;
         foreach (Placement placement in placements.Values)
         {
-            placement.Load();
+            placement.LoadOnce();
         }
         state = LoadState.PlacementsLoadCompleted;
 
@@ -153,7 +153,7 @@ public class ItemChangerProfile
                     {
                         foreach (Item item in placement.Items)
                         {
-                            item.Load();
+                            item.LoadOnce();
                         }
                     }
                     break;
@@ -179,7 +179,7 @@ public class ItemChangerProfile
         // if the final placement ending up in the profile is the newly added one, it may need to be loaded to catch up.
         if (state >= LoadState.PlacementsLoadCompleted && placements[placement.Name] == placement)
         {
-            placement.Load();
+            placement.LoadOnce();
         }
     }
 

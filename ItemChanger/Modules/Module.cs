@@ -8,13 +8,24 @@ namespace ItemChanger.Modules;
 /// </summary>
 public abstract class Module
 {
+    /// <summary>
+    /// Whether the module is loaded.
+    /// </summary>
+    [JsonIgnore]
+    public bool Loaded { get; private set; }
+
     public string Name => GetType().Name;
-    public abstract void Initialize();
-    public abstract void Unload();
+    /// <summary>
+    /// Method allowing derived classes to perform loading logic. Called once during loading.
+    /// </summary>
+    protected abstract void DoLoad();
+    /// <summary>
+    /// Method allowing derived classes to perform unloading logic. Called once during unloading.
+    /// </summary>
+    protected abstract void DoUnload();
 
     /// <summary>
-    /// Initializes the module and sets the Loaded property. If the module is already loaded, does nothing.
-    /// <br/>Preferred to "Initialize", which does not set the Loaded property.
+    /// Loads the module. If the module is already loaded, does nothing.
     /// </summary>
     public void LoadOnce()
     {
@@ -22,7 +33,7 @@ public abstract class Module
         {
             try
             {
-                Initialize();
+                DoLoad();
             }
             catch (Exception e)
             {
@@ -33,8 +44,7 @@ public abstract class Module
     }
 
     /// <summary>
-    /// Unloads the module and sets the Loaded property. If the module is not loaded, does nothing.
-    /// <br/>Preferred to "Unload", which does not set the Loaded property.
+    /// Unloads the module. If the module is not loaded, does nothing.
     /// </summary>
     public void UnloadOnce()
     {
@@ -42,7 +52,7 @@ public abstract class Module
         {
             try
             {
-                Unload();
+                DoUnload();
             }
             catch (Exception e)
             {
@@ -57,9 +67,6 @@ public abstract class Module
     /// </summary>
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
     public virtual ModuleHandlingFlags ModuleHandlingProperties { get; set; }
-
-    [JsonIgnore]
-    public bool Loaded { get; private set; }
 }
 
 /// <summary>

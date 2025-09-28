@@ -1,9 +1,6 @@
 Things to change
 
 Make ModuleCollection a real collection and hide the Modules field
-Make Load and Unload protected in favor of LoadOnce and UnloadOnce
-LoadOnce for placements, locations(?), items, and tags.
-Hide Loaded from serialization
 Need a way for default modules not dependent on being defined in the assembly with IC
 Game-agnostic container implementation
     Get rid of static constructor please
@@ -11,6 +8,7 @@ use :new() in type constraints throughout to enforce/encourage json-friendly con
 Audit fields -> properties and usage of required throughout
 docs
 move public APIs out of the "Internal" namespace
+make taggableobject.tags private, it's unsafe
 see if there is a good way to dejank single/multicost placements
 object parent -> taggableobject parent
 does incompat warning need to warn about mutual incompat only, or should it always warn

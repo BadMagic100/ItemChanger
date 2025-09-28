@@ -30,21 +30,21 @@ public class DualPlacement : Placement, IContainerPlacement, ISingleCostPlacemen
 
     public Cost? Cost { get; set; }
 
-    protected override void OnLoad()
+    protected override void DoLoad()
     {
         cachedValue = Test.Value;
         TrueLocation.Placement = this;
         FalseLocation.Placement = this;
         SetContainerType();
-        Location.Load();
-        Cost?.Load();
+        Location.LoadOnce();
+        Cost?.LoadOnce();
         GameEvents.OnBeginSceneTransition += OnBeginSceneTransition;
     }
 
-    protected override void OnUnload()
+    protected override void DoUnload()
     {
-        Location.Unload();
-        Cost?.Unload();
+        Location.UnloadOnce();
+        Cost?.UnloadOnce();
         GameEvents.OnBeginSceneTransition -= OnBeginSceneTransition;
     }
 
@@ -53,9 +53,9 @@ public class DualPlacement : Placement, IContainerPlacement, ISingleCostPlacemen
         bool value = Test.Value;
         if (cachedValue != value)
         {
-            Location.Unload();
+            Location.UnloadOnce();
             cachedValue = value;
-            Location.Load();
+            Location.LoadOnce();
         }
     }
 

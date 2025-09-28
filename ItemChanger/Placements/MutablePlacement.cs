@@ -24,17 +24,17 @@ public class MutablePlacement(string Name) : Placement(Name), IContainerPlacemen
 
     public Cost? Cost { get; set; }
 
-    protected override void OnLoad()
+    protected override void DoLoad()
     {
         Location.Placement = this;
-        Location.Load();
-        Cost?.Load();
+        Location.LoadOnce();
+        Cost?.LoadOnce();
     }
 
-    protected override void OnUnload()
+    protected override void DoUnload()
     {
-        Location.Unload();
-        Cost?.Unload();
+        Location.UnloadOnce();
+        Cost?.UnloadOnce();
     }
 
     public void GetContainer(Location location, out GameObject obj, out string containerType)

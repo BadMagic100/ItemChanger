@@ -1,4 +1,5 @@
 ﻿using ItemChanger.Costs;
+using ItemChanger.Tags.Constraints;
 
 namespace ItemChanger.Tags;
 
@@ -15,15 +16,13 @@ public class ImplicitCostTag : Tag
     /// </summary>
     public bool Inherent { get; init; }
 
-    public override void Load(object parent)
+    protected override void DoLoad(TaggableObject parent)
     {
-        base.Load(parent);
-        Cost.Load();
+        Cost.LoadOnce();
     }
 
-    public override void Unload(object parent)
+    protected override void DoUnload(TaggableObject parent)
     {
-        base.Unload(parent);
-        Cost.Unload();
+        Cost.UnloadOnce();
     }
 }

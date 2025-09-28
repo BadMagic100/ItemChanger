@@ -8,45 +8,16 @@ using UnityEngine;
 namespace ItemChanger.Items;
 
 /// <summary>
-/// The parameters included when an item is given. May be null.
-/// </summary>
-public class GiveInfo
-{
-    /// <summary>
-    /// The best description of the most specific container for this item.
-    /// </summary>
-    public string? Container { get; set; }
-    /// <summary>
-    /// How geo and similar objects are allowed to be flung.
-    /// </summary>
-    public FlingType FlingType { get; set; }
-    /// <summary>
-    /// The transform to use for flinging and similar actions. May be null.
-    /// </summary>
-    public Transform? Transform { get; set; }
-    /// <summary>
-    /// A flag enumeration of the allowed message types for the UIDef after the item is given.
-    /// </summary>
-    public MessageType MessageType { get; set; }
-    /// <summary>
-    /// A callback set by the location or placement to be executed by the UIDef when its message is complete.
-    /// </summary>
-    public Action<Item>? Callback { get; set; }
-
-    /// <summary>
-    /// Returns a shallow clone of the GiveInfo.
-    /// </summary>
-    public GiveInfo Clone()
-    {
-        return (GiveInfo)MemberwiseClone();
-    }
-}
-
-/// <summary>
 /// The base class for all items.
 /// </summary>
 public abstract class Item : TaggableObject
 {
+    /// <summary>
+    /// Whether the item is loaded
+    /// </summary>
+    [JsonIgnore]
+    public bool Loaded { get; set; }
+
     [JsonProperty]
     private ObtainState obtainState;
 
@@ -61,33 +32,55 @@ public abstract class Item : TaggableObject
     public UIDef? UIDef;
 
     /// <summary>
-    /// Method allowing derived item classes to initialize and place hooks.
+    /// Method allowing derived item classes to initialize and place hooks. Called once during loading.
     /// </summary>
-    protected virtual void OnLoad() { }
+    protected virtual void DoLoad() { }
 
     /// <summary>
-    /// Called on each item tied to a placement when the save is created or resumed.
+    /// Loads the item. If the item is already loaded, does nothing. Typically called by the item's placement during loading.
     /// <br/>Execution order is (modules load -> placement tags load -> items load -> placements load)
     /// </summary>
-    public void Load()
+    public void LoadOnce()
     {
-        LoadTags();
-        OnLoad();
+        if (!Loaded)
+        {
+            try
+            {
+                LoadTags();
+                DoLoad();
+            }
+            catch (Exception e)
+            {
+                LoggerProxy.LogError($"Error loading item {name}:\n{e}");
+            }
+            Loaded = true;
+        }
     }
 
     /// <summary>
-    /// Method allowing derived item classes to dispose hooks.
+    /// Method allowing derived item classes to dispose hooks. Called once during unloading.
     /// </summary>
-    protected virtual void OnUnload() { }
+    protected virtual void DoUnload() { }
 
     /// <summary>
-    /// Called on each item tied to a placement upon returning to the main menu.
+    /// Unloads the item. If the item is not loaded, does nothing. Typically called by the item's placement during unloading.
     /// <br/>Execution order is (modules unload -> placement tags unload -> items unload -> placements unload)
     /// </summary>
-    public void Unload()
+    public void UnloadOnce()
     {
-        UnloadTags();
-        OnUnload();
+        if (Loaded)
+        {
+            try
+            {
+                UnloadTags();
+                DoUnload();
+            }
+            catch (Exception e)
+            {
+                LoggerProxy.LogError($"Error unloading item {name}:\n{e}");
+            }
+            Loaded = false;
+        }
     }
 
     /// <summary>

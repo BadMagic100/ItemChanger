@@ -1,10 +1,66 @@
-﻿namespace ItemChanger.Costs;
+﻿
+using Newtonsoft.Json;
+using System;
+
+namespace ItemChanger.Costs;
 
 /// <summary>
 /// Data type used generally for cost handling, including in shops and y/n dialogue prompts.
 /// </summary>
 public abstract record Cost
 {
+    /// <summary>
+    /// Whether the cost has been loaded
+    /// </summary>
+    [JsonIgnore]
+    public bool Loaded { get; private set; }
+    /// <summary>
+    /// Method to implement optional loading logic, called once during loading.
+    /// </summary>
+    protected virtual void DoLoad() { }
+    /// <summary>
+    /// Method to implement optional unloading logic, called once during unloading.
+    /// </summary>
+    protected virtual void DoUnload() { }
+
+    /// <summary>
+    /// Loads the cost. If the cost is already loaded, does nothing.
+    /// </summary>
+    public void LoadOnce()
+    {
+        if (!Loaded)
+        {
+            try
+            {
+                DoLoad();
+            }
+            catch (Exception e)
+            {
+                LoggerProxy.LogError($"Error loading cost {this}:\n{e}");
+            }
+            Loaded = true;
+        }
+    }
+
+    /// <summary>
+    /// Unloads the cost. If the cost is already loaded, does nothing.
+    /// </summary>
+    public void UnloadOnce()
+    {
+        if (Loaded)
+        {
+            try
+            {
+                DoUnload();
+            }
+            catch (Exception e)
+            {
+                LoggerProxy.LogError($"Error unloading cost {this}:\n{e}");
+            }
+            Loaded = false;
+        }
+    }
+
     /// <summary>
     /// Returns whether the cost can currently be paid.
     /// </summary>
@@ -75,14 +131,6 @@ public abstract record Cost
     /// Does paying this cost have effects (particularly that could prevent paying other costs of the same type)?
     /// </summary>
     public abstract bool HasPayEffects();
-    /// <summary>
-    /// Method which should be called by the Cost's owner during initial loading. Used by certain costs which require global or shared tracking.
-    /// </summary>
-    public virtual void Load() { }
-    /// <summary>
-    /// Method which should be called by the Cost's owner during unloading. Used by certain costs which require global or shared tracking.
-    /// </summary>
-    public virtual void Unload() { }
 
     /// <summary>
     /// Combines two costs into a MultiCost. If either argument is null, returns the other argument.  If one or both costs is a MultiCost, flattens the result.

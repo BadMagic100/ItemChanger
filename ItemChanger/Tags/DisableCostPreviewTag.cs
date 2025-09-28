@@ -1,4 +1,6 @@
-﻿namespace ItemChanger.Tags;
+﻿using ItemChanger.Tags.Constraints;
+
+namespace ItemChanger.Tags;
 
 /// <summary>
 /// Tag which can be placed on placements or items to redact cost details from previews.

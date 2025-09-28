@@ -14,6 +14,12 @@ namespace ItemChanger;
 public abstract class Placement : TaggableObject
 {
     /// <summary>
+    /// Whether the placement is loaded.
+    /// </summary>
+    [JsonIgnore]
+    public bool Loaded { get; private set; }
+
+    /// <summary>
     /// Creates a placement with the given name.
     /// </summary>
     public Placement(string Name)
@@ -45,7 +51,7 @@ public abstract class Placement : TaggableObject
     public void GiveAll(GiveInfo info, Action? callback = null)
     {
         IEnumerator<Item> enumerator = Items.GetEnumerator();
-        
+
         GiveRecursive();
 
         void GiveRecursive(Item? _ = null)
@@ -57,7 +63,7 @@ public abstract class Placement : TaggableObject
                     continue;
                 }
 
-                var next = info.Clone();
+                GiveInfo next = info.Clone();
                 next.Callback = GiveRecursive;
                 enumerator.Current.Give(this, next);
                 return;
@@ -143,45 +149,67 @@ public abstract class Placement : TaggableObject
     #region Hooks
 
     /// <summary>
-    /// Called on each saved placement when the save is created or resumed.
+    /// Loads the placement. If the placement is already loaded, does nothing. Typically called when starting or resuming a profile.
     /// <br/>Execution order is (modules load -> placement tags load -> items load -> placements load)
     /// </summary>
-    public void Load()
+    public void LoadOnce()
     {
-        LoadTags();
-        foreach (Item item in Items)
+        if (!Loaded)
         {
-            item.Load();
-        }
+            try
+            {
+                LoadTags();
+                foreach (Item item in Items)
+                {
+                    item.LoadOnce();
+                }
 
-        OnLoad();
+                DoLoad();
+            }
+            catch (Exception e)
+            {
+                LoggerProxy.LogError($"Error loading placement {Name}:\n{e}");
+            }
+            Loaded = true;
+        }
     }
 
     /// <summary>
-    /// Called on each saved placement upon returning to main menu.
+    /// Unloads the placement. If the placement is not loaded, does nothing. Typically called when unloading a profile.
     /// <br/>Execution order is (modules unload -> placement tags unload -> items unload -> placements unload)
     /// </summary>
     public void Unload()
     {
-        UnloadTags();
-        foreach (Item item in Items)
+        if (Loaded)
         {
-            item.Unload();
-        }
+            try
+            {
+                UnloadTags();
+                foreach (Item item in Items)
+                {
+                    item.UnloadOnce();
+                }
 
-        OnUnload();
+                DoUnload();
+            }
+            catch (Exception e)
+            {
+                LoggerProxy.LogError($"Error unloading placement {Name}:\n{e}");
+            }
+            Loaded = false;
+        }
     }
 
 
     /// <summary>
-    /// Called by Load(). Dispose hooks in OnUnload.
+    /// Method allowing derived placement classes to initialize and place hooks. Called once during loading.
     /// </summary>
-    protected abstract void OnLoad();
+    protected abstract void DoLoad();
 
     /// <summary>
-    /// Called by Unload().
+    /// Method allowing derived placement classes to dispose hooks. Called once during unloading.
     /// </summary>
-    protected abstract void OnUnload();
+    protected abstract void DoUnload();
 
     /// <summary>
     /// Event invoked by each placement whenever new flags are added to its Visited. Skipped if added flags are a subset of Visited.
@@ -235,7 +263,7 @@ public abstract class Placement : TaggableObject
     /// </summary>
     public Placement Add(IEnumerable<Item> items)
     {
-        foreach (var i in items)
+        foreach (Item i in items)
         {
             Add(i);
         }

@@ -11,6 +11,12 @@ namespace ItemChanger;
 public abstract class Location : TaggableObject
 {
     /// <summary>
+    /// Whether the location is loaded.
+    /// </summary>
+    [JsonIgnore]
+    public bool Loaded { get; private set; }
+
+    /// <summary>
     /// The name of the location. Location names are often, but not always, distinct.
     /// </summary>
     public required string Name { get; init; }
@@ -39,34 +45,56 @@ public abstract class Location : TaggableObject
     public Placement? Placement { get; set; }
 
     /// <summary>
-    /// Called on a location by its placement, usually during AbstractPlacement.Load().
+    /// Loads the location. If the location is already loaded, does nothing. Typically called by the location's placement during loading.
     /// <br/>Execution order is (modules load -> placement tags load -> items load -> placements load)
     /// </summary>
-    public void Load()
+    public void LoadOnce()
     {
-        LoadTags();
-        OnLoad();
+        if (!Loaded)
+        {
+            try
+            {
+                LoadTags();
+                DoLoad();
+            }
+            catch (Exception e)
+            {
+                LoggerProxy.LogError($"Error loading location {Name}:\n{e}");
+            }
+            Loaded = true;
+        }
     }
 
     /// <summary>
-    /// Called on a location by its placement, usually during AbstractPlacement.Unload().
+    /// Unloads the location. If the location is not loaded, does nothing. Typically called by the location's placement during unloading.
     /// <br/>Execution order is (modules unload -> placement tags unload -> items unload -> placements unload)
     /// </summary>
-    public void Unload()
+    public void UnloadOnce()
     {
-        UnloadTags();
-        OnUnload();
+        if (Loaded)
+        {
+            try
+            {
+                UnloadTags();
+                DoUnload();
+            }
+            catch (Exception e)
+            {
+                LoggerProxy.LogError($"Error unloading location {Name}:\n{e}");
+            }
+            Loaded = false;
+        }
     }
 
     /// <summary>
-    /// Called during Load(). Allows the location to initialize and set up any hooks.
+    /// Allows the location to initialize and set up any hooks. Called once during loading.
     /// </summary>
-    protected abstract void OnLoad();
+    protected abstract void DoLoad();
 
     /// <summary>
-    /// Called during Unload(). Allows the location to dispose any hooks.
+    /// Allows the location to dispose any hooks. Called once during unloading.
     /// </summary>
-    protected abstract void OnUnload();
+    protected abstract void DoUnload();
 
     /// <summary>
     /// Creates a default placement for this location.

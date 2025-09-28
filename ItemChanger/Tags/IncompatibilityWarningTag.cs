@@ -10,9 +10,8 @@ public class IncompatibilityWarningTag : Tag
 {
     public required string IncompatiblePlacementName { get; init; }
 
-    public override void Load(object parent)
+    protected override void DoLoad(TaggableObject parent)
     {
-        base.Load(parent);
         string? parentPlacementName = parent switch
         {
             Placement parentPlacement => parentPlacement.Name,
@@ -20,7 +19,7 @@ public class IncompatibilityWarningTag : Tag
             _ => null,
         };
 
-        if (ItemChangerProfile.ActiveProfile.TryGetPlacement(IncompatiblePlacementName, out Placement? p) 
+        if (ItemChangerProfile.ActiveProfile.TryGetPlacement(IncompatiblePlacementName, out Placement? p)
             && p.GetPlacementAndLocationTags().OfType<IncompatibilityWarningTag>().Any(t => t.IncompatiblePlacementName == parentPlacementName))
         {
             LoggerProxy.LogWarn($"Placements {parentPlacementName} and {IncompatiblePlacementName} are marked as incompatible.");

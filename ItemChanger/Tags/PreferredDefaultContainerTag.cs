@@ -1,4 +1,6 @@
-﻿namespace ItemChanger.Tags;
+﻿using ItemChanger.Tags.Constraints;
+
+namespace ItemChanger.Tags;
 
 /// <summary>
 /// Tag for location or placement which indicates a preferred container type to use if no items request a specific container.

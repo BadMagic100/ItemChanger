@@ -10,12 +10,12 @@ public class StartLocation : AutoLocation
 {
     public MessageType MessageType;
 
-    protected override void OnLoad()
+    protected override void DoLoad()
     {
         LifecycleEvents.OnSafeToGiveItems += OnSafeToGiveItems;
     }
 
-    protected override void OnUnload()
+    protected override void DoUnload()
     {
         LifecycleEvents.OnSafeToGiveItems -= OnSafeToGiveItems;
     }

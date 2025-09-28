@@ -1,7 +1,7 @@
 ﻿using ItemChanger.Items;
 using System;
 
-namespace ItemChanger.Tags;
+namespace ItemChanger.Tags.Constraints;
 
 /// <summary>
 /// An attribute which appears on a subclass of <see cref="Tag"/> to indicate that the tag can be placed on a certain type of <see cref="TaggableObject"/>.

@@ -1,4 +1,6 @@
-﻿namespace ItemChanger.Tags;
+﻿using ItemChanger.Tags.Constraints;
+
+namespace ItemChanger.Tags;
 
 /// <summary>
 /// Tag which indicates an item has a fixed persistence.

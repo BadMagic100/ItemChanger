@@ -37,6 +37,8 @@ public class InteropModule : Module, IInteropModule
         return true;
     }
 
-    public override void Initialize() { }
-    public override void Unload() { }
+    /// <inheritdoc/>
+    protected override void DoLoad() { }
+    /// <inheritdoc/>
+    protected override void DoUnload() { }
 }
