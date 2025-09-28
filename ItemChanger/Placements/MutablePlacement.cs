@@ -1,4 +1,5 @@
-﻿using ItemChanger.Items;
+﻿using ItemChanger.Containers;
+using ItemChanger.Items;
 using ItemChanger.Locations;
 using System;
 using System.Collections.Generic;

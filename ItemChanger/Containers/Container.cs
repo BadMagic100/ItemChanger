@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ItemChanger;
+namespace ItemChanger.Containers;
 
 /// <summary>
 /// Base class for types which implement creating and fsm-editing item containers.
@@ -62,9 +62,9 @@ public abstract class Container
     /// <summary>
     /// Gets the defined container for placements with multiple items when no preference is specified.
     /// </summary>
-    public static Container GetDefaultMultiItemContainer() 
-    { 
-        throw new NotImplementedException(); 
+    public static Container GetDefaultMultiItemContainer()
+    {
+        throw new NotImplementedException();
     }
 
 
