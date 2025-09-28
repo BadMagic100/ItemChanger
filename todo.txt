@@ -1,6 +1,5 @@
 Things to change
 
-Make ModuleCollection a real collection and hide the Modules field
 Need a way for default modules not dependent on being defined in the assembly with IC
 Game-agnostic container implementation
     Get rid of static constructor please

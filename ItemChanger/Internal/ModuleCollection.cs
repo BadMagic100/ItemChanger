@@ -2,19 +2,25 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Module = ItemChanger.Modules.Module;
 
 namespace ItemChanger.Internal;
 
-public class ModuleCollection
+public class ModuleCollection : IEnumerable<Module>
 {
 
     [JsonConverter(typeof(ModuleListDeserializer))]
-    public List<Module> Modules = new();
+    [JsonProperty]
+    private List<Module> modules = new();
 
     private readonly ItemChangerProfile backingProfile;
+
+    /// <inheritdoc/>
+    public int Count => modules.Count;
+
     internal ModuleCollection(ItemChangerProfile backingProfile)
     {
         this.backingProfile = backingProfile;
@@ -22,17 +28,17 @@ public class ModuleCollection
 
     public void Initialize()
     {
-        for (int i = 0; i < Modules.Count; i++)
+        for (int i = 0; i < modules.Count; i++)
         {
-            Modules[i].LoadOnce();
+            modules[i].LoadOnce();
         }
     }
 
     public void Unload()
     {
-        for (int i = 0; i < Modules.Count; i++)
+        for (int i = 0; i < modules.Count; i++)
         {
-            Modules[i].UnloadOnce();
+            modules[i].UnloadOnce();
         }
     }
 
@@ -43,7 +49,7 @@ public class ModuleCollection
             throw new ArgumentNullException(nameof(m));
         }
 
-        Modules.Add(m);
+        modules.Add(m);
         if (backingProfile.state >= ItemChangerProfile.LoadState.ModuleLoadCompleted)
         {
             m.LoadOnce();
@@ -77,12 +83,12 @@ public class ModuleCollection
     /// </summary>
     public T? Get<T>()
     {
-        return Modules.OfType<T>().FirstOrDefault();
+        return modules.OfType<T>().FirstOrDefault();
     }
 
     public T GetOrAdd<T>() where T : Module, new()
     {
-        T? t = Modules.OfType<T>().FirstOrDefault();
+        T? t = modules.OfType<T>().FirstOrDefault();
         if (t == null)
         {
             t = Add<T>();
@@ -93,7 +99,7 @@ public class ModuleCollection
 
     public Module GetOrAdd(Type T)
     {
-        Module? m = Modules.FirstOrDefault(m => T.IsInstanceOfType(m));
+        Module? m = modules.FirstOrDefault(m => T.IsInstanceOfType(m));
         if (m == null)
         {
             m = Add(T);
@@ -104,7 +110,7 @@ public class ModuleCollection
 
     public void Remove(Module m)
     {
-        if (Modules.Remove(m) && backingProfile.state >= ItemChangerProfile.LoadState.ModuleLoadCompleted)
+        if (modules.Remove(m) && backingProfile.state >= ItemChangerProfile.LoadState.ModuleLoadCompleted)
         {
             m.UnloadOnce();
         }
@@ -112,7 +118,7 @@ public class ModuleCollection
 
     public void Remove<T>()
     {
-        if (Modules.OfType<T>().FirstOrDefault() is Module m)
+        if (modules.OfType<T>().FirstOrDefault() is Module m)
         {
             Remove(m);
         }
@@ -122,21 +128,26 @@ public class ModuleCollection
     {
         if (backingProfile.state >= ItemChangerProfile.LoadState.ModuleLoadCompleted)
         {
-            foreach (Module m in Modules.Where(m => m.GetType() == T))
+            foreach (Module m in modules.Where(m => m.GetType() == T))
             {
                 m.UnloadOnce();
             }
         }
-        Modules.RemoveAll(m => m.GetType() == T);
+        modules.RemoveAll(m => m.GetType() == T);
     }
 
     public void Remove(string name)
     {
-        if (Modules.Where(m => m.Name == name).FirstOrDefault() is Module m)
+        if (modules.Where(m => m.Name == name).FirstOrDefault() is Module m)
         {
             Remove(m);
         }
     }
+
+    /// <inheritdoc/>
+    public IEnumerator<Module> GetEnumerator() => modules.GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     internal class ModuleListSerializer : JsonConverter<List<Module>>
     {
