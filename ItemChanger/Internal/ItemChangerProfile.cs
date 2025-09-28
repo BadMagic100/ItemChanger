@@ -69,9 +69,9 @@ public class ItemChangerProfile
             throw new ArgumentException($"Cannot reset non-persistent items (persistence {nameof(Persistence.NonPersistent)})", nameof(persistence));
         }
 
-        foreach (var item in GetItems())
+        foreach (Item item in GetItems())
         {
-            if (item.GetTag<IPersistenceTag>(out var tag) && tag.Persistence == persistence)
+            if (item.GetTag<IPersistenceTag>(out IPersistenceTag? tag) && tag.Persistence == persistence)
             {
                 item.RefreshObtained();
             }

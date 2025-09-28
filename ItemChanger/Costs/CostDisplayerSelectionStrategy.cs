@@ -1,6 +1,6 @@
 ﻿using ItemChanger.Items;
 
-namespace ItemChanger;
+namespace ItemChanger.Costs;
 
 /// <summary>
 /// Interface used to select a cost displayer for a given shop

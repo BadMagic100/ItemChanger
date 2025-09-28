@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace ItemChanger;
+namespace ItemChanger.Costs;
 
 /// <summary>
 /// A utility object which dictates how costs (and especially multicosts) are to be displayed
@@ -98,6 +98,5 @@ public abstract class CostDisplayer
     /// (i.e. direct type casting without checking first is acceptable).
     /// </remarks>
     /// <param name="cost"></param>
-    /// <returns></returns>
     protected abstract int GetSingleCostDisplayAmount(Cost cost);
 }
