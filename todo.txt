@@ -1,5 +1,8 @@
 Things to change
 
+concept of a plan: force game implementations to provide a "host" to create profiles which
+handles default containers, game lifecycle event setup, etc
+
 Need a way for default modules not dependent on being defined in the assembly with IC
 Game-agnostic container implementation
     Get rid of static constructor please
@@ -11,6 +14,7 @@ make taggableobject.tags private, it's unsafe
 see if there is a good way to dejank single/multicost placements
 yeet item tree tag?
 user-facing error display (possibly via events?) replacing Internal.MessageController.OnError
+  * actually this exists (LifecycleEvents.NotifyError) but maybe it belongs in the per game host
 revamp visitstate
 separate enums to different files
 allow callers to specify Finder sheets
