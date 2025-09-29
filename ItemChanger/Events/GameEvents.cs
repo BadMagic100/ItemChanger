@@ -2,22 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
-namespace ItemChanger;
+namespace ItemChanger.Events;
 
 public static class GameEvents
 {
     /// <summary>
     /// Called after persistent items reset.
     /// </summary>
-    public static event Action OnPersistentUpdate { add => _OnPersistentUpdateSubscribers.Add(value); remove => _OnPersistentUpdateSubscribers.Remove(value); }
-    private static readonly List<Action> _OnPersistentUpdateSubscribers = [];
+    public static event Action OnPersistentUpdate { add => onPersistentUpdateSubscribers.Add(value); remove => onPersistentUpdateSubscribers.Remove(value); }
+    private static readonly List<Action> onPersistentUpdateSubscribers = [];
 
     /// <summary>
     /// Called after semipersistent data resets. Semi-persistent resets occur less frequently than persistent resets, and
     /// are only triggered by certain events, such as resting.
     /// </summary>
-    public static event Action OnSemiPersistentUpdate { add => _OnSemiPersistentUpdateSubscribers.Add(value); remove => _OnSemiPersistentUpdateSubscribers.Remove(value); }
-    private static readonly List<Action> _OnSemiPersistentUpdateSubscribers = [];
+    public static event Action OnSemiPersistentUpdate { add => onSemiPersistentUpdateSubscribers.Add(value); remove => onSemiPersistentUpdateSubscribers.Remove(value); }
+    private static readonly List<Action> onSemiPersistentUpdateSubscribers = [];
 
     /// <summary>
     /// Called immediately prior to beginning a scene transition. If transition overrides take place through ItemChanger, 
@@ -26,14 +26,14 @@ public static class GameEvents
     /// <remarks>
     /// This event only applies to games which have discrete scenes.
     /// </remarks>
-    public static event Action<Transition> OnBeginSceneTransition { add => _OnBeginSceneTransitionSubscribers.Add(value); remove => _OnBeginSceneTransitionSubscribers.Remove(value); }
-    private static readonly List<Action<Transition>> _OnBeginSceneTransitionSubscribers = [];
+    public static event Action<Transition> OnBeginSceneTransition { add => onBeginSceneTransitionSubscribers.Add(value); remove => onBeginSceneTransitionSubscribers.Remove(value); }
+    private static readonly List<Action<Transition>> onBeginSceneTransitionSubscribers = [];
 
     /// <summary>
     /// Called whenever a new scene is loaded, including both additive scene loads and full scene transitions.
     /// </summary>
-    public static event Action<Scene> OnNextSceneLoaded { add => _OnNextSceneLoadedSubscribers.Add(value); remove => _OnNextSceneLoadedSubscribers.Remove(value); }
-    private static readonly List<Action<Scene>> _OnNextSceneLoadedSubscribers = [];
+    public static event Action<Scene> OnNextSceneLoaded { add => onNextSceneLoadedSubscribers.Add(value); remove => onNextSceneLoadedSubscribers.Remove(value); }
+    private static readonly List<Action<Scene>> onNextSceneLoadedSubscribers = [];
 
     /// <summary>
     /// Registers a scene edit to be invoked whenever sceneName is loaded.
@@ -81,30 +81,10 @@ public static class GameEvents
 
     private static void InvokeSceneLoadedEvent(Scene to, LoadSceneMode _)
     {
-        foreach (Action<Scene> a in _OnNextSceneLoadedSubscribers)
-        {
-            try
-            {
-                a?.Invoke(to);
-            }
-            catch (Exception e)
-            {
-                LoggerProxy.LogError($"Error thrown by a global subscriber during {nameof(InvokeSceneLoadedEvent)} for scene {to.name}:\n{e}");
-            }
-        }
+        InvokeHelper.InvokeList(to, onNextSceneLoadedSubscribers);
         if (sceneEdits.TryGetValue(to.name, out List<Action<Scene>>? list))
         {
-            foreach (Action<Scene> a in _OnNextSceneLoadedSubscribers)
-            {
-                try
-                {
-                    a?.Invoke(to);
-                }
-                catch (Exception e)
-                {
-                    LoggerProxy.LogError($"Error thrown by a local subscriber during {nameof(InvokeSceneLoadedEvent)} for scene {to.name}:\n{e}");
-                }
-            }
+            InvokeHelper.InvokeList(to, list);
         }
     }
 
@@ -112,49 +92,10 @@ public static class GameEvents
     {
         internal Invoker() { }
 
-        public void NotifyPersistentUpdate()
-        {
-            foreach (Action a in _OnPersistentUpdateSubscribers)
-            {
-                try
-                {
-                    a?.Invoke();
-                }
-                catch (Exception e)
-                {
-                    LoggerProxy.LogError($"Error thrown by a subscriber during {nameof(NotifyPersistentUpdate)}:\n{e}");
-                }
-            }
-        }
+        public void NotifyPersistentUpdate() => InvokeHelper.InvokeList(onPersistentUpdateSubscribers);
 
-        public void NotifySemiPersistentUpdate()
-        {
-            foreach (Action a in _OnSemiPersistentUpdateSubscribers)
-            {
-                try
-                {
-                    a?.Invoke();
-                }
-                catch (Exception e)
-                {
-                    LoggerProxy.LogError($"Error thrown by a subscriber during {nameof(NotifySemiPersistentUpdate)}:\n{e}");
-                }
-            }
-        }
+        public void NotifySemiPersistentUpdate() => InvokeHelper.InvokeList(onSemiPersistentUpdateSubscribers);
 
-        public void NotifyOnBeginSceneTransition(Transition target)
-        {
-            foreach (Action<Transition> a in _OnBeginSceneTransitionSubscribers)
-            {
-                try
-                {
-                    a?.Invoke(target);
-                }
-                catch (Exception e)
-                {
-                    LoggerProxy.LogError($"Error thrown by a subscriber during {nameof(NotifyOnBeginSceneTransition)} for transition {target}:\n{e}");
-                }
-            }
-        }
+        public void NotifyOnBeginSceneTransition(Transition target) => InvokeHelper.InvokeList(target, onBeginSceneTransitionSubscribers);
     }
 }
