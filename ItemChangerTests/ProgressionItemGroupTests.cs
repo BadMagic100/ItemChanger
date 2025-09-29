@@ -12,6 +12,10 @@ namespace ItemChangerTests
 {
     public class ProgressionItemGroupTests(ITestOutputHelper Output)
     {
+        // A model in which there are 3 items: L,R,S. (from Hollow Knight, Left_Mothwing_Cloak, Right_Mothwing_Cloak, Split_Shade_Cloak).
+        // S cannot be given before one of L or R. If S is collected first, it must be replaced. There are no other constraints.
+        // Say we are left-biased: S is replaced by L if collected first.
+        // Then the condition that items are commutative determines what the items give when collected in any order, in the table below:
         [Theory]
         [InlineData((string[])["L", "R", "S"], (string[])["L", "R", "S"])]
         [InlineData((string[])["L", "S", "R"], (string[])["L", "S", "R"])]
@@ -19,22 +23,32 @@ namespace ItemChangerTests
         [InlineData((string[])["S", "R", "L"], (string[])["L", "R", "S"])]
         [InlineData((string[])["R", "L", "S"], (string[])["R", "L", "S"])]
         [InlineData((string[])["R", "S", "L"], (string[])["R", "L", "S"])]
-        public void RLS_ProgressionTest(string[] input, string[] expectedOutput)
+        public void LeftBiasedSplitCloakProgressionTest(string[] input, string[] expectedOutput)
         {
             // item/placement setup
-            Item l = CreateItem("L", "test", []);
-            Item r = CreateItem("R", "test", []);
-            Item s = CreateItem("S", "test", ["L"]);
+            Item l = CreateTaggedItem("L");
+            Item r = CreateTaggedItem("R");
+            Item s = CreateTaggedItem("S");
             Dictionary<string, Item> items = ((Item[])[l, r, s]).ToDictionary(i => i.name);
-            Placement p = CreatePlacement(input.Select(i => items[i]));
+            Placement p = CreatePlacement(input.Select(i => items[i].Clone()));
             // profile setup
             using ItemChangerProfile profile = CreateProfile(out TestHost host);
             profile.AddPlacement(p);
-            profile.Modules.Add(new ProgressiveItemGroupModule { GroupID = "test", OrderedMemberList = ["L", "R", "S"] });
+            profile.Modules.Add(new ProgressiveItemGroupModule
+            {
+                GroupID = "test",
+                OrderedMemberList = ["L", "R", "S"],
+                OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+                {
+                    ["L"] = [],
+                    ["R"] = [],
+                    ["S"] = ["L"],
+                },
+            });
             // prepare to monitor item order
             List<string> resultOrder = [];
             void AddToResult(ReadOnlyGiveEventArgs args) => resultOrder.Add(args.Item.name);
-            foreach (Item i in (Item[])[l, r, s]) i.AfterGive += AddToResult;
+            foreach (Item i in p.Items) i.AfterGive += AddToResult;
             // start IC
             host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
             profile.Load();
@@ -48,29 +62,44 @@ namespace ItemChangerTests
             Assert.Equal(expectedOutput, resultOrder);
         }
 
+        // A model in which there are 3 items: N,C,E. (from Silksong, Needolin, Beastling's Call, Elegy of the Deep).
+        // N must be given before C or E. There are no other constraints.
+        // Say we are Call-biased. If C and E are the first two items collected (in either order), we give Needolin and Call.
+        // Then the condition that items are commutative determines what the items give when collected in any order, in the table below:
+        // 
         [Theory]
-        [InlineData((string[])["N", "R", "O"], (string[])["N", "R", "O"])]
-        [InlineData((string[])["N", "O", "R"], (string[])["N", "O", "R"])]
-        [InlineData((string[])["R", "N", "O"], (string[])["N", "R", "O"])]
-        [InlineData((string[])["R", "O", "N"], (string[])["N", "R", "O"])]
-        [InlineData((string[])["O", "N", "R"], (string[])["N", "O", "R"])]
-        [InlineData((string[])["O", "R", "N"], (string[])["N", "R", "O"])]
+        [InlineData((string[])["N", "C", "E"], (string[])["N", "C", "E"])]
+        [InlineData((string[])["N", "E", "C"], (string[])["N", "E", "C"])]
+        [InlineData((string[])["C", "N", "E"], (string[])["N", "C", "E"])]
+        [InlineData((string[])["C", "E", "N"], (string[])["N", "C", "E"])]
+        [InlineData((string[])["E", "N", "C"], (string[])["N", "E", "C"])]
+        [InlineData((string[])["E", "C", "N"], (string[])["N", "C", "E"])]
         public void NRO_ProgressionTest(string[] input, string[] expectedOutput)
         {
             // item/placement setup
-            Item n = CreateItem("N", "test", []);
-            Item r = CreateItem("R", "test", ["N"]);
-            Item o = CreateItem("O", "test", ["N"]);
-            Dictionary<string, Item> items = ((Item[])[n, r, o]).ToDictionary(i => i.name);
-            Placement p = CreatePlacement(input.Select(i => items[i]));
+            Item n = CreateTaggedItem("N");
+            Item c = CreateTaggedItem("C");
+            Item e = CreateTaggedItem("E");
+            Dictionary<string, Item> items = ((Item[])[n, c, e]).ToDictionary(i => i.name);
+            Placement p = CreatePlacement(input.Select(i => items[i].Clone()));
             // profile setup
             using ItemChangerProfile profile = CreateProfile(out TestHost host);
             profile.AddPlacement(p);
-            profile.Modules.Add(new ProgressiveItemGroupModule { GroupID = "test", OrderedMemberList = ["N", "O", "R"] });
+            profile.Modules.Add(new ProgressiveItemGroupModule 
+            { 
+                GroupID = "test", 
+                OrderedMemberList = ["N", "E", "C"],
+                OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+                {
+                    ["N"] = [],
+                    ["C"] = ["N"],
+                    ["E"] = ["N"],
+                },
+            });
             // prepare to monitor item order
             List<string> resultOrder = [];
             void AddToResult(ReadOnlyGiveEventArgs args) => resultOrder.Add(args.Item.name);
-            foreach (Item i in (Item[])[n, r, o]) i.AfterGive += AddToResult;
+            foreach (Item i in p.Items) i.AfterGive += AddToResult;
             // start IC
             host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
             profile.Load();
@@ -84,6 +113,10 @@ namespace ItemChangerTests
             Assert.Equal(expectedOutput, resultOrder);
         }
 
+        // an abstract model with four items: M,S,H1,H2.
+        // In this model, the first two items must be given before either H1 or H2 can be given. There are no other constraints.
+        // We give H1 and H2 different preferences for how to be replaced; H1 prefers to be replaced by M, and H2 prefers to be replaced by S.
+        // We test a sampling of permutations of the four items, along with a scenario where duplicates of H1 and H2 are included.
         [Theory]
         [InlineData((string[])["M", "S", "H1", "H2"], (string[])["M", "S", "H1", "H2"])]
         [InlineData((string[])["H1", "S", "M", "H2"], (string[])["M", "S", "H1", "H2"])]
@@ -94,20 +127,31 @@ namespace ItemChangerTests
         public void MSH1H2_ProgressionTest(string[] input, string[] expectedOutput)
         {
             // item/placement setup
-            Item m = CreateItem("M", "test", []);
-            Item s = CreateItem("S", "test", []);
-            Item h1 = CreateItem("H1", "test", ["M", "S"]);
-            Item h2 = CreateItem("H2", "test", ["S", "M"]);
+            Item m = CreateTaggedItem("M");
+            Item s = CreateTaggedItem("S");
+            Item h1 = CreateTaggedItem("H1");
+            Item h2 = CreateTaggedItem("H2");
             Dictionary<string, Item> items = ((Item[])[m, s, h1, h2]).ToDictionary(i => i.name);
-            Placement p = CreatePlacement(input.Select(i => items[i]));
+            Placement p = CreatePlacement(input.Select(i => items[i].Clone()));
             // profile setup
             using ItemChangerProfile profile = CreateProfile(out TestHost host);
             profile.AddPlacement(p);
-            profile.Modules.Add(new ProgressiveItemGroupModule { GroupID = "test", OrderedMemberList = ["M", "S", "H1", "H2"] });
+            profile.Modules.Add(new ProgressiveItemGroupModule 
+            { 
+                GroupID = "test", 
+                OrderedMemberList = ["M", "S", "H1", "H2"],
+                OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+                {
+                    ["M"] = [],
+                    ["S"] = [],
+                    ["H1"] = ["M", "S"],
+                    ["H2"] = ["S", "M"],
+                },
+            });
             // prepare to monitor item order
             List<string> resultOrder = [];
             void AddToResult(ReadOnlyGiveEventArgs args) => resultOrder.Add(args.Item.name);
-            foreach (Item i in (Item[])[m, s, h1, h2]) i.AfterGive += AddToResult;
+            foreach (Item i in p.Items) i.AfterGive += AddToResult;
             // start IC
             host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
             profile.Load();
@@ -121,28 +165,111 @@ namespace ItemChangerTests
             Assert.Equal(expectedOutput, resultOrder);
         }
 
+        [Fact]
+        public void MissingMemberTest1()
+        {
+            // profile setup
+            using ItemChangerProfile profile = CreateProfile(out TestHost host);
+            profile.Modules.Add(new ProgressiveItemGroupModule 
+            { 
+                GroupID = "test", 
+                OrderedMemberList = ["X", "Y", "Z"],
+                OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+                {
+                    ["X"] = [],
+                    ["Y"] = ["X"],
+                },
+            });
+            // start IC
+            host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
+            profile.Load();
+            // retrieve error message
+            string err = Assert.Single(host.ErrorMessages)!;
+            Output.WriteLine(err);
+            Assert.StartsWith("Error initializing module ProgressiveItemGroupModule:\n" +
+                "System.InvalidOperationException: " +
+                "Item Z appears in data of ProgressiveItemGroupModule with GroupID test, " +
+                "but item is not both an entry of the member list and a key of the predecessor lookup.", err);
+        }
+
+        [Fact]
+        public void MissingMemberTest2()
+        {
+            // profile setup
+            using ItemChangerProfile profile = CreateProfile(out TestHost host);
+            profile.Modules.Add(new ProgressiveItemGroupModule
+            {
+                GroupID = "test",
+                OrderedMemberList = ["X", "Y"],
+                OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+                {
+                    ["X"] = [],
+                    ["Y"] = ["X"],
+                    ["Z"] = ["X"],
+                },
+            });
+            // start IC
+            host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
+            profile.Load();
+            // retrieve error message
+            string err = Assert.Single(host.ErrorMessages)!;
+            Output.WriteLine(err);
+            Assert.StartsWith("Error initializing module ProgressiveItemGroupModule:\n" +
+                "System.InvalidOperationException: " +
+                "Item Z appears in data of ProgressiveItemGroupModule with GroupID test, " +
+                "but item is not both an entry of the member list and a key of the predecessor lookup.", err);
+        }
+
+        [Fact]
+        public void MissingMemberTest3()
+        {
+            // profile setup
+            using ItemChangerProfile profile = CreateProfile(out TestHost host);
+            profile.Modules.Add(new ProgressiveItemGroupModule
+            {
+                GroupID = "test",
+                OrderedMemberList = ["X", "Y"],
+                OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+                {
+                    ["X"] = ["Z"],
+                    ["Y"] = ["X"],
+                },
+            });
+            // start IC
+            host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
+            profile.Load();
+            // retrieve error message
+            string err = Assert.Single(host.ErrorMessages)!;
+            Output.WriteLine(err);
+            Assert.StartsWith("Error initializing module ProgressiveItemGroupModule:\n" +
+                "System.InvalidOperationException: " +
+                "Item Z appears in data of ProgressiveItemGroupModule with GroupID test, " +
+                "but item is not both an entry of the member list and a key of the predecessor lookup.", err);
+        }
 
         [Fact]
         public void TransitivityTest()
         {
-            // item/placement setup
-            Item x = CreateItem("X", "test", []);
-            Item y = CreateItem("Y", "test", ["X"]);
-            Item z = CreateItem("Z", "test", ["Y"]);
-            Placement p = CreatePlacement([x, y, z]);
             // profile setup
             using ItemChangerProfile profile = CreateProfile(out TestHost host);
-            profile.AddPlacement(p);
-            profile.Modules.Add(new ProgressiveItemGroupModule { GroupID = "test", OrderedMemberList = ["X", "Y", "Z"] });
+            profile.Modules.Add(new ProgressiveItemGroupModule 
+            { 
+                GroupID = "test", 
+                OrderedMemberList = ["X", "Y", "Z"],
+                OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+                {
+                    ["X"] = [],
+                    ["Y"] = ["X"],
+                    ["Z"] = ["Y"],
+                },
+            });
             // start IC
             host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
             profile.Load();
-            host.LifecyleEventsInvoker.NotifyAfterStartNewGame();
-            host.LifecyleEventsInvoker.NotifyOnEnterGame();
             // retrieve error message
             string err = Assert.Single(host.ErrorMessages)!;
             Output.WriteLine(err);
-            Assert.StartsWith("Error thrown by a subscriber during NotifyOnEnterGame:\n" +
+            Assert.StartsWith("Error initializing module ProgressiveItemGroupModule:\n" +
                 "System.InvalidOperationException: " +
                 "ProgressiveItemGroupTag for Z with GroupID test is missing the transitive predecessor X of Y.", err);
         }
@@ -150,22 +277,24 @@ namespace ItemChangerTests
         [Fact]
         public void IrreflexivityTest()
         {
-            // item/placement setup
-            Item x = CreateItem("X", "test", ["X"]);
-            Placement p = CreatePlacement([x]);
             // profile setup
             using ItemChangerProfile profile = CreateProfile(out TestHost host);
-            profile.AddPlacement(p);
-            profile.Modules.Add(new ProgressiveItemGroupModule { GroupID = "test", OrderedMemberList = ["X"] });
+            profile.Modules.Add(new ProgressiveItemGroupModule 
+            { 
+                GroupID = "test", 
+                OrderedMemberList = ["X"],
+                OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+                {
+                    ["X"] = ["X"],
+                },
+            });
             // start IC
             host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
             profile.Load();
-            host.LifecyleEventsInvoker.NotifyAfterStartNewGame();
-            host.LifecyleEventsInvoker.NotifyOnEnterGame();
             // retrieve error message
             string err = Assert.Single(host.ErrorMessages)!;
             Output.WriteLine(err);
-            Assert.StartsWith("Error thrown by a subscriber during NotifyOnEnterGame:\n" +
+            Assert.StartsWith("Error initializing module ProgressiveItemGroupModule:\n" +
                 "System.InvalidOperationException: " +
                 "ProgressiveItemGroupTag for X with GroupID test declares X as its own predecessor.", err);
         }
@@ -173,63 +302,50 @@ namespace ItemChangerTests
         [Fact]
         public void OrderConsistencyTest()
         {
-            // item/placement setup
-            Item x = CreateItem("X", "test", []);
-            Item y = CreateItem("Y", "test", ["X"]);
-            Placement p = CreatePlacement([x, y]);
             // profile setup
             using ItemChangerProfile profile = CreateProfile(out TestHost host);
-            profile.AddPlacement(p);
-            profile.Modules.Add(new ProgressiveItemGroupModule { GroupID = "test", OrderedMemberList = ["Y", "X"] });
+            profile.Modules.Add(new ProgressiveItemGroupModule 
+            { 
+                GroupID = "test", 
+                OrderedMemberList = ["Y", "X"],
+                OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+                {
+                    ["X"] = [],
+                    ["Y"] = ["X"],
+                },
+            });
             // start IC
             host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
             profile.Load();
-            host.LifecyleEventsInvoker.NotifyAfterStartNewGame();
-            host.LifecyleEventsInvoker.NotifyOnEnterGame();
             // retrieve error message
             string err = Assert.Single(host.ErrorMessages)!;
             Output.WriteLine(err);
-            Assert.StartsWith("Error thrown by a subscriber during NotifyOnEnterGame:\n" +
+            Assert.StartsWith("Error initializing module ProgressiveItemGroupModule:\n" +
                 "System.InvalidOperationException: " +
                 "Y is declared as a predecessor of X, but Y occurs after X in the OrderedMemberList for ProgressiveItemGroupModule with GroupID test.", err);
-        }
-
-        [Fact]
-        public void MissingMemberTest()
-        {
-            // item/placement setup
-            Item x = CreateItem("X", "test", []);
-            Item y = CreateItem("Y", "test", ["X"]);
-            Placement p = CreatePlacement([x, y]);
-            // profile setup
-            using ItemChangerProfile profile = CreateProfile(out TestHost host);
-            profile.AddPlacement(p);
-            profile.Modules.Add(new ProgressiveItemGroupModule { GroupID = "test", OrderedMemberList = ["X", "Y", "Z"] });
-            // start IC
-            host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
-            profile.Load();
-            host.LifecyleEventsInvoker.NotifyAfterStartNewGame();
-            host.LifecyleEventsInvoker.NotifyOnEnterGame();
-            // retrieve error message
-            string err = Assert.Single(host.ErrorMessages)!;
-            Output.WriteLine(err);
-            Assert.StartsWith("Error thrown by a subscriber during NotifyOnEnterGame:\n" +
-                "System.Collections.Generic.KeyNotFoundException: " +
-                "Item Z was not loaded with a ProgressiveItemGroupTag with GroupID test.", err);
         }
 
         [Fact]
         public void UnexpectedMemberTest()
         {
             // item/placement setup
-            Item x = CreateItem("X", "test", []);
-            Item y = CreateItem("Y", "test", ["X"]);
-            Item z = CreateItem("Z", "test", ["Y"]);
+            Item x = CreateTaggedItem("X");
+            Item y = CreateTaggedItem("Y");
+            Item z = CreateTaggedItem("Z");
             Placement p = CreatePlacement([x, y, z]);
             // profile setup
             using ItemChangerProfile profile = CreateProfile(out TestHost host);
             profile.AddPlacement(p);
-            profile.Modules.Add(new ProgressiveItemGroupModule { GroupID = "test", OrderedMemberList = ["X", "Y"] });
+            profile.Modules.Add(new ProgressiveItemGroupModule 
+            { 
+                GroupID = "test", 
+                OrderedMemberList = ["X", "Y"] ,
+                OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+                {
+                    ["X"] = [],
+                    ["Y"] = ["X"],
+                },
+            });
             // start IC
             host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
             profile.Load();
@@ -242,14 +358,13 @@ namespace ItemChangerTests
         }
 
 
-        private Item CreateItem(string name, string groupID, List<string> predecessors)
+        private Item CreateTaggedItem(string name)
         {
             Item i = new NullItem { name = name, };
-            i.AddTag(new ProgressiveItemGroupTag { GroupID = groupID, OrderedTransitivePredecessors = predecessors });
-            i.AfterGive += args => args.Orig.RefreshObtained(); // convenience for testing duplicate items
-            return i;
+            i.AddTag(new ProgressiveItemGroupTag { GroupID = "test", });
+            Finder.DefineItem(i, overwrite:true);
+            return i.Clone();
         }
-
         private Placement CreatePlacement(IEnumerable<Item> items) => 
             new AutoPlacement("Test placement") { Location = new EmptyLocation { Name = "Test location" } }.Add(items);
         private ItemChangerProfile CreateProfile(out TestHost host) => new(host = new TestHost(Output));
