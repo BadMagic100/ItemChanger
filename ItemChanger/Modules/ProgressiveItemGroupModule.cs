@@ -1,5 +1,4 @@
-﻿using ItemChanger.Events;
-using ItemChanger.Items;
+﻿using ItemChanger.Items;
 using ItemChanger.Tags;
 using System;
 using System.Collections.Generic;
@@ -22,44 +21,48 @@ namespace ItemChanger.Modules
         /// </summary>
         public required List<string> OrderedMemberList { get; init; }
         /// <summary>
-        /// A lookup of the group's items populated by <see cref="Register(ProgressiveItemGroupTag, Item)"/>.
+        /// A lookup of the group's predecessor partial ordering populated by <see cref="RegisterItem(ProgressiveItemGroupTag, Item)"/>.
         /// </summary>
-        protected Dictionary<string, Item> GroupItems { get; } = [];
-        /// <summary>
-        /// A lookup of the group's predecessor partial ordering populated by <see cref="Register(ProgressiveItemGroupTag, Item)"/>.
-        /// </summary>
-        protected Dictionary<string, List<string>> OrderedTransitivePredecessorsLookup { get; } = [];
+        public required Dictionary<string, List<string>> OrderedTransitivePredecessorsLookup { get; init; }
 
         /// <summary>
         /// The list of items associated to the group which have been collected, prior to replacement. Includes duplicates with multiplicity.
         /// </summary>
         public List<string> CollectedItemList { get; } = [];
 
+        private readonly List<Item> registeredItems = [];
+
+
         /// <inheritdoc/>
         protected override void DoLoad()
         {
-            LifecycleEvents.OnEnterGame += LateInitialize;
+            CheckAllItemsCompletelyDefined();
+            CheckTransitive();
+            CheckIrreflexive();
+            CheckOrderConsistency();
         }
 
         /// <inheritdoc/>
         protected override void DoUnload()
         {
-            LifecycleEvents.OnEnterGame -= LateInitialize;
-            foreach (Item i in GroupItems.Values) i.ModifyItem -= ModifyItem;
-            GroupItems.Clear();
-            OrderedTransitivePredecessorsLookup.Clear();
+            foreach (Item i in registeredItems) i.ModifyItem -= ModifyItem;
+            registeredItems.Clear();
         }
+
+        /// <summary>
+        /// Retrieves the item by name, by default using <see cref="Finder.GetItem(string)"/>.
+        /// </summary>
+        protected virtual Item GetItem(string name) => Finder.GetItem(name) ?? throw new KeyNotFoundException($"Failed to find item {name} in Finder.");
 
         /// <summary>
         /// Records the tag's data and its item to be managed by the module.
         /// </summary>>
         /// <exception cref="InvalidOperationException">The item was not found in the <see cref="OrderedMemberList"/>.</exception>
-        public void Register(ProgressiveItemGroupTag tag, Item item)
+        public void RegisterItem(ProgressiveItemGroupTag tag, Item item)
         {
             if (!OrderedMemberList.Contains(item.name)) throw UnexpectedMember(item.name);
-            GroupItems[item.name] = item;
-            OrderedTransitivePredecessorsLookup[item.name] = tag.OrderedTransitivePredecessors;
             item.ModifyItem += ModifyItem;
+            registeredItems.Add(item);
         }
 
         /// <summary>
@@ -67,12 +70,12 @@ namespace ItemChanger.Modules
         /// </summary>
         protected void ModifyItem(GiveEventArgs args)
         {
-            Dictionary<string, int> prev = GetActualItems(CollectedItemList, OrderedMemberList, OrderedTransitivePredecessorsLookup);
+            Dictionary<string, int> prevMultiset = GetActualItems(CollectedItemList, OrderedMemberList, OrderedTransitivePredecessorsLookup);
             CollectedItemList.Add(args.Orig.name);
-            Dictionary<string, int> next = GetActualItems(CollectedItemList, OrderedMemberList, OrderedTransitivePredecessorsLookup);
-
-            string nextItem = next.Single(kvp => kvp.Value > (prev.TryGetValue(kvp.Key, out int value) ? value : 0)).Key;
-            args.Item = GroupItems[nextItem];
+            Dictionary<string, int> nextMultiset = GetActualItems(CollectedItemList, OrderedMemberList, OrderedTransitivePredecessorsLookup);
+            // the two multisets differ by 1 in exactly one key, as a guarantee of GetActualItems
+            string next = nextMultiset.Single(kvp => kvp.Value > (prevMultiset.TryGetValue(kvp.Key, out int value) ? value : 0)).Key;
+            args.Item = GetItem(next);
         }
 
         /// <summary>
@@ -111,25 +114,25 @@ namespace ItemChanger.Modules
             return result;
         }
 
-        /// <summary>
-        /// Checks that the tag-provided data satisfies all compatibility requirements with each other and with the module.
-        /// In particular, all expected items must be registered with the module, 
-        /// the "predecessor" relation must be a strict partial order (transitive and irreflexive),
-        /// and this partial order must be consistent with the order on the module's <see cref="OrderedMemberList"/>.
-        /// </summary>
-        protected void LateInitialize()
+        private void CheckAllItemsCompletelyDefined()
         {
-            CheckAllDefined();
-            CheckTransitive();
-            CheckIrreflexive();
-            CheckOrderConsistency();
-        }
-
-        private void CheckAllDefined()
-        {
-            foreach (string i in OrderedMemberList)
+            foreach (string s in OrderedMemberList)
             {
-                if (!GroupItems.ContainsKey(i) || !OrderedTransitivePredecessorsLookup.ContainsKey(i)) throw MissingMember(i);
+                if (!OrderedTransitivePredecessorsLookup.ContainsKey(s))
+                {
+                    throw IncompletelyDefinedItem(s);
+                }
+            }
+            if (OrderedMemberList.Count != OrderedTransitivePredecessorsLookup.Count)
+            {
+                throw IncompletelyDefinedItem(OrderedTransitivePredecessorsLookup.Keys.Except(OrderedMemberList).First());
+            }
+            foreach (string p in OrderedTransitivePredecessorsLookup.Values.SelectMany(l => l))
+            {
+                if (!OrderedTransitivePredecessorsLookup.ContainsKey(p))
+                {
+                    throw IncompletelyDefinedItem(p);
+                }
             }
         }
 
@@ -166,8 +169,10 @@ namespace ItemChanger.Modules
             }
         }
 
-        private Exception MissingMember(string name)
-            => new KeyNotFoundException($"Item {name} was not loaded with a {nameof(ProgressiveItemGroupTag)} with GroupID {GroupID}.");
+        private Exception IncompletelyDefinedItem(string name)
+            => new InvalidOperationException($"Item {name} appears in data of {nameof(ProgressiveItemGroupModule)} with GroupID {GroupID}, " +
+                $"but item is not both an entry of the member list and a key of the predecessor lookup.");
+
         private Exception UnexpectedMember(string name)
             => new InvalidOperationException($"Item {name} tagged with {nameof(ProgressiveItemGroupTag)} with GroupID {GroupID} was not declared on the module.");
         private Exception TransitivityViolation(string x, string y, string z)
