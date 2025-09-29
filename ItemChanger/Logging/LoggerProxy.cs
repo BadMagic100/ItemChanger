@@ -1,4 +1,5 @@
-﻿using ItemChanger.Logging;
+﻿using ItemChanger.Internal;
+using ItemChanger.Logging;
 
 namespace ItemChanger;
 
@@ -7,7 +8,7 @@ namespace ItemChanger;
 /// </summary>
 public static class LoggerProxy
 {
-    public static ILogger Logger { get; set; } = new NullLogger();
+    public static ILogger Logger { get => ItemChangerProfile.ActiveProfileOrNull?.Logger ?? NullLogger.Instance; }
 
     internal static void LogFine(string? message)
     {
