@@ -56,7 +56,6 @@ namespace ItemChanger.Modules
         /// <exception cref="InvalidOperationException">The item was not found in the <see cref="OrderedMemberList"/>.</exception>
         public void Register(ProgressiveItemGroupTag tag, Item item)
         {
-            ItemChanger.LoggerProxy.LogInfo("In register!");
             if (!OrderedMemberList.Contains(item.name)) throw UnexpectedMember(item.name);
             GroupItems[item.name] = item;
             OrderedTransitivePredecessorsLookup[item.name] = tag.OrderedTransitivePredecessors;
@@ -68,7 +67,7 @@ namespace ItemChanger.Modules
         /// </summary>
         protected void ModifyItem(GiveEventArgs args)
         {
-            ItemChanger.LoggerProxy.LogInfo("In modify!");
+
             HashSet<string> prev = GetActualItems(CollectedItemList, OrderedMemberList, OrderedTransitivePredecessorsLookup);
             CollectedItemList.Add(args.Orig.name);
             HashSet<string> next = GetActualItems(CollectedItemList, OrderedMemberList, OrderedTransitivePredecessorsLookup);

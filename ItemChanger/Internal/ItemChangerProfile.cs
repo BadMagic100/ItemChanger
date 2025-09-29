@@ -1,5 +1,6 @@
 ﻿using ItemChanger.Events;
 using ItemChanger.Items;
+using ItemChanger.Logging;
 using ItemChanger.Tags;
 using Newtonsoft.Json;
 using System;
@@ -45,6 +46,8 @@ public class ItemChangerProfile : IDisposable
 
     private bool hooked = false;
     internal LoadState state = LoadState.Unloaded;
+
+    public ILogger Logger { get => host.Logger; }
 
     private readonly IItemChangerHost host;
     private readonly LifecycleEvents.Invoker lifecycleInvoker;
