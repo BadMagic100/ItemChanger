@@ -90,6 +90,7 @@ namespace ItemChangerTests
         [InlineData((string[])["H2", "H1", "S", "M"], (string[])["S", "M", "H2", "H1"])]
         [InlineData((string[])["H1", "H2", "S", "M"], (string[])["M", "S", "H2", "H1"])]
         [InlineData((string[])["H1", "H2", "M", "S"], (string[])["M", "S", "H2", "H1"])]
+        [InlineData((string[])["H2", "H2", "H1", "H1", "M", "S", "H1", "H2"], (string[])["S", "M", "H2", "H2", "H1", "H1", "H1", "H2"])]
         public void MSH1H2_ProgressionTest(string[] input, string[] expectedOutput)
         {
             // item/placement setup
@@ -121,11 +122,131 @@ namespace ItemChangerTests
         }
 
 
+        [Fact]
+        public void TransitivityTest()
+        {
+            // item/placement setup
+            Item x = CreateItem("X", "test", []);
+            Item y = CreateItem("Y", "test", ["X"]);
+            Item z = CreateItem("Z", "test", ["Y"]);
+            Placement p = CreatePlacement([x, y, z]);
+            // profile setup
+            using ItemChangerProfile profile = CreateProfile(out TestHost host);
+            profile.AddPlacement(p);
+            profile.Modules.Add(new ProgressiveItemGroupModule { GroupID = "test", OrderedMemberList = ["X", "Y", "Z"] });
+            // start IC
+            host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
+            profile.Load();
+            host.LifecyleEventsInvoker.NotifyAfterStartNewGame();
+            host.LifecyleEventsInvoker.NotifyOnEnterGame();
+            // retrieve error message
+            string err = Assert.Single(host.ErrorMessages)!;
+            Output.WriteLine(err);
+            Assert.StartsWith("Error thrown by a subscriber during NotifyOnEnterGame:\n" +
+                "System.InvalidOperationException: " +
+                "ProgressiveItemGroupTag for Z with GroupID test is missing the transitive predecessor X of Y.", err);
+        }
+
+        [Fact]
+        public void IrreflexivityTest()
+        {
+            // item/placement setup
+            Item x = CreateItem("X", "test", ["X"]);
+            Placement p = CreatePlacement([x]);
+            // profile setup
+            using ItemChangerProfile profile = CreateProfile(out TestHost host);
+            profile.AddPlacement(p);
+            profile.Modules.Add(new ProgressiveItemGroupModule { GroupID = "test", OrderedMemberList = ["X"] });
+            // start IC
+            host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
+            profile.Load();
+            host.LifecyleEventsInvoker.NotifyAfterStartNewGame();
+            host.LifecyleEventsInvoker.NotifyOnEnterGame();
+            // retrieve error message
+            string err = Assert.Single(host.ErrorMessages)!;
+            Output.WriteLine(err);
+            Assert.StartsWith("Error thrown by a subscriber during NotifyOnEnterGame:\n" +
+                "System.InvalidOperationException: " +
+                "ProgressiveItemGroupTag for X with GroupID test declares X as its own predecessor.", err);
+        }
+
+        [Fact]
+        public void OrderConsistencyTest()
+        {
+            // item/placement setup
+            Item x = CreateItem("X", "test", []);
+            Item y = CreateItem("Y", "test", ["X"]);
+            Placement p = CreatePlacement([x, y]);
+            // profile setup
+            using ItemChangerProfile profile = CreateProfile(out TestHost host);
+            profile.AddPlacement(p);
+            profile.Modules.Add(new ProgressiveItemGroupModule { GroupID = "test", OrderedMemberList = ["Y", "X"] });
+            // start IC
+            host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
+            profile.Load();
+            host.LifecyleEventsInvoker.NotifyAfterStartNewGame();
+            host.LifecyleEventsInvoker.NotifyOnEnterGame();
+            // retrieve error message
+            string err = Assert.Single(host.ErrorMessages)!;
+            Output.WriteLine(err);
+            Assert.StartsWith("Error thrown by a subscriber during NotifyOnEnterGame:\n" +
+                "System.InvalidOperationException: " +
+                "Y is declared as a predecessor of X, but Y occurs after X in the OrderedMemberList for ProgressiveItemGroupModule with GroupID test.", err);
+        }
+
+        [Fact]
+        public void MissingMemberTest()
+        {
+            // item/placement setup
+            Item x = CreateItem("X", "test", []);
+            Item y = CreateItem("Y", "test", ["X"]);
+            Placement p = CreatePlacement([x, y]);
+            // profile setup
+            using ItemChangerProfile profile = CreateProfile(out TestHost host);
+            profile.AddPlacement(p);
+            profile.Modules.Add(new ProgressiveItemGroupModule { GroupID = "test", OrderedMemberList = ["X", "Y", "Z"] });
+            // start IC
+            host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
+            profile.Load();
+            host.LifecyleEventsInvoker.NotifyAfterStartNewGame();
+            host.LifecyleEventsInvoker.NotifyOnEnterGame();
+            // retrieve error message
+            string err = Assert.Single(host.ErrorMessages)!;
+            Output.WriteLine(err);
+            Assert.StartsWith("Error thrown by a subscriber during NotifyOnEnterGame:\n" +
+                "System.Collections.Generic.KeyNotFoundException: " +
+                "Item Z was not loaded with a ProgressiveItemGroupTag with GroupID test.", err);
+        }
+
+        [Fact]
+        public void UnexpectedMemberTest()
+        {
+            // item/placement setup
+            Item x = CreateItem("X", "test", []);
+            Item y = CreateItem("Y", "test", ["X"]);
+            Item z = CreateItem("Z", "test", ["Y"]);
+            Placement p = CreatePlacement([x, y, z]);
+            // profile setup
+            using ItemChangerProfile profile = CreateProfile(out TestHost host);
+            profile.AddPlacement(p);
+            profile.Modules.Add(new ProgressiveItemGroupModule { GroupID = "test", OrderedMemberList = ["X", "Y"] });
+            // start IC
+            host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
+            profile.Load();
+            // retrieve error message
+            string err = Assert.Single(host.ErrorMessages)!;
+            Output.WriteLine(err);
+            Assert.StartsWith("Error loading ProgressiveItemGroupTag:\n" +
+                "System.InvalidOperationException: " +
+                "Item Z tagged with ProgressiveItemGroupTag with GroupID test was not declared on the module.", err);
+        }
+
 
         private Item CreateItem(string name, string groupID, List<string> predecessors)
         {
             Item i = new NullItem { name = name, };
             i.AddTag(new ProgressiveItemGroupTag { GroupID = groupID, OrderedTransitivePredecessors = predecessors });
+            i.AfterGive += args => args.Orig.RefreshObtained(); // convenience for testing duplicate items
             return i;
         }
 

@@ -67,40 +67,46 @@ namespace ItemChanger.Modules
         /// </summary>
         protected void ModifyItem(GiveEventArgs args)
         {
-
-            HashSet<string> prev = GetActualItems(CollectedItemList, OrderedMemberList, OrderedTransitivePredecessorsLookup);
+            Dictionary<string, int> prev = GetActualItems(CollectedItemList, OrderedMemberList, OrderedTransitivePredecessorsLookup);
             CollectedItemList.Add(args.Orig.name);
-            HashSet<string> next = GetActualItems(CollectedItemList, OrderedMemberList, OrderedTransitivePredecessorsLookup);
-            next.ExceptWith(prev);
-            string? nextItem = next.SingleOrDefault();
-            if (nextItem is null)
-            {
-                // either args.Orig is a duplicate, or duplicates have exhausted the item poset containing Orig.
-                return;
-            }
+            Dictionary<string, int> next = GetActualItems(CollectedItemList, OrderedMemberList, OrderedTransitivePredecessorsLookup);
+
+            string nextItem = next.Single(kvp => kvp.Value > (prev.TryGetValue(kvp.Key, out int value) ? value : 0)).Key;
             args.Item = GroupItems[nextItem];
         }
 
         /// <summary>
-        /// Gets the set of items which replaces the sequence of collected items. 
+        /// Gets the multiset of items which replaces the sequence of collected items.
         /// The sequence is first resorted according to the order of the main item list. Then each item is replaced by its first predecessor not yet in the result, or else unmodified.
-        /// Collected items can contain duplicates. If an item and all of its predecessors are in the result, then a duplicate of the item has no effect.
+        /// If an item is added when it and all of its predecessors are given, its multiplicity in the dictionary may be incremented beyond 1.
         /// </summary>
-        public static HashSet<string> GetActualItems(IEnumerable<string> collectedItems, List<string> itemList, Dictionary<string, List<string>> predecessors)
+        public static Dictionary<string, int> GetActualItems(IEnumerable<string> collectedItems, List<string> itemList, Dictionary<string, List<string>> predecessors)
         {
-            HashSet<string> result = [];
+            Dictionary<string, int> result = [];
+
             foreach (string item in collectedItems.OrderBy(itemList.IndexOf))
             {
                 bool replaced = false;
                 foreach (string p in predecessors[item])
                 {
-                    if (result.Add(p))
+                    if (!result.ContainsKey(p))
                     {
+                        result.Add(p, 1);
                         replaced = true;
                         break;
                     }
                 }
-                if (!replaced) result.Add(item);
+                if (!replaced)
+                {
+                    if (!result.ContainsKey(item))
+                    {
+                        result.Add(item, 1);
+                    }
+                    else
+                    {
+                        result[item]++;
+                    }
+                }
             }
             return result;
         }
@@ -108,7 +114,7 @@ namespace ItemChanger.Modules
         /// <summary>
         /// Checks that the tag-provided data satisfies all compatibility requirements with each other and with the module.
         /// In particular, all expected items must be registered with the module, 
-        /// the "predecessor" relation must be a partial order (transitive, irreflexive, antisymmetric),
+        /// the "predecessor" relation must be a strict partial order (transitive and irreflexive),
         /// and this partial order must be consistent with the order on the module's <see cref="OrderedMemberList"/>.
         /// </summary>
         protected void LateInitialize()
@@ -116,7 +122,6 @@ namespace ItemChanger.Modules
             CheckAllDefined();
             CheckTransitive();
             CheckIrreflexive();
-            CheckAntisymmetric();
             CheckOrderConsistency();
         }
 
@@ -147,14 +152,6 @@ namespace ItemChanger.Modules
             }
         }
 
-        private void CheckAntisymmetric()
-        {
-            foreach (var kvp in OrderedTransitivePredecessorsLookup)
-            {
-                foreach (string p in kvp.Value) if (OrderedTransitivePredecessorsLookup[p].Contains(kvp.Key)) throw AntisymmetryViolation(kvp.Key, p);
-            }
-        }
-
         private void CheckOrderConsistency()
         {
             HashSet<string> items = [.. OrderedMemberList];
@@ -177,8 +174,6 @@ namespace ItemChanger.Modules
             => new InvalidOperationException($"{nameof(ProgressiveItemGroupTag)} for {z} with GroupID {GroupID} is missing the transitive predecessor {x} of {y}.");
         private Exception IrreflexivityViolation(string name)
             => new InvalidOperationException($"{nameof(ProgressiveItemGroupTag)} for {name} with GroupID {GroupID} declares {name} as its own predecessor.");
-        private Exception AntisymmetryViolation(string x, string y)
-            => new InvalidOperationException($"{nameof(ProgressiveItemGroupTag)}s for {x}, {y} with GroupID {GroupID} declare each other as predecessors.");
         private Exception OrderConsistencyViolation(string x, string y)
             => new InvalidOperationException($"{y} is declared as a predecessor of {x}, but {y} occurs after {x}" +
                 $" in the {nameof(OrderedMemberList)} for {nameof(ProgressiveItemGroupModule)} with GroupID {GroupID}.");
