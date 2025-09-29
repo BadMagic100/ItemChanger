@@ -10,6 +10,8 @@ namespace ItemChangerTests
     internal class TestLogger : ILogger
     {
         private readonly ITestOutputHelper output;
+        public List<string?> ErrorMessages { get; } = [];
+
 
         public TestLogger(ITestOutputHelper output)
         {
@@ -18,6 +20,7 @@ namespace ItemChangerTests
 
         public void LogError(string? message)
         {
+            ErrorMessages.Add(message);
             output.WriteLine($"[ERROR]: {message}");
         }
 
@@ -45,6 +48,7 @@ namespace ItemChangerTests
         }
 
         public ILogger Logger { get; }
+        public List<string?> ErrorMessages { get => ((TestLogger)Logger).ErrorMessages; }
 
         Container IItemChangerHost.DefaultSingleItemContainer => throw new NotImplementedException();
 
