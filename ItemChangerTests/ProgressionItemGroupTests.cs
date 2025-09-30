@@ -15,7 +15,8 @@ namespace ItemChangerTests
         // A model in which there are 3 items: L,R,S. (from Hollow Knight, Left_Mothwing_Cloak, Right_Mothwing_Cloak, Split_Shade_Cloak).
         // S cannot be given before one of L or R. If S is collected first, it must be replaced. There are no other constraints.
         // Say we are left-biased: S is replaced by L if collected first.
-        // Then the condition that items are commutative determines what the items give when collected in any order, in the table below:
+        // Then the condition that items are commutative determines what the items give when collected in any order, in the table below.
+        // We also test a few combinations with duplicates of progression-maximal items.
         [Theory]
         [InlineData((string[])["L", "R", "S"], (string[])["L", "R", "S"])]
         [InlineData((string[])["L", "S", "R"], (string[])["L", "S", "R"])]
@@ -23,6 +24,10 @@ namespace ItemChangerTests
         [InlineData((string[])["S", "R", "L"], (string[])["L", "R", "S"])]
         [InlineData((string[])["R", "L", "S"], (string[])["R", "L", "S"])]
         [InlineData((string[])["R", "S", "L"], (string[])["R", "L", "S"])]
+        [InlineData((string[])["S", "S", "L", "R"], (string[])["L", "S", "S", "R"])]
+        [InlineData((string[])["S", "S", "R", "L"], (string[])["L", "S", "R", "S"])]
+        [InlineData((string[])["S", "L", "S", "R"], (string[])["L", "S", "S", "R"])]
+        [InlineData((string[])["S", "R", "S", "L"], (string[])["L", "R", "S", "S"])]
         public void LeftBiasedSplitCloakProgressionTest(string[] input, string[] expectedOutput)
         {
             // item/placement setup
@@ -58,11 +63,58 @@ namespace ItemChangerTests
             Assert.Equal(expectedOutput, resultOrder);
         }
 
+        // A few samples of the same LeftBiasedSplitCloak setup, with some of the items defined only after profile load.
+        [Theory]
+        [InlineData((string[])["L", "R"], (string[])["S"], (string[])["L", "R", "S"])]
+        [InlineData((string[])["S", "R"], (string[])["L"], (string[])["L", "R", "S"])]
+        [InlineData((string[])["R"], (string[])["S", "L"], (string[])["R", "L", "S"])]
+        public void LateItemLoadProgressionTest(string[] firstInput, string[] secondInput, string[] expectedOutput)
+        {
+            // item/placement setup
+            Item l = CreateTaggedItem("L");
+            Item r = CreateTaggedItem("R");
+            Item s = CreateTaggedItem("S");
+            Dictionary<string, Item> items = ((Item[])[l, r, s]).ToDictionary(i => i.name);
+            Placement p1 = CreatePlacement(firstInput.Select(i => items[i].Clone()));
+            // profile setup
+            using ItemChangerProfile profile = CreateProfile(out TestHost host);
+            profile.AddPlacement(p1);
+            profile.Modules.Add(new ProgressiveItemGroupModule
+            {
+                GroupID = "test",
+                OrderedMemberList = ["L", "R", "S"],
+                OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+                {
+                    ["L"] = [],
+                    ["R"] = [],
+                    ["S"] = ["L"],
+                },
+            });
+            // prepare to monitor item order
+            List<string> resultOrder = [];
+            void AddToResult(ReadOnlyGiveEventArgs args) => resultOrder.Add(args.Item.name);
+            foreach (Item i in p1.Items) i.AfterGive += AddToResult;
+            // start IC w/o errors
+            Assert.True(host.RunStartNewLifecycle());
+            // give items
+            GiveInfo gi = new();
+            p1.GiveAll(gi);
+            // define second placement
+            Placement p2 = CreatePlacement(secondInput.Select(i => items[i].Clone()));
+            profile.AddPlacement(p2);
+            foreach (Item i in p2.Items) i.AfterGive += AddToResult;
+            // give items
+            gi = new();
+            p2.GiveAll(gi);
+            // assert
+            Assert.Equal(expectedOutput, resultOrder);
+        }
+
         // A model in which there are 3 items: N,C,E. (from Silksong, Needolin, Beastling's Call, Elegy of the Deep).
         // N must be given before C or E. There are no other constraints.
         // Say we are Call-biased. If C and E are the first two items collected (in either order), we give Needolin and Call.
-        // Then the condition that items are commutative determines what the items give when collected in any order, in the table below:
-        // 
+        // Then the condition that items are commutative determines what the items give when collected in any order, in the table below.
+        // We also test a few combinations with duplicates of progression-maximal items.
         [Theory]
         [InlineData((string[])["N", "C", "E"], (string[])["N", "C", "E"])]
         [InlineData((string[])["N", "E", "C"], (string[])["N", "E", "C"])]
@@ -70,7 +122,13 @@ namespace ItemChangerTests
         [InlineData((string[])["C", "E", "N"], (string[])["N", "C", "E"])]
         [InlineData((string[])["E", "N", "C"], (string[])["N", "E", "C"])]
         [InlineData((string[])["E", "C", "N"], (string[])["N", "C", "E"])]
-        public void NRO_ProgressionTest(string[] input, string[] expectedOutput)
+        [InlineData((string[])["E", "E", "C", "N"], (string[])["N", "E", "C", "E"])]
+        [InlineData((string[])["C", "C", "E", "N"], (string[])["N", "C", "C", "E"])]
+        [InlineData((string[])["E", "C", "E", "N"], (string[])["N", "C", "E", "E"])]
+        [InlineData((string[])["C", "E", "C", "N"], (string[])["N", "C", "C", "E"])]
+        [InlineData((string[])["E", "E", "N", "C"], (string[])["N", "E", "E", "C"])]
+        [InlineData((string[])["C", "C", "N", "E"], (string[])["N", "C", "C", "E"])]
+        public void NeedolinProgressionTest(string[] input, string[] expectedOutput)
         {
             // item/placement setup
             Item n = CreateTaggedItem("N");
@@ -116,7 +174,16 @@ namespace ItemChangerTests
         [InlineData((string[])["H1", "H2", "S", "M"], (string[])["M", "S", "H2", "H1"])]
         [InlineData((string[])["H1", "H2", "M", "S"], (string[])["M", "S", "H2", "H1"])]
         [InlineData((string[])["H2", "H2", "H1", "H1", "M", "S", "H1", "H2"], (string[])["S", "M", "H2", "H2", "H1", "H1", "H1", "H2"])]
-        public void MSH1H2_ProgressionTest(string[] input, string[] expectedOutput)
+        // to explain this last case, recall that items are sorted according to member order before being replaced by the module. So the output is obtained by:
+        // H2 -> S; new item is S
+        // H2 -> S, H2 -> M; new item is M
+        // H1 -> M, H2 -> S, H2 -> H2; new item is H2 (note that H1 was collected last, but is sorted before H2)
+        // H1 -> M, H1 -> S, H2 -> H2, H2 -> H2 (dupe); new item is H2 (dupe)
+        // M -> M, H1 -> S, H1 -> H1, H2 -> H2, H2 -> H2 (dupe); new item is H1
+        // M -> M, S -> S, H1 -> H1, H1 -> H1 (dupe), H2 -> H2, H2 -> H2 (dupe); new item is H1 (dupe)
+        // M -> M, S -> S, H1 -> H1, H1 -> H1 (dupe), H1 -> H1 (dupe), H2 -> H2, H2 -> H2 (dupe); new item is H1 (dupe)
+        // M -> M, S -> S, H1 -> H1, H1 -> H1 (dupe), H1 -> H1 (dupe), H2 -> H2, H2 -> H2 (dupe), H2 -> H2 (dupe); new item is H2 (dupe)
+        public void FourItemProgressionTest(string[] input, string[] expectedOutput)
         {
             // item/placement setup
             Item m = CreateTaggedItem("M");
