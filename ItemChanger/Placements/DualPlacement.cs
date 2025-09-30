@@ -1,5 +1,6 @@
 ﻿using ItemChanger.Containers;
 using ItemChanger.Costs;
+using ItemChanger.Events;
 using ItemChanger.Tags;
 using Newtonsoft.Json;
 using System.Collections.Generic;

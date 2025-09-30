@@ -1,22 +1,23 @@
-﻿using ItemChanger.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
-namespace ItemChanger;
+namespace ItemChanger.Events;
 
 public static class GameEvents
 {
     /// <summary>
     /// Called after persistent items reset.
     /// </summary>
-    public static event Action? OnPersistentUpdate;
+    public static event Action OnPersistentUpdate { add => onPersistentUpdateSubscribers.Add(value); remove => onPersistentUpdateSubscribers.Remove(value); }
+    private static readonly List<Action> onPersistentUpdateSubscribers = [];
 
     /// <summary>
     /// Called after semipersistent data resets. Semi-persistent resets occur less frequently than persistent resets, and
     /// are only triggered by certain events, such as resting.
     /// </summary>
-    public static event Action? OnSemiPersistentUpdate;
+    public static event Action OnSemiPersistentUpdate { add => onSemiPersistentUpdateSubscribers.Add(value); remove => onSemiPersistentUpdateSubscribers.Remove(value); }
+    private static readonly List<Action> onSemiPersistentUpdateSubscribers = [];
 
     /// <summary>
     /// Called immediately prior to beginning a scene transition. If transition overrides take place through ItemChanger, 
@@ -25,12 +26,14 @@ public static class GameEvents
     /// <remarks>
     /// This event only applies to games which have discrete scenes.
     /// </remarks>
-    public static event Action<Transition>? OnBeginSceneTransition;
+    public static event Action<Transition> OnBeginSceneTransition { add => onBeginSceneTransitionSubscribers.Add(value); remove => onBeginSceneTransitionSubscribers.Remove(value); }
+    private static readonly List<Action<Transition>> onBeginSceneTransitionSubscribers = [];
 
     /// <summary>
     /// Called whenever a new scene is loaded, including both additive scene loads and full scene transitions.
     /// </summary>
-    public static event Action<Scene>? OnNextSceneLoaded;
+    public static event Action<Scene> OnNextSceneLoaded { add => onNextSceneLoadedSubscribers.Add(value); remove => onNextSceneLoadedSubscribers.Remove(value); }
+    private static readonly List<Action<Scene>> onNextSceneLoadedSubscribers = [];
 
     /// <summary>
     /// Registers a scene edit to be invoked whenever sceneName is loaded.
@@ -39,11 +42,11 @@ public static class GameEvents
     {
         if (sceneEdits.ContainsKey(sceneName))
         {
-            sceneEdits[sceneName] += action;
+            sceneEdits[sceneName].Add(action);
         }
         else
         {
-            sceneEdits[sceneName] = action;
+            sceneEdits[sceneName] = [action];
         }
     }
 
@@ -52,9 +55,9 @@ public static class GameEvents
     /// </summary>
     public static void RemoveSceneChangeEdit(string sceneName, Action<Scene> action)
     {
-        if (sceneEdits.ContainsKey(sceneName))
+        if (sceneEdits.TryGetValue(sceneName, out List<Action<Scene>>? list))
         {
-            sceneEdits[sceneName] -= action;
+            list.Remove(action);
         }
     }
 
@@ -64,7 +67,7 @@ public static class GameEvents
      *************************************************************************************
     */
 
-    private static readonly Dictionary<string, Action<Scene>?> sceneEdits = new();
+    private static readonly Dictionary<string, List<Action<Scene>>> sceneEdits = [];
 
     internal static void Hook()
     {
@@ -78,18 +81,21 @@ public static class GameEvents
 
     private static void InvokeSceneLoadedEvent(Scene to, LoadSceneMode _)
     {
-        OnNextSceneLoaded?.Invoke(to);
-        sceneEdits.GetOrDefault(to.name)?.Invoke(to);
+        InvokeHelper.InvokeList(to, onNextSceneLoadedSubscribers);
+        if (sceneEdits.TryGetValue(to.name, out List<Action<Scene>>? list))
+        {
+            InvokeHelper.InvokeList(to, list);
+        }
     }
 
     public class Invoker
     {
         internal Invoker() { }
 
-        public void NotifyPersistentUpdate() => OnPersistentUpdate?.Invoke();
+        public void NotifyPersistentUpdate() => InvokeHelper.InvokeList(onPersistentUpdateSubscribers);
 
-        public void NotifySemiPersistenUpdate() => OnSemiPersistentUpdate?.Invoke();
+        public void NotifySemiPersistentUpdate() => InvokeHelper.InvokeList(onSemiPersistentUpdateSubscribers);
 
-        public void NotifyOnBeginSceneTransition(Transition target) => OnBeginSceneTransition?.Invoke(target);
+        public void NotifyOnBeginSceneTransition(Transition target) => InvokeHelper.InvokeList(target, onBeginSceneTransitionSubscribers);
     }
 }

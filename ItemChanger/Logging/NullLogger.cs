@@ -2,6 +2,8 @@
 
 public class NullLogger : ILogger
 {
+    public static NullLogger Instance { get; } = new();
+
     public void LogFine(string? message)
     {
     }
