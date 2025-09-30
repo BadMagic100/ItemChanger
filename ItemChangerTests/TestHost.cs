@@ -44,10 +44,13 @@ namespace ItemChangerTests
         public TestHost(ITestOutputHelper output)
         {
             Logger = new TestLogger(output);
+            Profile = new(this);
         }
 
         public ILogger Logger { get; }
         public List<string?> ErrorMessages { get => ((TestLogger)Logger).ErrorMessages; }
+
+        public ItemChangerProfile Profile { get; }
 
         Container IItemChangerHost.DefaultSingleItemContainer => throw new NotImplementedException();
 
@@ -55,17 +58,93 @@ namespace ItemChangerTests
 
         void IItemChangerHost.PrepareEvents(LifecycleEvents.Invoker lifecycleInvoker, GameEvents.Invoker gameInvoker)
         {
-            LifecyleEventsInvoker = lifecycleInvoker;
+            LifecycleEventsInvoker = lifecycleInvoker;
             GameEventsInvoker = gameInvoker;
         }
 
         void IItemChangerHost.UnhookEvents(LifecycleEvents.Invoker lifecycleInvoker, GameEvents.Invoker gameInvoker)
         {
-            LifecyleEventsInvoker = null;
+            LifecycleEventsInvoker = null;
             GameEventsInvoker = null;
         }
 
-        public LifecycleEvents.Invoker? LifecyleEventsInvoker { get; private set; }
+        /// <summary>
+        /// Executes lifecycle events in order, stopping early if an error message is recorded to the <see cref="Logger"/>.
+        /// </summary>
+        /// <returns>False if the execution stopped early, otherwise true.</returns>
+        public bool RunStartNewLifecycle()
+        {
+            if (LifecycleEventsInvoker is null) throw new NullReferenceException(nameof(LifecycleEventsInvoker));
+
+            IEnumerable<Action> cycle =
+            [
+                LifecycleEventsInvoker.NotifyBeforeStartNewGame,
+                Profile.Load,
+                LifecycleEventsInvoker.NotifyOnEnterGame,
+                LifecycleEventsInvoker.NotifyAfterStartNewGame,
+                LifecycleEventsInvoker.NotifyOnSafeToGiveItems,
+            ];
+
+            foreach (Action a in cycle)
+            {
+                a();
+                if (ErrorMessages.Count > 0) return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Executes lifecycle events in order, stopping early if an error message is recorded to the <see cref="Logger"/>.
+        /// </summary>
+        /// <returns>False if the execution stopped early, otherwise true.</returns>
+        public bool RunContinueLifecycle()
+        {
+            if (LifecycleEventsInvoker is null) throw new NullReferenceException(nameof(LifecycleEventsInvoker));
+
+            IEnumerable<Action> cycle =
+            [
+                LifecycleEventsInvoker.NotifyBeforeContinueGame,
+                Profile.Load,
+                LifecycleEventsInvoker.NotifyOnEnterGame,
+                LifecycleEventsInvoker.NotifyAfterContinueGame,
+                LifecycleEventsInvoker.NotifyOnSafeToGiveItems,
+            ];
+
+            foreach (Action a in cycle)
+            {
+                a();
+                if (ErrorMessages.Count > 0) return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Executes lifecycle events in order, stopping early if an error message is recorded to the <see cref="Logger"/>.
+        /// </summary>
+        /// <returns>False if the execution stopped early, otherwise true.</returns>
+        public bool RunLeaveLifecycle()
+        {
+            if (LifecycleEventsInvoker is null) throw new NullReferenceException(nameof(LifecycleEventsInvoker));
+
+            IEnumerable<Action> cycle =
+            [
+                LifecycleEventsInvoker.NotifyOnLeaveGame,
+                Profile.Unload,
+            ];
+
+            foreach (Action a in cycle)
+            {
+                a();
+                if (ErrorMessages.Count > 0) return false;
+            }
+
+            return true;
+        }
+
+
+        public LifecycleEvents.Invoker? LifecycleEventsInvoker { get; private set; }
         public GameEvents.Invoker? GameEventsInvoker { get; private set; }
     }
 }

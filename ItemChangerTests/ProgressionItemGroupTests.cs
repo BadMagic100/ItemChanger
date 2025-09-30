@@ -49,12 +49,8 @@ namespace ItemChangerTests
             List<string> resultOrder = [];
             void AddToResult(ReadOnlyGiveEventArgs args) => resultOrder.Add(args.Item.name);
             foreach (Item i in p.Items) i.AfterGive += AddToResult;
-            // start IC
-            host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
-            profile.Load();
-            host.LifecyleEventsInvoker.NotifyOnEnterGame();
-            host.LifecyleEventsInvoker!.NotifyAfterStartNewGame();
-            host.LifecyleEventsInvoker!.NotifyOnSafeToGiveItems();
+            // start IC w/o errors
+            Assert.True(host.RunStartNewLifecycle());
             // give items
             GiveInfo gi = new();
             p.GiveAll(gi);
@@ -100,12 +96,8 @@ namespace ItemChangerTests
             List<string> resultOrder = [];
             void AddToResult(ReadOnlyGiveEventArgs args) => resultOrder.Add(args.Item.name);
             foreach (Item i in p.Items) i.AfterGive += AddToResult;
-            // start IC
-            host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
-            profile.Load();
-            host.LifecyleEventsInvoker.NotifyOnEnterGame();
-            host.LifecyleEventsInvoker!.NotifyAfterStartNewGame();
-            host.LifecyleEventsInvoker!.NotifyOnSafeToGiveItems();
+            // start IC w/o errors
+            Assert.True(host.RunStartNewLifecycle());
             // give items
             GiveInfo gi = new();
             p.GiveAll(gi);
@@ -152,12 +144,8 @@ namespace ItemChangerTests
             List<string> resultOrder = [];
             void AddToResult(ReadOnlyGiveEventArgs args) => resultOrder.Add(args.Item.name);
             foreach (Item i in p.Items) i.AfterGive += AddToResult;
-            // start IC
-            host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
-            profile.Load();
-            host.LifecyleEventsInvoker.NotifyOnEnterGame();
-            host.LifecyleEventsInvoker!.NotifyAfterStartNewGame();
-            host.LifecyleEventsInvoker!.NotifyOnSafeToGiveItems();
+            // start IC w/o errors
+            Assert.True(host.RunStartNewLifecycle());
             // give items
             GiveInfo gi = new();
             p.GiveAll(gi);
@@ -180,9 +168,8 @@ namespace ItemChangerTests
                     ["Y"] = ["X"],
                 },
             });
-            // start IC
-            host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
-            profile.Load();
+            // start IC w/ errors
+            Assert.False(host.RunStartNewLifecycle());
             // retrieve error message
             string err = Assert.Single(host.ErrorMessages)!;
             Output.WriteLine(err);
@@ -208,9 +195,8 @@ namespace ItemChangerTests
                     ["Z"] = ["X"],
                 },
             });
-            // start IC
-            host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
-            profile.Load();
+            // start IC w/ errors
+            Assert.False(host.RunStartNewLifecycle());
             // retrieve error message
             string err = Assert.Single(host.ErrorMessages)!;
             Output.WriteLine(err);
@@ -235,9 +221,8 @@ namespace ItemChangerTests
                     ["Y"] = ["X"],
                 },
             });
-            // start IC
-            host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
-            profile.Load();
+            // start IC w/ errors
+            Assert.False(host.RunStartNewLifecycle());
             // retrieve error message
             string err = Assert.Single(host.ErrorMessages)!;
             Output.WriteLine(err);
@@ -263,9 +248,8 @@ namespace ItemChangerTests
                     ["Z"] = ["Y"],
                 },
             });
-            // start IC
-            host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
-            profile.Load();
+            // start IC w/ errors
+            Assert.False(host.RunStartNewLifecycle());
             // retrieve error message
             string err = Assert.Single(host.ErrorMessages)!;
             Output.WriteLine(err);
@@ -288,9 +272,8 @@ namespace ItemChangerTests
                     ["X"] = ["X"],
                 },
             });
-            // start IC
-            host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
-            profile.Load();
+            // start IC w/ errors
+            Assert.False(host.RunStartNewLifecycle());
             // retrieve error message
             string err = Assert.Single(host.ErrorMessages)!;
             Output.WriteLine(err);
@@ -314,9 +297,8 @@ namespace ItemChangerTests
                     ["Y"] = ["X"],
                 },
             });
-            // start IC
-            host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
-            profile.Load();
+            // start IC w/ errors
+            Assert.False(host.RunStartNewLifecycle());
             // retrieve error message
             string err = Assert.Single(host.ErrorMessages)!;
             Output.WriteLine(err);
@@ -346,9 +328,8 @@ namespace ItemChangerTests
                     ["Y"] = ["X"],
                 },
             });
-            // start IC
-            host.LifecyleEventsInvoker!.NotifyBeforeStartNewGame();
-            profile.Load();
+            // start IC w/ errors
+            Assert.False(host.RunStartNewLifecycle());
             // retrieve error message
             string err = Assert.Single(host.ErrorMessages)!;
             Output.WriteLine(err);
@@ -365,8 +346,16 @@ namespace ItemChangerTests
             Finder.DefineItem(i, overwrite:true);
             return i.Clone();
         }
-        private Placement CreatePlacement(IEnumerable<Item> items) => 
-            new AutoPlacement("Test placement") { Location = new EmptyLocation { Name = "Test location" } }.Add(items);
-        private ItemChangerProfile CreateProfile(out TestHost host) => new(host = new TestHost(Output));
+
+        private Placement CreatePlacement(IEnumerable<Item> items)
+        {
+            return new AutoPlacement("Test placement") { Location = new EmptyLocation { Name = "Test location" } }.Add(items);
+        }
+
+        private ItemChangerProfile CreateProfile(out TestHost host)
+        {
+            host = new(Output);
+            return host.Profile;
+        }
     }
 }
