@@ -18,7 +18,7 @@ public class IncompatibilityWarningTag : Tag
             _ => null,
         };
 
-        if (ItemChangerProfile.ActiveProfile.TryGetPlacement(IncompatiblePlacementName, out Placement? p))
+        if (ItemChangerHost.Singleton.ActiveProfile!.TryGetPlacement(IncompatiblePlacementName, out Placement? p))
         {
             LoggerProxy.LogWarn($"Placement {parentPlacementName} is incompatible with {IncompatiblePlacementName}, but both are present.");
         }

@@ -25,7 +25,8 @@ we hate change scene info and change scene tag
 preferred container/container selection carries a lot of hk specific baggage (e.g. if a cost or TP is needed only a shiny is allowed)
 incompatibility warning tag has some weird timing related edge cases (ie if I add something incompatible after load it doesn't get caught)
 consistent interface for replacable locations
-Consider de-staticting some things and associate to profile.
+remove all static singletons, they make testability a nightmare.
+  Open question - how tf do we know the current scope at any given time without losing serializability
 find sane places for exception handling
 
 Unity stuff - is a unity shim package needed? How to deal with unity refs from nuget package?

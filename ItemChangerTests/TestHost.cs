@@ -39,30 +39,35 @@ namespace ItemChangerTests
         }
     }
 
-    internal class TestHost : IItemChangerHost
+    internal class TestHost : ItemChangerHost, IDisposable
     {
-        public TestHost(ITestOutputHelper output)
+        public TestHost(ITestOutputHelper output) : base()
         {
             Logger = new TestLogger(output);
             Profile = new(this);
         }
 
-        public ILogger Logger { get; }
+        void IDisposable.Dispose()
+        {
+            DetachSingleton();
+        }
+
+        public override ILogger Logger { get; }
         public List<string?> ErrorMessages { get => ((TestLogger)Logger).ErrorMessages; }
 
         public ItemChangerProfile Profile { get; }
 
-        Container IItemChangerHost.DefaultSingleItemContainer => throw new NotImplementedException();
+        public override Container DefaultSingleItemContainer => throw new NotImplementedException();
 
-        Container IItemChangerHost.DefaultMultiItemContainer => throw new NotImplementedException();
+        public override Container DefaultMultiItemContainer => throw new NotImplementedException();
 
-        void IItemChangerHost.PrepareEvents(LifecycleEvents.Invoker lifecycleInvoker, GameEvents.Invoker gameInvoker)
+        public override void PrepareEvents(LifecycleEvents.Invoker lifecycleInvoker, GameEvents.Invoker gameInvoker)
         {
             LifecycleEventsInvoker = lifecycleInvoker;
             GameEventsInvoker = gameInvoker;
         }
 
-        void IItemChangerHost.UnhookEvents(LifecycleEvents.Invoker lifecycleInvoker, GameEvents.Invoker gameInvoker)
+        public override void UnhookEvents(LifecycleEvents.Invoker lifecycleInvoker, GameEvents.Invoker gameInvoker)
         {
             LifecycleEventsInvoker = null;
             GameEventsInvoker = null;
@@ -74,7 +79,10 @@ namespace ItemChangerTests
         /// <returns>False if the execution stopped early, otherwise true.</returns>
         public bool RunStartNewLifecycle()
         {
-            if (LifecycleEventsInvoker is null) throw new NullReferenceException(nameof(LifecycleEventsInvoker));
+            if (LifecycleEventsInvoker is null)
+            {
+                throw new NullReferenceException(nameof(LifecycleEventsInvoker));
+            }
 
             IEnumerable<Action> cycle =
             [
@@ -88,7 +96,10 @@ namespace ItemChangerTests
             foreach (Action a in cycle)
             {
                 a();
-                if (ErrorMessages.Count > 0) return false;
+                if (ErrorMessages.Count > 0)
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -100,7 +111,10 @@ namespace ItemChangerTests
         /// <returns>False if the execution stopped early, otherwise true.</returns>
         public bool RunContinueLifecycle()
         {
-            if (LifecycleEventsInvoker is null) throw new NullReferenceException(nameof(LifecycleEventsInvoker));
+            if (LifecycleEventsInvoker is null)
+            {
+                throw new NullReferenceException(nameof(LifecycleEventsInvoker));
+            }
 
             IEnumerable<Action> cycle =
             [
@@ -114,7 +128,10 @@ namespace ItemChangerTests
             foreach (Action a in cycle)
             {
                 a();
-                if (ErrorMessages.Count > 0) return false;
+                if (ErrorMessages.Count > 0)
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -126,7 +143,10 @@ namespace ItemChangerTests
         /// <returns>False if the execution stopped early, otherwise true.</returns>
         public bool RunLeaveLifecycle()
         {
-            if (LifecycleEventsInvoker is null) throw new NullReferenceException(nameof(LifecycleEventsInvoker));
+            if (LifecycleEventsInvoker is null)
+            {
+                throw new NullReferenceException(nameof(LifecycleEventsInvoker));
+            }
 
             IEnumerable<Action> cycle =
             [
@@ -137,7 +157,10 @@ namespace ItemChangerTests
             foreach (Action a in cycle)
             {
                 a();
-                if (ErrorMessages.Count > 0) return false;
+                if (ErrorMessages.Count > 0)
+                {
+                    return false;
+                }
             }
 
             return true;

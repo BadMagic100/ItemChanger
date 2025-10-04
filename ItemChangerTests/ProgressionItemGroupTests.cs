@@ -37,7 +37,8 @@ namespace ItemChangerTests
             Dictionary<string, Item> items = ((Item[])[l, r, s]).ToDictionary(i => i.name);
             Placement p = CreatePlacement(input.Select(i => items[i].Clone()));
             // profile setup
-            using ItemChangerProfile profile = CreateProfile(out TestHost host);
+            using TestHost host = CreateHost();
+            using ItemChangerProfile profile = host.Profile;
             profile.AddPlacement(p);
             profile.Modules.Add(new ProgressiveItemGroupModule
             {
@@ -53,7 +54,10 @@ namespace ItemChangerTests
             // prepare to monitor item order
             List<string> resultOrder = [];
             void AddToResult(ReadOnlyGiveEventArgs args) => resultOrder.Add(args.Item.name);
-            foreach (Item i in p.Items) i.AfterGive += AddToResult;
+            foreach (Item i in p.Items)
+            {
+                i.AfterGive += AddToResult;
+            }
             // start IC w/o errors
             Assert.True(host.RunStartNewLifecycle());
             // give items
@@ -77,7 +81,8 @@ namespace ItemChangerTests
             Dictionary<string, Item> items = ((Item[])[l, r, s]).ToDictionary(i => i.name);
             Placement p1 = CreatePlacement(firstInput.Select(i => items[i].Clone()));
             // profile setup
-            using ItemChangerProfile profile = CreateProfile(out TestHost host);
+            using TestHost host = CreateHost();
+            using ItemChangerProfile profile = host.Profile;
             profile.AddPlacement(p1);
             profile.Modules.Add(new ProgressiveItemGroupModule
             {
@@ -93,7 +98,10 @@ namespace ItemChangerTests
             // prepare to monitor item order
             List<string> resultOrder = [];
             void AddToResult(ReadOnlyGiveEventArgs args) => resultOrder.Add(args.Item.name);
-            foreach (Item i in p1.Items) i.AfterGive += AddToResult;
+            foreach (Item i in p1.Items)
+            {
+                i.AfterGive += AddToResult;
+            }
             // start IC w/o errors
             Assert.True(host.RunStartNewLifecycle());
             // give items
@@ -102,7 +110,10 @@ namespace ItemChangerTests
             // define second placement
             Placement p2 = CreatePlacement(secondInput.Select(i => items[i].Clone()));
             profile.AddPlacement(p2);
-            foreach (Item i in p2.Items) i.AfterGive += AddToResult;
+            foreach (Item i in p2.Items)
+            {
+                i.AfterGive += AddToResult;
+            }
             // give items
             gi = new();
             p2.GiveAll(gi);
@@ -137,11 +148,12 @@ namespace ItemChangerTests
             Dictionary<string, Item> items = ((Item[])[n, c, e]).ToDictionary(i => i.name);
             Placement p = CreatePlacement(input.Select(i => items[i].Clone()));
             // profile setup
-            using ItemChangerProfile profile = CreateProfile(out TestHost host);
+            using TestHost host = CreateHost();
+            using ItemChangerProfile profile = host.Profile;
             profile.AddPlacement(p);
-            profile.Modules.Add(new ProgressiveItemGroupModule 
-            { 
-                GroupID = "test", 
+            profile.Modules.Add(new ProgressiveItemGroupModule
+            {
+                GroupID = "test",
                 OrderedMemberList = ["N", "E", "C"],
                 OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
                 {
@@ -153,7 +165,10 @@ namespace ItemChangerTests
             // prepare to monitor item order
             List<string> resultOrder = [];
             void AddToResult(ReadOnlyGiveEventArgs args) => resultOrder.Add(args.Item.name);
-            foreach (Item i in p.Items) i.AfterGive += AddToResult;
+            foreach (Item i in p.Items)
+            {
+                i.AfterGive += AddToResult;
+            }
             // start IC w/o errors
             Assert.True(host.RunStartNewLifecycle());
             // give items
@@ -193,11 +208,12 @@ namespace ItemChangerTests
             Dictionary<string, Item> items = ((Item[])[m, s, h1, h2]).ToDictionary(i => i.name);
             Placement p = CreatePlacement(input.Select(i => items[i].Clone()));
             // profile setup
-            using ItemChangerProfile profile = CreateProfile(out TestHost host);
+            using TestHost host = CreateHost();
+            using ItemChangerProfile profile = host.Profile;
             profile.AddPlacement(p);
-            profile.Modules.Add(new ProgressiveItemGroupModule 
-            { 
-                GroupID = "test", 
+            profile.Modules.Add(new ProgressiveItemGroupModule
+            {
+                GroupID = "test",
                 OrderedMemberList = ["M", "S", "H1", "H2"],
                 OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
                 {
@@ -210,7 +226,10 @@ namespace ItemChangerTests
             // prepare to monitor item order
             List<string> resultOrder = [];
             void AddToResult(ReadOnlyGiveEventArgs args) => resultOrder.Add(args.Item.name);
-            foreach (Item i in p.Items) i.AfterGive += AddToResult;
+            foreach (Item i in p.Items)
+            {
+                i.AfterGive += AddToResult;
+            }
             // start IC w/o errors
             Assert.True(host.RunStartNewLifecycle());
             // give items
@@ -224,10 +243,11 @@ namespace ItemChangerTests
         public void MissingMemberTest1()
         {
             // profile setup
-            using ItemChangerProfile profile = CreateProfile(out TestHost host);
-            profile.Modules.Add(new ProgressiveItemGroupModule 
-            { 
-                GroupID = "test", 
+            using TestHost host = CreateHost();
+            using ItemChangerProfile profile = host.Profile;
+            profile.Modules.Add(new ProgressiveItemGroupModule
+            {
+                GroupID = "test",
                 OrderedMemberList = ["X", "Y", "Z"],
                 OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
                 {
@@ -250,7 +270,8 @@ namespace ItemChangerTests
         public void MissingMemberTest2()
         {
             // profile setup
-            using ItemChangerProfile profile = CreateProfile(out TestHost host);
+            using TestHost host = CreateHost();
+            using ItemChangerProfile profile = host.Profile;
             profile.Modules.Add(new ProgressiveItemGroupModule
             {
                 GroupID = "test",
@@ -277,7 +298,8 @@ namespace ItemChangerTests
         public void MissingMemberTest3()
         {
             // profile setup
-            using ItemChangerProfile profile = CreateProfile(out TestHost host);
+            using TestHost host = CreateHost();
+            using ItemChangerProfile profile = host.Profile;
             profile.Modules.Add(new ProgressiveItemGroupModule
             {
                 GroupID = "test",
@@ -303,10 +325,11 @@ namespace ItemChangerTests
         public void TransitivityTest()
         {
             // profile setup
-            using ItemChangerProfile profile = CreateProfile(out TestHost host);
-            profile.Modules.Add(new ProgressiveItemGroupModule 
-            { 
-                GroupID = "test", 
+            using TestHost host = CreateHost();
+            using ItemChangerProfile profile = host.Profile;
+            profile.Modules.Add(new ProgressiveItemGroupModule
+            {
+                GroupID = "test",
                 OrderedMemberList = ["X", "Y", "Z"],
                 OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
                 {
@@ -329,10 +352,11 @@ namespace ItemChangerTests
         public void IrreflexivityTest()
         {
             // profile setup
-            using ItemChangerProfile profile = CreateProfile(out TestHost host);
-            profile.Modules.Add(new ProgressiveItemGroupModule 
-            { 
-                GroupID = "test", 
+            using TestHost host = CreateHost();
+            using ItemChangerProfile profile = host.Profile;
+            profile.Modules.Add(new ProgressiveItemGroupModule
+            {
+                GroupID = "test",
                 OrderedMemberList = ["X"],
                 OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
                 {
@@ -353,10 +377,11 @@ namespace ItemChangerTests
         public void OrderConsistencyTest()
         {
             // profile setup
-            using ItemChangerProfile profile = CreateProfile(out TestHost host);
-            profile.Modules.Add(new ProgressiveItemGroupModule 
-            { 
-                GroupID = "test", 
+            using TestHost host = CreateHost();
+            using ItemChangerProfile profile = host.Profile;
+            profile.Modules.Add(new ProgressiveItemGroupModule
+            {
+                GroupID = "test",
                 OrderedMemberList = ["Y", "X"],
                 OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
                 {
@@ -383,12 +408,14 @@ namespace ItemChangerTests
             Item z = CreateTaggedItem("Z");
             Placement p = CreatePlacement([x, y, z]);
             // profile setup
-            using ItemChangerProfile profile = CreateProfile(out TestHost host);
+            using TestHost host = CreateHost();
+            using ItemChangerProfile profile = host.Profile;
+
             profile.AddPlacement(p);
-            profile.Modules.Add(new ProgressiveItemGroupModule 
-            { 
-                GroupID = "test", 
-                OrderedMemberList = ["X", "Y"] ,
+            profile.Modules.Add(new ProgressiveItemGroupModule
+            {
+                GroupID = "test",
+                OrderedMemberList = ["X", "Y"],
                 OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
                 {
                     ["X"] = [],
@@ -410,7 +437,7 @@ namespace ItemChangerTests
         {
             Item i = new NullItem { name = name, };
             i.AddTag(new ProgressiveItemGroupTag { GroupID = "test", });
-            Finder.DefineItem(i, overwrite:true);
+            Finder.DefineItem(i, overwrite: true);
             return i.Clone();
         }
 
@@ -419,10 +446,9 @@ namespace ItemChangerTests
             return new AutoPlacement("Test placement") { Location = new EmptyLocation { Name = "Test location" } }.Add(items);
         }
 
-        private ItemChangerProfile CreateProfile(out TestHost host)
+        private TestHost CreateHost()
         {
-            host = new(Output);
-            return host.Profile;
+            return new(Output);
         }
     }
 }

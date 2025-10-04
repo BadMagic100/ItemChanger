@@ -21,7 +21,7 @@ namespace ItemChanger.Tags
         protected override void DoLoad(TaggableObject parent)
         {
             base.DoLoad(parent);
-            ItemChangerProfile.ActiveProfile.Modules.OfType<ProgressiveItemGroupModule>()
+            ItemChangerHost.Singleton.ActiveProfile!.Modules.OfType<ProgressiveItemGroupModule>()
                 .First(m => m.GroupID == GroupID)
                 .RegisterItem(this, (Item)parent);
         }

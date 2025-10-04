@@ -1,6 +1,5 @@
 ﻿using ItemChanger.Events;
 using ItemChanger.Items;
-using ItemChanger.Logging;
 using ItemChanger.Tags;
 using Newtonsoft.Json;
 using System;
@@ -12,21 +11,6 @@ namespace ItemChanger.Internal;
 
 public class ItemChangerProfile : IDisposable
 {
-    private static ItemChangerProfile? activeProfile;
-
-    /// <summary>
-    /// The active ItemChanger profile, or null if no profile is loaded.
-    /// </summary>
-    public static ItemChangerProfile? ActiveProfileOrNull => activeProfile;
-
-    /// <summary>
-    /// The active ItemChanger profile. Will throw if no profile is loaded.
-    /// </summary>
-    public static ItemChangerProfile ActiveProfile
-    {
-        get => activeProfile ?? throw new InvalidOperationException("Attempted to access active profile while no profile was loaded");
-    }
-
     internal enum LoadState : uint
     {
         Unloaded = 0,
@@ -47,9 +31,7 @@ public class ItemChangerProfile : IDisposable
     private bool hooked = false;
     internal LoadState state = LoadState.Unloaded;
 
-    public ILogger Logger { get => host.Logger; }
-
-    private readonly IItemChangerHost host;
+    private readonly ItemChangerHost host;
     private readonly LifecycleEvents.Invoker lifecycleInvoker;
     private readonly GameEvents.Invoker gameInvoker;
 
@@ -60,10 +42,11 @@ public class ItemChangerProfile : IDisposable
         gameInvoker = new GameEvents.Invoker();
     }
 
-    public ItemChangerProfile(IItemChangerHost host) : this()
+    public ItemChangerProfile(ItemChangerHost host) : this()
     {
-        Modules = new(this);
+        host.ActiveProfile = this;
         this.host = host;
+        Modules = new(this);
 
         DoHook();
     }
@@ -84,6 +67,7 @@ public class ItemChangerProfile : IDisposable
             Unload();
         }
         DoUnhook();
+        host.ActiveProfile = null;
         GC.SuppressFinalize(this);
     }
 
@@ -127,12 +111,7 @@ public class ItemChangerProfile : IDisposable
         {
             throw new InvalidOperationException($"Cannot load an already loaded profile. Current state is {state}");
         }
-        if (activeProfile != null)
-        {
-            throw new InvalidOperationException("Cannot load profile while another profile is active");
-        }
 
-        activeProfile = this;
         state = LoadState.LoadStarted;
 
         state = LoadState.ModuleLoadStarted;
@@ -168,7 +147,6 @@ public class ItemChangerProfile : IDisposable
         state = LoadState.ModuleLoadStarted;
 
         state = LoadState.Unloaded;
-        activeProfile = null;
     }
 
     public void AddPlacement(Placement placement, PlacementConflictResolution conflictResolution = PlacementConflictResolution.MergeKeepingNew)

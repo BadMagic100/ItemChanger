@@ -1,5 +1,4 @@
 ﻿using ItemChanger.Internal;
-using ItemChanger.Logging;
 
 namespace ItemChanger;
 
@@ -8,25 +7,23 @@ namespace ItemChanger;
 /// </summary>
 public static class LoggerProxy
 {
-    public static ILogger Logger { get => ItemChangerProfile.ActiveProfileOrNull?.Logger ?? NullLogger.Instance; }
-
     internal static void LogFine(string? message)
     {
-        Logger.LogFine(message);
+        ItemChangerHost.Singleton.Logger.LogFine(message);
     }
 
     internal static void LogInfo(string? message)
     {
-        Logger.LogInfo(message);
+        ItemChangerHost.Singleton.Logger.LogInfo(message);
     }
 
     internal static void LogWarn(string? message)
     {
-        Logger.LogWarn(message);
+        ItemChangerHost.Singleton.Logger.LogWarn(message);
     }
 
     internal static void LogError(string? message)
     {
-        Logger.LogError(message);
+        ItemChangerHost.Singleton.Logger.LogError(message);
     }
 }

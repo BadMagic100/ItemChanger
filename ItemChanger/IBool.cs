@@ -66,7 +66,7 @@ public class PlacementAllObtainedBool(string placementName, IBool? missingPlacem
     {
         get
         {
-            if (ItemChangerProfile.ActiveProfile.TryGetPlacement(placementName, out Placement? p) && p != null)
+            if (ItemChangerHost.Singleton.ActiveProfile!.TryGetPlacement(placementName, out Placement? p) && p != null)
             {
                 return p.AllObtained();
             }
@@ -100,7 +100,7 @@ public class PlacementVisitStateBool(string placementName, VisitState requiredFl
     {
         get
         {
-            if (ItemChangerProfile.ActiveProfile.TryGetPlacement(placementName, out Placement? p) && p != null)
+            if (ItemChangerHost.Singleton.ActiveProfile!.TryGetPlacement(placementName, out Placement? p) && p != null)
             {
                 return requireAny ? p.CheckVisitedAny(requiredFlags) : p.CheckVisitedAll(requiredFlags);
             }
@@ -137,7 +137,7 @@ public class Disjunction : IBool
         return new Disjunction(bools.Select(b => b.Clone()));
     }
 
-    public Disjunction OrWith(IBool b) => b is Disjunction d ? new([..bools, ..d.bools]) : new([..bools, b]);
+    public Disjunction OrWith(IBool b) => b is Disjunction d ? new([.. bools, .. d.bools]) : new([.. bools, b]);
 }
 
 public class Conjunction : IBool
@@ -163,7 +163,7 @@ public class Conjunction : IBool
         return new Conjunction(bools.Select(b => b.Clone()));
     }
 
-    public Conjunction AndWith(IBool b) => b is Conjunction c ? new([..bools, ..c.bools]) : new([..bools, b]);
+    public Conjunction AndWith(IBool b) => b is Conjunction c ? new([.. bools, .. c.bools]) : new([.. bools, b]);
 }
 
 [method: JsonConstructor]
