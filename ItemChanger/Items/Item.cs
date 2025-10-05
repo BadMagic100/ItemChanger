@@ -85,7 +85,7 @@ public abstract class Item : TaggableObject
     /// <summary>
     /// Used by some placements to decide what container to use for the item. A value of "Unknown" is ignored, and usually leads to a shiny item by default.
     /// </summary>
-    public virtual string GetPreferredContainer() => Container.Unknown;
+    public virtual string GetPreferredContainer() => ContainerRegistry.UnknownContainerType;
 
     /// <summary>
     /// Indicates that the item can be given early in a special way from the given container.

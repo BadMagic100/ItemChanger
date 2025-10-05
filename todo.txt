@@ -1,8 +1,6 @@
 Things to change
 
 Need a way for default modules not dependent on being defined in the assembly with IC
-Game-agnostic container implementation
-    Get rid of static constructor please
 use :new() in type constraints throughout to enforce/encourage json-friendly construction
 Audit fields -> properties and usage of required throughout
 docs
@@ -21,7 +19,6 @@ lock down load state to be accessible only to profile
 get OnBeginSceneTransition dependence out of dualplacement
   the difference is that the scene loaded event may be called multiple times per active scene. However not all games have discrete scenes
   so some plan is needed still.
-we hate change scene info and change scene tag
 preferred container/container selection carries a lot of hk specific baggage (e.g. if a cost or TP is needed only a shiny is allowed)
 incompatibility warning tag has some weird timing related edge cases (ie if I add something incompatible after load it doesn't get caught)
 consistent interface for replacable locations

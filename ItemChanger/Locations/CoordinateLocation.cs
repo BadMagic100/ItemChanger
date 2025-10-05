@@ -1,5 +1,5 @@
-﻿using ItemChanger.Containers;
-using ItemChanger.Events;
+﻿using ItemChanger.Events;
+using ItemChanger.Internal;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -35,7 +35,8 @@ public class CoordinateLocation : PlaceableLocation
 
     public override void PlaceContainer(GameObject obj, string containerType)
     {
-        Container.GetContainer(containerType)!.ApplyTargetContext(obj, X, Y, Z);
+        ItemChangerHost.Singleton.ContainerRegistry.GetContainer(containerType)!
+            .ApplyTargetContext(obj, new Vector3(X, Y, Z), Vector3.zero);
         if (!obj.activeSelf)
         {
             obj.SetActive(true);

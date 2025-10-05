@@ -1,5 +1,6 @@
 ﻿using ItemChanger.Containers;
 using ItemChanger.Costs;
+using ItemChanger.Internal;
 using ItemChanger.Items;
 using ItemChanger.Locations;
 using ItemChanger.Tags;
@@ -20,7 +21,7 @@ public class MutablePlacement(string Name) : Placement(Name), IContainerPlacemen
     Location IPrimaryLocationPlacement.Location => Location;
 
     public override string MainContainerType => ContainerType;
-    public string ContainerType { get; set; } = Container.Unknown;
+    public string ContainerType { get; set; } = ContainerRegistry.UnknownContainerType;
 
     public Cost? Cost { get; set; }
 
@@ -39,63 +40,72 @@ public class MutablePlacement(string Name) : Placement(Name), IContainerPlacemen
 
     public void GetContainer(Location location, out GameObject obj, out string containerType)
     {
-        if (this.ContainerType == Container.Unknown)
+        if (this.ContainerType == ContainerRegistry.UnknownContainerType)
         {
             this.ContainerType = ChooseContainerType(this, location as ContainerLocation, Items);
         }
 
         containerType = this.ContainerType;
-        Container? container = Container.GetContainer(containerType);
+        Container? container = ItemChangerHost.Singleton.ContainerRegistry.GetContainer(containerType);
         if (container == null || !container.SupportsInstantiate)
         {
             this.ContainerType = containerType = ChooseContainerType(this, location as ContainerLocation, Items);
-            container = Container.GetContainer(containerType);
+            container = ItemChangerHost.Singleton.ContainerRegistry.GetContainer(containerType);
             if (container == null)
             {
                 throw new InvalidOperationException($"Unable to resolve container type {containerType} for placement {Name}!");
             }
         }
 
-        obj = container.GetNewContainer(new ContainerInfo(container.Name, this, location.FlingType, Cost,
-            location.GetTags<Tags.ChangeSceneTag>().FirstOrDefault()?.ToChangeSceneInfo())
+        obj = container.GetNewContainer(new ContainerInfo(container.Name, this, location.FlingType, Cost)
         { ContainerType = containerType });
     }
 
-    public static string ChooseContainerType(ISingleCostPlacement placement, ContainerLocation? location, IEnumerable<Item> items)
+    public static string ChooseContainerType<T>(T placement, ContainerLocation? location, IEnumerable<Item> items) where T : Placement, ISingleCostPlacement
     {
-        if (location?.ForceShiny ?? true)
+        ContainerRegistry reg = ItemChangerHost.Singleton.ContainerRegistry;
+        if (location?.ForceDefaultContainer ?? true)
         {
-            return Container.GetDefaultSingleItemContainer().Name;
+            return ItemChangerHost.Singleton.ContainerRegistry.DefaultSingleItemContainer.Name;
         }
 
-        bool mustSupportCost = placement.Cost != null;
-        bool mustSupportSceneChange = location.GetTags<Tags.ChangeSceneTag>().Any() || ((Placement)placement).GetTags<Tags.ChangeSceneTag>().Any();
+        uint requestedCapabilities = placement.GetPlacementAndLocationTags()
+            .OfType<INeedsContainerCapability>()
+            .Select(x => x.RequestedCapabilities)
+            .Aggregate(0u, (acc, next) => acc | next);
+        if (placement.Cost != null)
+        {
+            requestedCapabilities |= ContainerCapabilities.PAY_COSTS;
+        }
 
-        HashSet<string> unsupported = new(((placement as Placement)?.GetPlacementAndLocationTags() ?? Enumerable.Empty<Tag>())
-            .OfType<Tags.UnsupportedContainerTag>()
-            .Select(t => t.ContainerType));
+
+        HashSet<string> unsupported = [
+            .. placement.GetPlacementAndLocationTags()
+                .OfType<UnsupportedContainerTag>()
+                .Select(t => t.ContainerType)
+        ];
 
         string? containerType = items
             .Select(i => i.GetPreferredContainer())
-            .FirstOrDefault(c => location.Supports(c) && !unsupported.Contains(c) && Container.SupportsAll(c, true, mustSupportCost, mustSupportSceneChange));
+            .FirstOrDefault(c => location.Supports(c) && !unsupported.Contains(c) && reg.GetContainer(c)?.SupportsAll(true, requestedCapabilities) == true);
 
         if (string.IsNullOrEmpty(containerType))
         {
-            if (((placement as Placement)?.GetPlacementAndLocationTags() ?? Enumerable.Empty<Tag>())
-                .OfType<Tags.PreferredDefaultContainerTag>().FirstOrDefault() is Tags.PreferredDefaultContainerTag t
-                && Container.SupportsAll(t.ContainerType, true, mustSupportCost, mustSupportSceneChange))
+            if (placement.GetPlacementAndLocationTags().OfType<PreferredDefaultContainerTag>().FirstOrDefault() is PreferredDefaultContainerTag t
+                && reg.GetContainer(t.ContainerType)?.SupportsAll(true, requestedCapabilities) == true)
             {
                 containerType = t.ContainerType;
             }
-            else if (!mustSupportCost && !mustSupportSceneChange && !unsupported.Contains(Container.GetDefaultMultiItemContainer().Name)
-                && items.Skip(1).Any()) // has more than 1 item, and can support Chest
-
+            // has more than 1 item and can support the default multi item container
+            else if (items.Skip(1).Any()
+                && !unsupported.Contains(ItemChangerHost.Singleton.ContainerRegistry.DefaultMultiItemContainer.Name)
+                && reg.DefaultMultiItemContainer.SupportsAll(true, requestedCapabilities))
             {
-                containerType = Container.GetDefaultMultiItemContainer().Name;
+                containerType = reg.DefaultMultiItemContainer.Name;
             }
             else
             {
-                containerType = Container.GetDefaultSingleItemContainer().Name;
+                containerType = reg.DefaultSingleItemContainer.Name;
             }
         }
 

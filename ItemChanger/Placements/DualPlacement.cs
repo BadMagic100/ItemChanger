@@ -1,6 +1,7 @@
 ﻿using ItemChanger.Containers;
 using ItemChanger.Costs;
 using ItemChanger.Events;
+using ItemChanger.Internal;
 using ItemChanger.Tags;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ public class DualPlacement : Placement, IContainerPlacement, ISingleCostPlacemen
 
     private bool cachedValue;
 
-    public string ContainerType { get; set; } = Container.Unknown;
+    public string ContainerType { get; set; } = ContainerRegistry.UnknownContainerType;
     public override string MainContainerType => ContainerType;
 
     [JsonIgnore]
@@ -63,33 +64,41 @@ public class DualPlacement : Placement, IContainerPlacement, ISingleCostPlacemen
     // MutablePlacement implementation of GetContainer
     public void GetContainer(Location location, out GameObject obj, out string containerType)
     {
-        if (this.ContainerType == Container.Unknown)
+        if (this.ContainerType == ContainerRegistry.UnknownContainerType)
         {
             this.ContainerType = MutablePlacement.ChooseContainerType(this, location as Locations.ContainerLocation, Items);
         }
 
+        ContainerRegistry reg = ItemChangerHost.Singleton.ContainerRegistry;
+
         containerType = this.ContainerType;
-        Container? container = Container.GetContainer(containerType);
+        Container? container = reg.GetContainer(containerType);
         if (container is null || !container.SupportsInstantiate)
         {
             // this means that the container that was chosen on load isn't valid
             // most likely due from switching from a noninstantiatable ECL to a CL
             // so, we make a shiny but we don't modify the saved container type
-            containerType = Container.GetDefaultSingleItemContainer().Name;
-            container = Container.GetContainer(containerType)!;
+            containerType = reg.DefaultSingleItemContainer.Name;
+            container = reg.DefaultSingleItemContainer;
         }
 
-        obj = container.GetNewContainer(new ContainerInfo(container.Name, this, location.FlingType, Cost,
-            location.GetTags<Tags.ChangeSceneTag>().FirstOrDefault()?.ToChangeSceneInfo())
+        obj = container.GetNewContainer(new ContainerInfo(container.Name, this, location.FlingType, Cost)
         { ContainerType = containerType });
     }
 
     private void SetContainerType()
     {
-        bool mustSupportCost = Cost != null;
-        bool mustSupportSceneChange = FalseLocation.GetTags<Tags.ChangeSceneTag>().Any()
-            || TrueLocation.GetTags<Tags.ChangeSceneTag>().Any() || GetTags<Tags.ChangeSceneTag>().Any();
-        if (Container.SupportsAll(ContainerType, true, mustSupportCost, mustSupportSceneChange))
+        uint requestedCapabilities = GetPlacementAndLocationTags()
+            .OfType<INeedsContainerCapability>()
+            .Select(x => x.RequestedCapabilities)
+            .Aggregate(0u, (acc, next) => acc | next);
+        if (Cost != null)
+        {
+            requestedCapabilities |= ContainerCapabilities.PAY_COSTS;
+        }
+
+        ContainerRegistry reg = ItemChangerHost.Singleton.ContainerRegistry;
+        if (reg.GetContainer(ContainerType)?.SupportsAll(true, requestedCapabilities) == true)
         {
             return;
         }

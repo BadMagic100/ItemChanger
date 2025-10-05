@@ -241,7 +241,7 @@ public abstract class Placement : TaggableObject
     /// The container type that best describes the placement as a whole.
     /// </summary>
     [JsonIgnore]
-    public virtual string MainContainerType => Container.Unknown;
+    public virtual string MainContainerType => ContainerRegistry.UnknownContainerType;
 
     public virtual IEnumerable<Tag> GetPlacementAndLocationTags()
     {

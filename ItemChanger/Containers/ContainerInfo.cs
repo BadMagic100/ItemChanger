@@ -14,7 +14,6 @@ public class ContainerInfo
     public required string ContainerType { get; init; }
 
     public ContainerGiveInfo GiveInfo { get; init; }
-    public ChangeSceneInfo? ChangeSceneInfo { get; init; }
     public ContainerCostInfo? CostInfo { get; init; }
 
     /// <summary>
@@ -65,29 +64,11 @@ public class ContainerInfo
         }
     }
 
-    /// <summary>
-    /// Creates ContainerInfo with standard ContainerGiveInfo and the provided ChangeSceneInfo. If the cost parameter is not null, initializes costInfo with the cost.
-    /// </summary>
-    public ContainerInfo(string containerType, Placement placement, FlingType flingType, Cost? cost, ChangeSceneInfo? changeSceneInfo)
-        : this(containerType, placement, placement.Items, flingType, cost, changeSceneInfo)
-    {
-    }
-
-    /// <summary>
-    /// Creates ContainerInfo with standard ContainerGiveInfo and the provided ChangeSceneInfo. If the cost parameter is not null, initializes costInfo with the cost.
-    /// </summary>
-    public ContainerInfo(string containerType, Placement placement, IEnumerable<Item> items, FlingType flingType, Cost? cost, ChangeSceneInfo? changeSceneInfo)
-        : this(containerType, placement, items, flingType, cost)
-    {
-        ChangeSceneInfo = changeSceneInfo;
-    }
-
-    public ContainerInfo(string containerType, ContainerGiveInfo giveInfo, ContainerCostInfo? costInfo, ChangeSceneInfo? changeSceneInfo)
+    public ContainerInfo(string containerType, ContainerGiveInfo giveInfo, ContainerCostInfo? costInfo)
     {
         ContainerType = containerType;
         GiveInfo = giveInfo;
         CostInfo = costInfo;
-        ChangeSceneInfo = changeSceneInfo;
     }
 
 

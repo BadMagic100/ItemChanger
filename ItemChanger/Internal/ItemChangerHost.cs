@@ -22,7 +22,7 @@ public abstract class ItemChangerHost
         ?? throw new InvalidOperationException("Cannot use singleton host before a host is created.");
 
     /// <summary>
-    /// The logger
+    /// The logger to be used by ItemChanger to emit log output to the game.
     /// </summary>
     public abstract ILogger Logger { get; }
 
@@ -48,9 +48,10 @@ public abstract class ItemChangerHost
         }
     }
 
-    public abstract Container DefaultSingleItemContainer { get; }
-
-    public abstract Container DefaultMultiItemContainer { get; }
+    /// <summary>
+    /// Registry of container type definitions for this host.
+    /// </summary>
+    public abstract ContainerRegistry ContainerRegistry { get; }
 
     /// <summary>
     /// Allows hosts to hook game-specific code to invoke the generic itemchanger event system.

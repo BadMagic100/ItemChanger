@@ -1,4 +1,5 @@
-﻿using ItemChanger.Events;
+﻿using ItemChanger.Containers;
+using ItemChanger.Events;
 using ItemChanger.Items;
 using ItemChanger.Tags;
 using Newtonsoft.Json;
@@ -221,6 +222,10 @@ public class ItemChangerProfile : IDisposable
 
         GameEvents.Hook();
         host.PrepareEvents(lifecycleInvoker, gameInvoker);
+        foreach (Container c in host.ContainerRegistry)
+        {
+            c.Load();
+        }
 
         lifecycleInvoker.NotifyHooked();
 
@@ -234,6 +239,10 @@ public class ItemChangerProfile : IDisposable
             return;
         }
 
+        foreach (Container c in host.ContainerRegistry)
+        {
+            c.Unload();
+        }
         host.UnhookEvents(lifecycleInvoker, gameInvoker);
         GameEvents.Unhook();
 

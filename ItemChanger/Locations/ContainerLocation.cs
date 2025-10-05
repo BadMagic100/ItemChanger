@@ -1,4 +1,4 @@
-﻿using ItemChanger.Containers;
+﻿using ItemChanger.Internal;
 using ItemChanger.Placements;
 using UnityEngine;
 
@@ -10,9 +10,9 @@ namespace ItemChanger.Locations;
 public abstract class ContainerLocation : Location
 {
     /// <summary>
-    /// Whether to force a shiny at the location.
+    /// Whether to force a default single-item container at the location.
     /// </summary>
-    public bool ForceShiny { get; init; }
+    public bool ForceDefaultContainer { get; init; }
 
     public void GetContainer(out GameObject obj, out string containerType)
     {
@@ -21,7 +21,9 @@ public abstract class ContainerLocation : Location
 
     public virtual bool Supports(string containerType)
     {
-        return containerType == Container.GetDefaultSingleItemContainer().Name ? true : !ForceShiny;
+        return containerType == ItemChangerHost.Singleton.ContainerRegistry.DefaultSingleItemContainer.Name
+            ? true
+            : !ForceDefaultContainer;
     }
 
     public override Placement Wrap()

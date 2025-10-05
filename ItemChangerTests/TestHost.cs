@@ -57,9 +57,11 @@ namespace ItemChangerTests
 
         public ItemChangerProfile Profile { get; }
 
-        public override Container DefaultSingleItemContainer => throw new NotImplementedException();
-
-        public override Container DefaultMultiItemContainer => throw new NotImplementedException();
+        public override ContainerRegistry ContainerRegistry => new()
+        {
+            DefaultMultiItemContainer = null!,
+            DefaultSingleItemContainer = null!,
+        };
 
         public override void PrepareEvents(LifecycleEvents.Invoker lifecycleInvoker, GameEvents.Invoker gameInvoker)
         {
