@@ -11,18 +11,12 @@ public interface ITransition
     string GateName { get; }
 }
 
-public readonly struct Transition : ITransition, IEquatable<Transition>
+[method: JsonConstructor]
+public readonly struct Transition(string SceneName, string GateName) : ITransition, IEquatable<Transition>
 {
-    public string SceneName { get; }
-    public string GateName { get; }
+    public string SceneName { get; } = SceneName;
+    public string GateName { get; } = GateName;
     public const string door_dreamReturn = "door_dreamReturn";
-
-    [JsonConstructor]
-    public Transition(string SceneName, string GateName)
-    {
-        this.SceneName = SceneName;
-        this.GateName = GateName;
-    }
 
     public static Transition GetDreamReturn(string sceneName)
     {
@@ -49,7 +43,7 @@ public readonly struct Transition : ITransition, IEquatable<Transition>
         return obj is Transition t && Equals(t);
     }
 
-    public static bool operator==(Transition t1, Transition t2)
+    public static bool operator ==(Transition t1, Transition t2)
     {
         return t1.SceneName == t2.SceneName && t1.GateName == t2.GateName;
     }
@@ -59,10 +53,10 @@ public readonly struct Transition : ITransition, IEquatable<Transition>
     private class TransitionDictConverter<TValue> : JsonConverter<Dictionary<Transition, TValue>>
     {
         public override Dictionary<Transition, TValue>? ReadJson(
-            JsonReader reader, 
-            Type objectType, 
-            Dictionary<Transition, TValue>? existingValue, 
-            bool hasExistingValue, 
+            JsonReader reader,
+            Type objectType,
+            Dictionary<Transition, TValue>? existingValue,
+            bool hasExistingValue,
             JsonSerializer serializer)
         {
             return serializer.Deserialize<KeyValuePair<Transition, TValue>[]>(reader)?.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);

@@ -17,7 +17,7 @@ public static class UnityExtensions
     }
     public static GameObject FindChild(this GameObject g, IEnumerable<string> steps)
     {
-        var t = g.transform;
+        Transform t = g.transform;
         foreach (string s in steps)
         {
             t = t.Find(s);

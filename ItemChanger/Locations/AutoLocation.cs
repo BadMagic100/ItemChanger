@@ -1,5 +1,6 @@
 ﻿using ItemChanger.Containers;
 using ItemChanger.Items;
+using ItemChanger.Placements;
 using Newtonsoft.Json;
 using System;
 using UnityEngine;

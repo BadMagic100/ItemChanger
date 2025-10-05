@@ -14,11 +14,9 @@ public interface ISprite
 /// <summary>
 /// ISprite wrapper for Sprite. Use only for items created and disposed at runtime--it is not serializable.
 /// </summary>
-public class BoxedSprite : ISprite
+public class BoxedSprite(Sprite Value) : ISprite
 {
-    public Sprite Value { get; set; }
-
-    public BoxedSprite(Sprite Value) => this.Value = Value;
+    public Sprite Value { get; set; } = Value;
 
     public ISprite Clone() => (ISprite)MemberwiseClone();
 }
@@ -38,7 +36,7 @@ public abstract class EmbeddedSprite : ISprite
 public class EmptySprite : ISprite
 {
     private Sprite? cachedSprite;
-    [JsonIgnore] 
+    [JsonIgnore]
     public Sprite Value
     {
         get
@@ -58,18 +56,11 @@ public class EmptySprite : ISprite
 }
 
 [Serializable]
-public class DualSprite : ISprite
+public class DualSprite(IBool Test, ISprite TrueSprite, ISprite FalseSprite) : ISprite
 {
-    public IBool Test;
-    public ISprite TrueSprite;
-    public ISprite FalseSprite;
-
-    public DualSprite(IBool Test, ISprite TrueSprite, ISprite FalseSprite)
-    {
-        this.Test = Test;
-        this.TrueSprite = TrueSprite;
-        this.FalseSprite = FalseSprite;
-    }
+    public IBool Test = Test;
+    public ISprite TrueSprite = TrueSprite;
+    public ISprite FalseSprite = FalseSprite;
 
     [JsonIgnore] public Sprite Value => Test.Value ? TrueSprite.Value : FalseSprite.Value;
     public ISprite Clone() => (ISprite)MemberwiseClone();

@@ -1,6 +1,7 @@
 ﻿using ItemChanger.Containers;
 using ItemChanger.Events;
 using ItemChanger.Items;
+using ItemChanger.Placements;
 using ItemChanger.Tags;
 using Newtonsoft.Json;
 using System;

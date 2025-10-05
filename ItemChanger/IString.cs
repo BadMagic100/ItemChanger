@@ -6,11 +6,9 @@ public interface IString
     IString Clone();
 }
 
-public class BoxedString : IString
+public class BoxedString(string Value) : IString
 {
-    public string Value { get; set; }
+    public string Value { get; set; } = Value;
 
-    public BoxedString(string Value) => this.Value = Value;
-    
     public IString Clone() => (IString)MemberwiseClone();
 }

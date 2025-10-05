@@ -1,80 +1,52 @@
 ﻿using ItemChanger.Items;
+using ItemChanger.Placements;
 using System;
 using UnityEngine;
 
 namespace ItemChanger;
 
-public class GetItemEventArgs : EventArgs
+public class GetItemEventArgs(string itemName) : EventArgs
 {
-    public string ItemName { get; }
+    public string ItemName { get; } = itemName;
     public Item? Current { get; set; }
-
-    public GetItemEventArgs(string itemName) => this.ItemName = itemName;
 }
 
-public class GetLocationEventArgs : EventArgs
+public class GetLocationEventArgs(string locationName) : EventArgs
 {
-    public string LocationName { get; }
+    public string LocationName { get; } = locationName;
     public Location? Current { get; set; }
-
-    public GetLocationEventArgs(string locationName) => this.LocationName = locationName;
 }
 
-public class VisitStateChangedEventArgs : EventArgs
+public class VisitStateChangedEventArgs(Placement placement, VisitState newFlags) : EventArgs
 {
-    public VisitStateChangedEventArgs(Placement placement, VisitState newFlags)
-    {
-        Placement = placement;
-        NewFlags = newFlags;
-        Orig = placement.Visited;
-    }
-
-    public Placement Placement { get; }
-    public VisitState Orig { get; }
-    public VisitState NewFlags { get; }
+    public Placement Placement { get; } = placement;
+    public VisitState Orig { get; } = placement.Visited;
+    public VisitState NewFlags { get; } = newFlags;
     public bool NoChange => (NewFlags & Orig) == NewFlags;
 }
 
-public class GiveEventArgs : EventArgs
+public class GiveEventArgs(Item orig, Item item, Placement? placement, GiveInfo? info, ObtainState state) : EventArgs
 {
-    public GiveEventArgs(Item orig, Item item, Placement? placement, GiveInfo? info, ObtainState state)
-    {
-        this.Orig = orig;
-        this.Item = item;
-        this.Placement = placement;
-        this.Info = info;
-        this.OriginalState = state;
-    }
-
-    public Item Orig { get; }
-    public Item? Item { get; set; }
-    public Placement? Placement { get; }
-    public GiveInfo? Info { get; set; }
-    public ObtainState OriginalState { get; }
+    public Item Orig { get; } = orig;
+    public Item? Item { get; set; } = item;
+    public Placement? Placement { get; } = placement;
+    public GiveInfo? Info { get; set; } = info;
+    public ObtainState OriginalState { get; } = state;
 }
 
-public class ReadOnlyGiveEventArgs : EventArgs
+public class ReadOnlyGiveEventArgs(Item orig, Item item, Placement? placement, GiveInfo info, ObtainState state) : EventArgs
 {
-    private readonly GiveInfo info;
+    private readonly GiveInfo info = info;
 
-    public ReadOnlyGiveEventArgs(Item orig, Item item, Placement? placement, GiveInfo info, ObtainState state)
-    {
-        this.Orig = orig;
-        this.Item = item;
-        this.Placement = placement;
-        this.info = info;
-        this.OriginalState = state;
-    }
-
-    public Item Orig { get; }
-    public Item Item { get; }
-    public Placement? Placement { get; }
+    public Item Orig { get; } = orig;
+    public Item Item { get; } = item;
+    public Placement? Placement { get; } = placement;
     public string? Container => info.Container;
     public FlingType Fling => info.FlingType;
     public Transform? Transform => info.Transform;
     public MessageType MessageType => info.MessageType;
     public Action<Item>? Callback => info.Callback;
-    public ObtainState OriginalState { get; }
+    public ObtainState OriginalState { get; } = state;
 }
 
 public class StringGetArgs

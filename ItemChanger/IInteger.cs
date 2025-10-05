@@ -20,11 +20,9 @@ public interface IWritableInteger : IInteger
 /// <summary>
 /// IInteger which represents a constant value.
 /// </summary>
-public class BoxedInteger : IWritableInteger
+public class BoxedInteger(int Value) : IWritableInteger
 {
-    public int Value { get; set; }
-
-    public BoxedInteger(int Value) => this.Value = Value;
+    public int Value { get; set; } = Value;
 
     public IInteger Clone() => (IInteger)MemberwiseClone();
 }

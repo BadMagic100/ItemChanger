@@ -1,10 +1,8 @@
-﻿using ItemChanger.Containers;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace ItemChanger.Components
+namespace ItemChanger.Containers;
+
+internal class ContainerInfoComponent : MonoBehaviour
 {
-    internal class ContainerInfoComponent : MonoBehaviour
-    {
-        public ContainerInfo? info;
-    }
+    public ContainerInfo? info;
 }

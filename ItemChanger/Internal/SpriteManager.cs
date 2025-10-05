@@ -9,12 +9,18 @@ namespace ItemChanger.Internal;
 /// <summary>
 /// Class for managing loading and caching Sprites from png files.
 /// </summary>
-public class SpriteManager
+/// <remarks>
+/// Creates a SpriteManager to lazily load and cache Sprites from the embedded png files in the specified assembly.
+/// <br/>Only filepaths with the matching prefix are considered, and the prefix is removed to determine sprite names (e.g. "ItemChangerMod.Resources." is the prefix for Instance).
+/// </remarks>
+public class SpriteManager(Assembly a, string resourcePrefix, SpriteManager.Info info)
 {
-    private readonly Assembly _assembly;
-    private readonly Dictionary<string, string> _resourcePaths;
+    private readonly Assembly _assembly = a;
+    private readonly Dictionary<string, string> _resourcePaths = a.GetManifestResourceNames()
+            .Where(n => n.EndsWith(".png") && n.StartsWith(resourcePrefix))
+            .ToDictionary(n => n.Substring(resourcePrefix.Length, n.Length - resourcePrefix.Length - ".png".Length));
     private readonly Dictionary<string, Sprite> _cachedSprites = new();
-    private readonly Info _info;
+    private readonly Info _info = info;
 
     public class Info
     {
@@ -23,7 +29,7 @@ public class SpriteManager
         public FilterMode defaultFilterMode = FilterMode.Bilinear;
         public float defaultPixelsPerUnit = 100f;
 
-        public virtual float GetPixelsPerUnit(string name) 
+        public virtual float GetPixelsPerUnit(string name)
         {
             if (overridePPUs != null && overridePPUs.TryGetValue(name, out float ppu))
             {
@@ -50,19 +56,6 @@ public class SpriteManager
     /// <br/>Images will be loaded with default Bilinear filter mode and 100 pixels per unit.
     /// </summary>
     public SpriteManager(Assembly a, string resourcePrefix) : this(a, resourcePrefix, new()) { }
-
-    /// <summary>
-    /// Creates a SpriteManager to lazily load and cache Sprites from the embedded png files in the specified assembly.
-    /// <br/>Only filepaths with the matching prefix are considered, and the prefix is removed to determine sprite names (e.g. "ItemChangerMod.Resources." is the prefix for Instance).
-    /// </summary>
-    public SpriteManager(Assembly a, string resourcePrefix, Info info)
-    {
-        _assembly = a;
-        _resourcePaths = a.GetManifestResourceNames()
-            .Where(n => n.EndsWith(".png") && n.StartsWith(resourcePrefix))
-            .ToDictionary(n => n.Substring(resourcePrefix.Length, n.Length - resourcePrefix.Length - ".png".Length));
-        _info = info;
-    }
 
     /// <summary>
     /// Fetches the Sprite with the specified name. If it has not yet been loaded, loads it from embedded resources and caches the result.

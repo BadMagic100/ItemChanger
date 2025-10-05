@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ItemChanger.Placements;
+using System;
 
 namespace ItemChanger.Locations;
 
@@ -39,7 +40,7 @@ public class DualLocation : Location
         {
             Test = Test,
             FalseLocation = FalseLocation,
-            TrueLocation = TrueLocation,   
+            TrueLocation = TrueLocation,
             tags = tags,
         };
     }

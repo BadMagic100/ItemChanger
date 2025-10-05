@@ -6,12 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ItemChanger;
+namespace ItemChanger.Placements;
 
 /// <summary>
 /// The base class for all placements. Placements carry a list of items and specify how to implement those items, often using locations.
 /// </summary>
-public abstract class Placement : TaggableObject
+/// <remarks>
+/// Creates a placement with the given name.
+/// </remarks>
+public abstract class Placement(string Name) : TaggableObject
 {
     /// <summary>
     /// Whether the placement is loaded.
@@ -20,22 +23,14 @@ public abstract class Placement : TaggableObject
     public bool Loaded { get; private set; }
 
     /// <summary>
-    /// Creates a placement with the given name.
-    /// </summary>
-    public Placement(string Name)
-    {
-        this.Name = Name;
-    }
-
-    /// <summary>
     /// The name of the placement. Placement names are enforced to be unique.
     /// </summary>
-    public string Name { get; }
+    public string Name { get; } = Name;
 
     /// <summary>
     /// The items attached to the placement.
     /// </summary>
-    public List<Item> Items { get; } = new();
+    public List<Item> Items { get; } = [];
 
     /// <summary>
     /// An enumeration of visit flags accrued by the placement. Which flags may be set depends on the placement type and other factors.
@@ -50,7 +45,7 @@ public abstract class Placement : TaggableObject
     /// </summary>
     public void GiveAll(GiveInfo info, Action? callback = null)
     {
-        IEnumerator<Item> enumerator = Items.GetEnumerator();
+        List<Item>.Enumerator enumerator = Items.GetEnumerator();
 
         GiveRecursive();
 
@@ -80,7 +75,7 @@ public abstract class Placement : TaggableObject
 
     public virtual void OnPreview(string previewText)
     {
-        GetOrAddTag<Tags.PreviewRecordTag>().PreviewText = previewText;
+        GetOrAddTag<PreviewRecordTag>().PreviewText = previewText;
         AddVisitFlag(VisitState.Previewed);
     }
 
@@ -98,10 +93,10 @@ public abstract class Placement : TaggableObject
     public string GetUIName(int maxLength)
     {
         IEnumerable<string> itemNames = Items.Where(i => !i.IsObtained()).Select(i => i.GetPreviewName(this) ?? "Unknown Item");
-        string itemText = string.Join(", ", itemNames.ToArray());
+        string itemText = string.Join(", ", [.. itemNames]);
         if (itemText.Length > maxLength)
         {
-            itemText = itemText.Substring(0, maxLength > 3 ? maxLength - 3 : 0) + "...";
+            itemText = itemText[..(maxLength > 3 ? maxLength - 3 : 0)] + "...";
         }
 
         return itemText;

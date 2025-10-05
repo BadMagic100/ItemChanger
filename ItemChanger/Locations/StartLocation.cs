@@ -1,5 +1,6 @@
 ﻿using ItemChanger.Events;
 using ItemChanger.Items;
+using ItemChanger.Placements;
 
 namespace ItemChanger.Locations;
 

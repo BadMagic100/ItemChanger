@@ -13,10 +13,8 @@ namespace ItemChanger.Placements;
 /// <summary>
 /// Placement which handles switching between two possible locations according to a test.
 /// </summary>
-public class DualPlacement : Placement, IContainerPlacement, ISingleCostPlacement, IPrimaryLocationPlacement
+public class DualPlacement(string Name) : Placement(Name), IContainerPlacement, ISingleCostPlacement, IPrimaryLocationPlacement
 {
-    public DualPlacement(string Name) : base(Name) { }
-
     public required Location TrueLocation { get; init; }
     public required Location FalseLocation { get; init; }
 

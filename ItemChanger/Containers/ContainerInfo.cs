@@ -1,6 +1,6 @@
-﻿using ItemChanger.Components;
-using ItemChanger.Costs;
+﻿using ItemChanger.Costs;
 using ItemChanger.Items;
+using ItemChanger.Placements;
 using System.Collections.Generic;
 using UnityEngine;
 
