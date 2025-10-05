@@ -19,7 +19,6 @@ lock down load state to be accessible only to profile
 get OnBeginSceneTransition dependence out of dualplacement
   the difference is that the scene loaded event may be called multiple times per active scene. However not all games have discrete scenes
   so some plan is needed still.
-preferred container/container selection carries a lot of hk specific baggage (e.g. if a cost or TP is needed only a shiny is allowed)
 incompatibility warning tag has some weird timing related edge cases (ie if I add something incompatible after load it doesn't get caught)
 consistent interface for replacable locations
 remove all static singletons, they make testability a nightmare.
