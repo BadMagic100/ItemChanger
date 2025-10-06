@@ -31,7 +31,7 @@ public class ContainerRegistry : IEnumerable<Container>
     /// any preference being specified by an item, location, or capability requirement.
     /// </summary>
     /// <remarks>
-    /// DefaultSingleItemContainer need not necessarily support all capabilities, but if it does
+    /// DefaultMultiItemContainer need not necessarily support all capabilities, but if it does
     /// not, DefaultSingleItemContainer will be used instead.
     /// </remarks>
     public required Container DefaultMultiItemContainer
