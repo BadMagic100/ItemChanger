@@ -1,20 +1,19 @@
-﻿using ItemChanger.Modules;
+﻿using ItemChanger.Internal;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Module = ItemChanger.Modules.Module;
 
-namespace ItemChanger.Internal;
+namespace ItemChanger.Modules;
 
 public class ModuleCollection : IEnumerable<Module>
 {
 
     [JsonConverter(typeof(ModuleListDeserializer))]
     [JsonProperty]
-    private List<Module> modules = new();
+    private readonly List<Module> modules = [];
 
     private readonly ItemChangerProfile backingProfile;
 
@@ -26,7 +25,7 @@ public class ModuleCollection : IEnumerable<Module>
         this.backingProfile = backingProfile;
     }
 
-    public void Initialize()
+    public void Load()
     {
         for (int i = 0; i < modules.Count; i++)
         {
@@ -89,10 +88,7 @@ public class ModuleCollection : IEnumerable<Module>
     public T GetOrAdd<T>() where T : Module, new()
     {
         T? t = modules.OfType<T>().FirstOrDefault();
-        if (t == null)
-        {
-            t = Add<T>();
-        }
+        t ??= Add<T>();
 
         return t;
     }
@@ -100,10 +96,7 @@ public class ModuleCollection : IEnumerable<Module>
     public Module GetOrAdd(Type T)
     {
         Module? m = modules.FirstOrDefault(m => T.IsInstanceOfType(m));
-        if (m == null)
-        {
-            m = Add(T);
-        }
+        m ??= Add(T);
 
         return m;
     }
@@ -168,7 +161,7 @@ public class ModuleCollection : IEnumerable<Module>
 
             if (RemoveNewProfileModules)
             {
-                value = new(value.Where(t => !t.ModuleHandlingProperties.HasFlag(ModuleHandlingFlags.RemoveOnNewProfile)));
+                value = [.. value.Where(t => !t.ModuleHandlingProperties.HasFlag(ModuleHandlingFlags.RemoveOnNewProfile))];
             }
 
             serializer.Serialize(writer, value.ToArray());

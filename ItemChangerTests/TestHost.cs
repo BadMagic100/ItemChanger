@@ -2,6 +2,7 @@
 using ItemChanger.Events;
 using ItemChanger.Internal;
 using ItemChanger.Logging;
+using ItemChanger.Modules;
 using Xunit.Abstractions;
 
 namespace ItemChangerTests;
@@ -62,6 +63,8 @@ internal class TestHost : ItemChangerHost, IDisposable
         DefaultMultiItemContainer = null!,
         DefaultSingleItemContainer = null!,
     };
+
+    public override IEnumerable<Module> BuildDefaultModules() => [];
 
     public override void PrepareEvents(LifecycleEvents.Invoker lifecycleInvoker, GameEvents.Invoker gameInvoker)
     {

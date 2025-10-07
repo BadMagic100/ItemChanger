@@ -1,6 +1,7 @@
 ﻿using ItemChanger.Containers;
 using ItemChanger.Events;
 using ItemChanger.Items;
+using ItemChanger.Modules;
 using ItemChanger.Placements;
 using ItemChanger.Tags;
 using Newtonsoft.Json;
@@ -25,7 +26,7 @@ public class ItemChangerProfile : IDisposable
     }
 
     [JsonProperty]
-    private readonly Dictionary<string, Placement> placements = new();
+    private readonly Dictionary<string, Placement> placements = [];
 
     [JsonProperty]
     public ModuleCollection Modules { get; }
@@ -48,7 +49,12 @@ public class ItemChangerProfile : IDisposable
     {
         host.ActiveProfile = this;
         this.host = host;
+
         Modules = new(this);
+        foreach (Module mod in host.BuildDefaultModules())
+        {
+            Modules.Add(mod);
+        }
 
         DoHook();
     }
@@ -117,7 +123,7 @@ public class ItemChangerProfile : IDisposable
         state = LoadState.LoadStarted;
 
         state = LoadState.ModuleLoadStarted;
-        Modules.Initialize();
+        Modules.Load();
         state = LoadState.ModuleLoadCompleted;
 
         state = LoadState.PlacementsLoadStarted;

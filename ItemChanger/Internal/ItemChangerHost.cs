@@ -1,11 +1,13 @@
 ﻿using ItemChanger.Containers;
-# nullable enable
-
 using ItemChanger.Events;
 using ItemChanger.Logging;
+using ItemChanger.Modules;
 using System;
+using System.Collections.Generic;
 
 namespace ItemChanger.Internal;
+
+# nullable enable
 
 /// <summary>
 /// Represents a game-specific host mod which acts as a static liason between ItemChanger and the game. This includes
@@ -52,6 +54,11 @@ public abstract class ItemChangerHost
     /// Registry of container type definitions for this host.
     /// </summary>
     public abstract ContainerRegistry ContainerRegistry { get; }
+
+    /// <summary>
+    /// Constructs default modules for the host. Called during profile creation.
+    /// </summary>
+    public abstract IEnumerable<Module> BuildDefaultModules();
 
     /// <summary>
     /// Allows hosts to hook game-specific code to invoke the generic itemchanger event system.

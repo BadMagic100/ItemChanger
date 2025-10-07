@@ -1,6 +1,5 @@
 Things to change
 
-Need a way for default modules not dependent on being defined in the assembly with IC
 use :new() in type constraints throughout to enforce/encourage json-friendly construction
 Audit fields -> properties and usage of required throughout
 docs
