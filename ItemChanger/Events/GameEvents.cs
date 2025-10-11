@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ItemChanger.Events.Args;
+using System;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
@@ -23,14 +24,14 @@ public static class GameEvents
     /// Called immediately prior to loading a new scene, including both additive loads and full transitions.
     /// Hosts which modify which scene will be loaded must do so before invoking this event.
     /// </summary>
-    public static event Action<string> BeforeNextSceneLoaded { add => beforeNextSceneLoadedSubscribers.Add(value); remove => beforeNextSceneLoadedSubscribers.Remove(value); }
-    private static readonly List<Action<string>> beforeNextSceneLoadedSubscribers = [];
+    public static event Action<BeforeSceneLoadedEventArgs> BeforeNextSceneLoaded { add => beforeNextSceneLoadedSubscribers.Add(value); remove => beforeNextSceneLoadedSubscribers.Remove(value); }
+    private static readonly List<Action<BeforeSceneLoadedEventArgs>> beforeNextSceneLoadedSubscribers = [];
 
     /// <summary>
     /// Called whenever a new scene is loaded, including both additive scene loads and full scene transitions.
     /// </summary>
-    public static event Action<Scene> OnNextSceneLoaded { add => onNextSceneLoadedSubscribers.Add(value); remove => onNextSceneLoadedSubscribers.Remove(value); }
-    private static readonly List<Action<Scene>> onNextSceneLoadedSubscribers = [];
+    public static event Action<SceneLoadedEventArgs> OnNextSceneLoaded { add => onNextSceneLoadedSubscribers.Add(value); remove => onNextSceneLoadedSubscribers.Remove(value); }
+    private static readonly List<Action<SceneLoadedEventArgs>> onNextSceneLoadedSubscribers = [];
 
     /// <summary>
     /// Registers a scene edit to be invoked whenever sceneName is loaded.
@@ -78,7 +79,8 @@ public static class GameEvents
 
     private static void InvokeSceneLoadedEvent(Scene to, LoadSceneMode _)
     {
-        InvokeHelper.InvokeList(to, onNextSceneLoadedSubscribers);
+        SceneLoadedEventArgs args = new SceneLoadedEventArgs(to);
+        InvokeHelper.InvokeList(args, onNextSceneLoadedSubscribers);
         if (sceneEdits.TryGetValue(to.name, out List<Action<Scene>>? list))
         {
             InvokeHelper.InvokeList(to, list);
@@ -93,6 +95,6 @@ public static class GameEvents
 
         public void NotifySemiPersistentUpdate() => InvokeHelper.InvokeList(onSemiPersistentUpdateSubscribers);
 
-        public void NotifyBeforeNextSceneLoaded(string targetScene) => InvokeHelper.InvokeList(targetScene, beforeNextSceneLoadedSubscribers);
+        public void NotifyBeforeNextSceneLoaded(BeforeSceneLoadedEventArgs args) => InvokeHelper.InvokeList(args, beforeNextSceneLoadedSubscribers);
     }
 }

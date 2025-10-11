@@ -1,6 +1,7 @@
 ﻿using ItemChanger.Containers;
 using ItemChanger.Costs;
 using ItemChanger.Events;
+using ItemChanger.Events.Args;
 using ItemChanger.Tags;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -47,7 +48,7 @@ public class DualPlacement(string Name) : Placement(Name), IContainerPlacement, 
         GameEvents.BeforeNextSceneLoaded -= BeforeNextSceneLoaded;
     }
 
-    private void BeforeNextSceneLoaded(string targetScene)
+    private void BeforeNextSceneLoaded(BeforeSceneLoadedEventArgs _)
     {
         bool value = Test.Value;
         if (cachedValue != value)
