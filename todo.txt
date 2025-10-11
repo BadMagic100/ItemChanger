@@ -7,7 +7,6 @@ move public APIs out of the "Internal" namespace
 make taggableobject.tags private, it's unsafe
 see if there is a good way to dejank single/multicost placements
 revamp visitstate
-separate enums to different files
 allow callers to specify Finder sheets
 almost all of start location logic is HK specific so let it be a game specific module
 Bring back objectlocation (see https://github.com/BadMagic100/ItemChanger/commit/a21ef4f582a22cf72eff92ed3a5ea14ddae1a175)

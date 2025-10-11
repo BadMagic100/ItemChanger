@@ -1,4 +1,5 @@
-﻿using ItemChanger.Items;
+﻿using ItemChanger.Enums;
+using ItemChanger.Items;
 using ItemChanger.Placements;
 using System;
 using UnityEngine;

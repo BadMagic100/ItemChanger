@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using ItemChanger.Enums;
+using Newtonsoft.Json;
 using System;
 
 namespace ItemChanger.Modules;

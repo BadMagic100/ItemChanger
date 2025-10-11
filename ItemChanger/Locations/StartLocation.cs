@@ -1,4 +1,5 @@
-﻿using ItemChanger.Events;
+﻿using ItemChanger.Enums;
+using ItemChanger.Events;
 using ItemChanger.Items;
 using ItemChanger.Placements;
 

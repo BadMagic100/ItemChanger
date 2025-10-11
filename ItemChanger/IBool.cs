@@ -1,4 +1,5 @@
-﻿using ItemChanger.Extensions;
+﻿using ItemChanger.Enums;
+using ItemChanger.Extensions;
 using ItemChanger.Internal;
 using ItemChanger.Placements;
 using Newtonsoft.Json;

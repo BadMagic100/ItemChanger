@@ -1,4 +1,5 @@
-﻿using ItemChanger.Tags.Constraints;
+﻿using ItemChanger.Enums;
+using ItemChanger.Tags.Constraints;
 
 namespace ItemChanger.Tags;
 

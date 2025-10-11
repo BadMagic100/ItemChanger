@@ -1,4 +1,5 @@
 ﻿using ItemChanger.Costs;
+using ItemChanger.Enums;
 using ItemChanger.Items;
 using ItemChanger.Placements;
 using System.Collections.Generic;

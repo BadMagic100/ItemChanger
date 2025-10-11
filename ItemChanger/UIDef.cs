@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ItemChanger.Enums;
+using System;
 using UnityEngine;
 
 namespace ItemChanger;

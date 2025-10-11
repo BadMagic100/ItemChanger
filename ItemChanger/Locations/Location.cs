@@ -1,4 +1,5 @@
-﻿using ItemChanger.Placements;
+﻿using ItemChanger.Enums;
+using ItemChanger.Placements;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
