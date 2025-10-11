@@ -7,7 +7,6 @@ make taggableobject.tags private, it's unsafe
 see if there is a good way to dejank single/multicost placements
 revamp visitstate and messagetype
 allow callers to specify Finder sheets
-almost all of start location logic is HK specific so let it be a game specific module
 Bring back objectlocation (see https://github.com/BadMagic100/ItemChanger/commit/a21ef4f582a22cf72eff92ed3a5ea14ddae1a175)
   * rename default container tag to original container tag
   * support priority and forced original container usage
@@ -18,9 +17,6 @@ save and load profiles from file/stream
 PolySharp configure included types explicitly per runtime
 Improve loading strategy so that modules can safely add other modules (and placements can do the same and so on)
 lock down load state to be accessible only to profile
-get OnBeginSceneTransition dependence out of dualplacement
-  the difference is that the scene loaded event may be called multiple times per active scene. However not all games have discrete scenes
-  so some plan is needed still.
 incompatibility warning tag has some weird timing related edge cases (ie if I add something incompatible after load it doesn't get caught)
 remove all static singletons, they make testability a nightmare.
   Open question - how tf do we know the current scope at any given time without losing serializability

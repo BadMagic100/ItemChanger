@@ -20,14 +20,11 @@ public static class GameEvents
     private static readonly List<Action> onSemiPersistentUpdateSubscribers = [];
 
     /// <summary>
-    /// Called immediately prior to beginning a scene transition. If transition overrides take place through ItemChanger, 
-    /// these are applied before the event is invoked.
+    /// Called immediately prior to loading a new scene, including both additive loads and full transitions.
+    /// Hosts which modify which scene will be loaded must do so before invoking this event.
     /// </summary>
-    /// <remarks>
-    /// This event only applies to games which have discrete scenes.
-    /// </remarks>
-    public static event Action<Transition> OnBeginSceneTransition { add => onBeginSceneTransitionSubscribers.Add(value); remove => onBeginSceneTransitionSubscribers.Remove(value); }
-    private static readonly List<Action<Transition>> onBeginSceneTransitionSubscribers = [];
+    public static event Action<string> BeforeNextSceneLoaded { add => beforeNextSceneLoadedSubscribers.Add(value); remove => beforeNextSceneLoadedSubscribers.Remove(value); }
+    private static readonly List<Action<string>> beforeNextSceneLoadedSubscribers = [];
 
     /// <summary>
     /// Called whenever a new scene is loaded, including both additive scene loads and full scene transitions.
@@ -96,6 +93,6 @@ public static class GameEvents
 
         public void NotifySemiPersistentUpdate() => InvokeHelper.InvokeList(onSemiPersistentUpdateSubscribers);
 
-        public void NotifyOnBeginSceneTransition(Transition target) => InvokeHelper.InvokeList(target, onBeginSceneTransitionSubscribers);
+        public void NotifyBeforeNextSceneLoaded(string targetScene) => InvokeHelper.InvokeList(targetScene, beforeNextSceneLoadedSubscribers);
     }
 }

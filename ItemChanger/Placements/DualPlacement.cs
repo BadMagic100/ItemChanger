@@ -37,17 +37,17 @@ public class DualPlacement(string Name) : Placement(Name), IContainerPlacement, 
         SetContainerType();
         Location.LoadOnce();
         Cost?.LoadOnce();
-        GameEvents.OnBeginSceneTransition += OnBeginSceneTransition;
+        GameEvents.BeforeNextSceneLoaded += BeforeNextSceneLoaded;
     }
 
     protected override void DoUnload()
     {
         Location.UnloadOnce();
         Cost?.UnloadOnce();
-        GameEvents.OnBeginSceneTransition -= OnBeginSceneTransition;
+        GameEvents.BeforeNextSceneLoaded -= BeforeNextSceneLoaded;
     }
 
-    private void OnBeginSceneTransition(Transition obj)
+    private void BeforeNextSceneLoaded(string targetScene)
     {
         bool value = Test.Value;
         if (cachedValue != value)
