@@ -26,7 +26,4 @@ remove all static singletons, they make testability a nightmare.
   Open question - how tf do we know the current scope at any given time without losing serializability
 find sane places for exception handling
 
-Unity stuff - is a unity shim package needed? How to deal with unity refs from nuget package?
-Null sprite
-VoidItem implementation https://github.com/homothetyhk/HollowKnight.ItemChanger/commit/b0cd2759804b34e742a745377d184e9de2ab8f3b#diff-16c1eb3b5d162965ceb06081c26439940ec1ebb8aebffc2a9ab274a3f84151e6
 ObjectLocation https://github.com/homothetyhk/HollowKnight.ItemChanger/commit/a21ef4f582a22cf72eff92ed3a5ea14ddae1a175#diff-7e44b7af206242e36a693694039d7ac18d3e68239efc19db3b19272b13aaaaae

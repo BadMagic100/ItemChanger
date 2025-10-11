@@ -43,8 +43,8 @@ public class EmptySprite : ISprite
             if (cachedSprite == null)
             {
                 Texture2D tex = new Texture2D(1, 1);
-                byte[] date = [0, 0, 0, 0];
-                tex.LoadRawTextureData(date);
+                byte[] data = [0, 0, 0, 0];
+                tex.LoadRawTextureData(data);
                 tex.Apply();
                 cachedSprite = Sprite.Create(tex, new Rect(0, 0, 1, 1), Vector2.zero);
             }
