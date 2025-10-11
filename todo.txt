@@ -2,7 +2,6 @@ Things to change
 
 use :new() in type constraints throughout to enforce/encourage json-friendly construction
 Audit fields -> properties and usage of required throughout
-docs
 make taggableobject.tags private, it's unsafe
 see if there is a good way to dejank single/multicost placements
 allow callers to specify Finder sheets
@@ -13,12 +12,16 @@ Bring back objectlocation (see https://github.com/BadMagic100/ItemChanger/commit
   * replacement for ecl destroyed tag
 consistent interface for replacable locations
 save and load profiles from file/stream
-PolySharp configure included types explicitly per runtime
 Improve loading strategy so that modules can safely add other modules (and placements can do the same and so on)
 lock down load state to be accessible only to profile
 incompatibility warning tag has some weird timing related edge cases (ie if I add something incompatible after load it doesn't get caught)
 remove all static singletons, they make testability a nightmare.
   Open question - how tf do we know the current scope at any given time without losing serializability
-find sane places for exception handling
 
 ObjectLocation https://github.com/homothetyhk/HollowKnight.ItemChanger/commit/a21ef4f582a22cf72eff92ed3a5ea14ddae1a175#diff-7e44b7af206242e36a693694039d7ac18d3e68239efc19db3b19272b13aaaaae
+
+future improvements:
+* Nullability annotations
+* PolySharp configure included types explicitly per runtime
+* docs
+* find additional places for exception handling
