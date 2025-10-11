@@ -1,5 +1,4 @@
 ﻿using ItemChanger.Enums;
-using ItemChanger.Internal;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;

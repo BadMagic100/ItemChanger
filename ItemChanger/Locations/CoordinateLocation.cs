@@ -1,5 +1,4 @@
 ﻿using ItemChanger.Events;
-using ItemChanger.Internal;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 

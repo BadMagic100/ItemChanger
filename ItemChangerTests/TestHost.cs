@@ -1,6 +1,6 @@
-﻿using ItemChanger.Containers;
+﻿using ItemChanger;
+using ItemChanger.Containers;
 using ItemChanger.Events;
-using ItemChanger.Internal;
 using ItemChanger.Logging;
 using ItemChanger.Modules;
 using Xunit.Abstractions;

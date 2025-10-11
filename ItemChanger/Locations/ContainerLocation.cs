@@ -1,5 +1,4 @@
-﻿using ItemChanger.Internal;
-using ItemChanger.Placements;
+﻿using ItemChanger.Placements;
 using UnityEngine;
 
 namespace ItemChanger.Locations;

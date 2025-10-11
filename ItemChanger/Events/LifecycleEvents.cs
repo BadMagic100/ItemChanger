@@ -65,7 +65,7 @@ public static class LifecycleEvents
     private static readonly List<Action> onLeaveGameSubscribers = [];
 
     /// <summary>
-    /// Used by the active <see cref="Internal.ItemChangerHost"/> to wire up lifecycle events.
+    /// Used by the active <see cref="ItemChanger.ItemChangerHost"/> to wire up lifecycle events.
     /// It is the host's responsibility to invoke the events in the order specified by the documentation.
     /// </summary>
     public class Invoker

@@ -5,7 +5,7 @@ using ItemChanger.Modules;
 using System;
 using System.Collections.Generic;
 
-namespace ItemChanger.Internal;
+namespace ItemChanger;
 
 # nullable enable
 

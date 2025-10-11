@@ -7,7 +7,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Audio;
 
-namespace ItemChanger.Internal;
+namespace ItemChanger;
 
 /// <summary>
 /// Class for managing loading and caching of AudioClips from wav files.

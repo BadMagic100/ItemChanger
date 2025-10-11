@@ -3,7 +3,6 @@ Things to change
 use :new() in type constraints throughout to enforce/encourage json-friendly construction
 Audit fields -> properties and usage of required throughout
 docs
-move public APIs out of the "Internal" namespace
 make taggableobject.tags private, it's unsafe
 see if there is a good way to dejank single/multicost placements
 revamp visitstate

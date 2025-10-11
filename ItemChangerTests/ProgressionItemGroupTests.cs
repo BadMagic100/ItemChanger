@@ -1,5 +1,4 @@
 using ItemChanger;
-using ItemChanger.Internal;
 using ItemChanger.Items;
 using ItemChanger.Locations;
 using ItemChanger.Modules;

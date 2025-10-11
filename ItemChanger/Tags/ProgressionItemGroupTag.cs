@@ -1,5 +1,4 @@
-﻿using ItemChanger.Internal;
-using ItemChanger.Items;
+﻿using ItemChanger.Items;
 using ItemChanger.Modules;
 using ItemChanger.Tags.Constraints;
 using System.Linq;

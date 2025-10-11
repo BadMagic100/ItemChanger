@@ -1,5 +1,4 @@
-﻿using ItemChanger.Internal;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using UnityEngine;
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-namespace ItemChanger.Internal;
+namespace ItemChanger;
 
 /// <summary>
 /// Class for managing loading and caching Sprites from png files.
