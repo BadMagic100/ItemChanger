@@ -92,6 +92,14 @@ public abstract class Container
     public virtual bool SupportsInstantiate => false;
 
     /// <summary>
+    /// Returns true if the container type can be modified in place, or false if it must be re-created.
+    /// </summary>
+    /// <remarks>
+    /// Generally, a container that does not support modification in place should support instantiation.
+    /// </remarks>
+    public virtual bool SupportsModifyInPlace => false;
+
+    /// <summary>
     /// A bitfield of additional capabilities supported by the container. The lower order 8 bits are reserved by ItemChanger.
     /// </summary>
     /// <seealso cref="ContainerCapabilities"/>
@@ -100,8 +108,20 @@ public abstract class Container
     /// <summary>
     /// Produces a new object of this container type.
     /// </summary>
+    /// <param name="info">The container info to be attached to the new container instance.</param>
     /// <exception cref="NotImplementedException">The container does not support instantiation.</exception>
     public virtual GameObject GetNewContainer(ContainerInfo info)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Modifies a GameObject in-place to act as a container of this type by attaching container info and making any other required changes.
+    /// </summary>
+    /// <param name="obj">The object to be modified.</param>
+    /// <param name="info">The container info to be attached.</param>
+    /// <exception cref="NotImplementedException">The container does not support in-place modification.</exception>
+    public virtual void ModifyContainerInPlace(GameObject obj, ContainerInfo info)
     {
         throw new NotImplementedException();
     }
