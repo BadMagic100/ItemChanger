@@ -10,16 +10,16 @@ public enum MessageType
 {
     None = 0,
     /// <summary>
-    /// A message which shows a sprite and text in the bottom-left corner without taking control.
+    /// A message which shows a sprite and text without taking control.
     /// </summary>
-    Corner = 1,
+    SmallPopup = 1 << 0,
     /// <summary>
     /// A message which takes control and shows a fullscreen popup.
     /// </summary>
-    Big = 2,
+    LargePopup = 1 << 1,
     /// <summary>
-    /// A message which takes control and starts a dialogue prompt.
+    /// A message which takes control and starts a dialog prompt, similar to speaking to an NPC.
     /// </summary>
-    Lore = 4,
-    Any = Corner | Big | Lore,
+    Dialog = 1 << 2,
+    Any = SmallPopup | LargePopup | Dialog,
 }

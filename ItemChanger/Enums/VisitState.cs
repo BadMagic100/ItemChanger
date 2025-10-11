@@ -5,14 +5,20 @@ namespace ItemChanger.Enums;
 [Flags]
 public enum VisitState
 {
+    /// <summary>
+    /// The placement has not been visited
+    /// </summary>
     None = 0,
+    /// <summary>
+    /// Any item from the placement has been obtained
+    /// </summary>
     ObtainedAnyItem = 1 << 0,
     /// <summary>
-    /// Applies to shops, placements with preview dialogues, and placements with hint boxes.
+    /// The content of the placement has been previewed, such as through a local hint box or shop UI.
     /// </summary>
     Previewed = 1 << 1,
     /// <summary>
-    /// Corresponds to opening a container: e.g. opening a chest, breaking a grub jar or geo rock, etc.
+    /// Corresponds to opening a container, such as opening a chest.
     /// </summary>
     Opened = 1 << 2,
     /// <summary>
@@ -20,7 +26,8 @@ public enum VisitState
     /// </summary>
     Dropped = 1 << 3,
     /// <summary>
-    /// Applies to placements offered by NPCs (Cornifer, Nailmasters). Usually set to indicate that the NPC is no longer required to make the offer when items respawn.
+    /// Applies to placements offered by NPCs or other mechanisms. 
+    /// Usually set to indicate that the placement can respawn the items without prompting the player again.
     /// </summary>
     Accepted = 1 << 4,
     /// <summary>

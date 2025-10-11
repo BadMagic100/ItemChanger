@@ -10,7 +10,7 @@ public enum Persistence
     /// </summary>
     NonPersistent,
     /// <summary>
-    /// Indicates the item should be respawned when the game resets semipersistent items (on bench, death, and a few world events).
+    /// Indicates the item should be respawned when the game resets semipersistent items (triggered by specific game events).
     /// </summary>
     SemiPersistent,
     /// <summary>
