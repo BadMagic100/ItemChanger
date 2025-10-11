@@ -3,7 +3,6 @@ using ItemChanger.Containers;
 using ItemChanger.Events;
 using ItemChanger.Logging;
 using ItemChanger.Modules;
-using Xunit.Abstractions;
 
 namespace ItemChangerTests;
 
@@ -58,11 +57,14 @@ internal class TestHost : ItemChangerHost, IDisposable
 
     public ItemChangerProfile Profile { get; }
 
-    public override ContainerRegistry ContainerRegistry => new()
+    public override ContainerRegistry ContainerRegistry
     {
-        DefaultMultiItemContainer = null!,
-        DefaultSingleItemContainer = null!,
-    };
+        get
+        {
+            FakedContainer fake = new FakedContainer();
+            return field ??= new ContainerRegistry() { DefaultSingleItemContainer = fake, DefaultMultiItemContainer = fake };
+        }
+    }
 
     public override IEnumerable<Module> BuildDefaultModules() => [];
 

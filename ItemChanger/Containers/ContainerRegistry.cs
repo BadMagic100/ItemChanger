@@ -21,7 +21,11 @@ public class ContainerRegistry : IEnumerable<Container>
         get => field;
         init
         {
-            DefineContainer(value);
+            if (!containers.ContainsKey(value.Name))
+            {
+                DefineContainer(value);
+            }
+
             field = value;
         }
     }
@@ -39,7 +43,11 @@ public class ContainerRegistry : IEnumerable<Container>
         get => field;
         init
         {
-            DefineContainer(value);
+            if (!containers.ContainsKey(value.Name))
+            {
+                DefineContainer(value);
+            }
+
             field = value;
         }
     }

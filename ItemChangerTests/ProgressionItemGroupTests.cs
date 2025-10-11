@@ -4,11 +4,11 @@ using ItemChanger.Locations;
 using ItemChanger.Modules;
 using ItemChanger.Placements;
 using ItemChanger.Tags;
-using Xunit.Abstractions;
 
 
 namespace ItemChangerTests;
 
+[CollectionDefinition("Tests", DisableParallelization = true)]
 public class ProgressionItemGroupTests(ITestOutputHelper Output)
 {
     // A model in which there are 3 items: L,R,S. (from Hollow Knight, Left_Mothwing_Cloak, Right_Mothwing_Cloak, Split_Shade_Cloak).
