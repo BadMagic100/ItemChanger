@@ -1,40 +1,52 @@
 ﻿using Newtonsoft.Json;
-using System;
 using UnityEngine;
 
-namespace ItemChanger;
+namespace ItemChanger.Serialization;
 
+/// <summary>
+/// Interface which allows representing functions to define sprites in a serializable manner.
+/// </summary>
 public interface ISprite
 {
+    /// <summary>
+    /// Gets the defined sprite.
+    /// </summary>
     Sprite Value { get; }
+    /// <summary>
+    /// Creates a deep clone of this sprite.
+    /// </summary>
     ISprite Clone();
 }
 
 /// <summary>
-/// ISprite wrapper for Sprite. Use only for items created and disposed at runtime--it is not serializable.
+/// An <see cref="ISprite"/> which retrieves its sprite from a <see cref="ItemChanger.SpriteManager"/>.
 /// </summary>
-public class BoxedSprite(Sprite Value) : ISprite
+public abstract class EmbeddedSprite : ISprite
 {
-    public Sprite Value { get; set; } = Value;
+    /// <summary>
+    /// The key of the sprite in the SpriteManager
+    /// </summary>
+    public string key;
 
+    /// <summary>
+    /// The sprite manager which will provide the sprite implementation.
+    /// </summary>
+    [JsonIgnore] public abstract SpriteManager SpriteManager { get; }
+
+    /// <inheritdoc/>
+    [JsonIgnore] public Sprite Value => SpriteManager.GetSprite(key);
+
+    /// <inheritdoc/>
     public ISprite Clone() => (ISprite)MemberwiseClone();
 }
 
 /// <summary>
-/// An ISprite which retrieves its sprite from a SpriteManager.
+/// A sprite with no content
 /// </summary>
-public abstract class EmbeddedSprite : ISprite
-{
-    public string key;
-    [JsonIgnore] public abstract SpriteManager SpriteManager { get; }
-    [JsonIgnore] public Sprite Value => SpriteManager.GetSprite(key);
-    public ISprite Clone() => (ISprite)MemberwiseClone();
-}
-
-[Serializable]
 public class EmptySprite : ISprite
 {
     private Sprite? cachedSprite;
+    /// <inheritdoc/>
     [JsonIgnore]
     public Sprite Value
     {
@@ -51,16 +63,21 @@ public class EmptySprite : ISprite
             return cachedSprite;
         }
     }
+    /// <inheritdoc/>
     public ISprite Clone() => new EmptySprite();
 }
 
-[Serializable]
+/// <summary>
+/// A sprite that can be changed based on an <see cref="IBool"/>
+/// </summary>
 public class DualSprite(IBool Test, ISprite TrueSprite, ISprite FalseSprite) : ISprite
 {
     public IBool Test = Test;
     public ISprite TrueSprite = TrueSprite;
     public ISprite FalseSprite = FalseSprite;
 
+    /// <inheritdoc/>
     [JsonIgnore] public Sprite Value => Test.Value ? TrueSprite.Value : FalseSprite.Value;
+    /// <inheritdoc/>
     public ISprite Clone() => (ISprite)MemberwiseClone();
 }

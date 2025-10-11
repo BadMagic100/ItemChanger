@@ -1,4 +1,5 @@
 ﻿using ItemChanger.Placements;
+using ItemChanger.Serialization;
 using System;
 
 namespace ItemChanger.Locations;

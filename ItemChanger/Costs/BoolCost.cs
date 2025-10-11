@@ -1,3 +1,5 @@
+using ItemChanger.Serialization;
+
 namespace ItemChanger.Costs;
 
 /// <summary>

@@ -5,14 +5,21 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ItemChanger;
+namespace ItemChanger.Serialization;
 
 /// <summary>
 /// Interface which can supply a bool value. Used frequently for serializable bool tests.
 /// </summary>
 public interface IBool
 {
+    /// <summary>
+    /// The defined value
+    /// </summary>
     bool Value { get; }
+
+    /// <summary>
+    /// Creates a deep copy of this bool
+    /// </summary>
     IBool Clone();
 }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ItemChanger.Serialization;
+using System;
 using UnityEngine;
 
 namespace ItemChanger.Events.Args;

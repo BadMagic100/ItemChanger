@@ -2,6 +2,7 @@
 using ItemChanger.Events.Args;
 using ItemChanger.Items;
 using ItemChanger.Placements;
+using ItemChanger.Serialization;
 
 namespace ItemChanger.Tags;
 

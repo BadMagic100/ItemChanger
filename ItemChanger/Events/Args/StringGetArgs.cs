@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ItemChanger.Serialization;
+using System;
 
 namespace ItemChanger.Events.Args;
 

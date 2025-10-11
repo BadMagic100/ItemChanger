@@ -1,4 +1,6 @@
-﻿namespace ItemChanger.Costs;
+﻿using ItemChanger.Serialization;
+
+namespace ItemChanger.Costs;
 
 /// <summary>
 /// An integer cost where the source integer is not consumed when the cost is paid.

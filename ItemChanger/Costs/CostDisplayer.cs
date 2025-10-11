@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ItemChanger.Serialization;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ItemChanger.Costs;
