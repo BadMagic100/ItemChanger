@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using ItemChanger.Containers;
+using ItemChanger.Locations;
 
 namespace ItemChanger.Placements;
 
@@ -7,5 +8,5 @@ namespace ItemChanger.Placements;
 /// </summary>
 public interface IContainerPlacement
 {
-    void GetContainer(Location location, out GameObject obj, out string containerType);
+    void GetContainer(Location location, out Container container, out ContainerInfo info);
 }

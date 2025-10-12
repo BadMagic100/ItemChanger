@@ -1,4 +1,5 @@
-﻿using ItemChanger.Events;
+﻿using ItemChanger.Containers;
+using ItemChanger.Events;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -20,23 +21,23 @@ public class CoordinateLocation : PlaceableLocation
 
     protected override void DoUnload()
     {
-        GameEvents.RemoveSceneChangeEdit(UnsafeSceneName, OnActiveSceneChanged);
+        GameEvents.RemoveSceneEdit(UnsafeSceneName, OnActiveSceneChanged);
     }
 
-    public void OnActiveSceneChanged(Scene to)
+    protected void OnActiveSceneChanged(Scene to)
     {
         if (!Managed && to.name == UnsafeSceneName)
         {
-            base.GetContainer(out GameObject obj, out string containerType);
-            PlaceContainer(obj, containerType);
+            base.GetContainer(out Container container, out ContainerInfo info);
+            PlaceContainer(container, info);
         }
     }
 
-    public override void PlaceContainer(GameObject obj, string containerType)
+    /// <inheritdoc/>
+    public override void PlaceContainer(Container container, ContainerInfo info)
     {
-        ItemChangerHost
-            .Singleton.ContainerRegistry.GetContainer(containerType)!
-            .ApplyTargetContext(obj, new Vector3(X, Y, Z), Vector3.zero);
+        GameObject obj = container.GetNewContainer(info);
+        container.ApplyTargetContext(obj, new Vector3(X, Y, Z), Vector3.zero);
         if (!obj.activeSelf)
         {
             obj.SetActive(true);

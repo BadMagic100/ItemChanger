@@ -39,8 +39,6 @@ public static class UnityExtensions
         }
     }
 
-    static readonly List<GameObject> rootObjects = new List<GameObject>(500);
-
     /// <summary>
     /// Finds a GameObject in the given scene by its full path.
     /// </summary>
@@ -49,7 +47,8 @@ public static class UnityExtensions
     /// <returns></returns>
     public static GameObject? FindGameObject(this Scene s, string path)
     {
-        s.GetRootGameObjects(rootObjects); // clears list
+        List<GameObject> rootObjects = new(500);
+        s.GetRootGameObjects(rootObjects);
         int index = path.IndexOf('/');
         GameObject? result = null;
         if (index >= 0)
@@ -74,6 +73,7 @@ public static class UnityExtensions
     /// </summary>
     public static GameObject? FindGameObjectByName(this Scene s, string name)
     {
+        List<GameObject> rootObjects = new(500);
         s.GetRootGameObjects(rootObjects);
         GameObject? result = null;
         foreach (GameObject g in rootObjects)
@@ -105,6 +105,7 @@ public static class UnityExtensions
     /// </summary>
     public static List<(string path, GameObject go)> Traverse(this Scene s)
     {
+        List<GameObject> rootObjects = new(500);
         s.GetRootGameObjects(rootObjects);
         List<(string, GameObject)> results = new();
         foreach (GameObject g in rootObjects)

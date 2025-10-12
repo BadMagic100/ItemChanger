@@ -1,4 +1,5 @@
-﻿using ItemChanger.Placements;
+﻿using ItemChanger.Locations;
+using ItemChanger.Placements;
 
 namespace ItemChanger.Tags;
 

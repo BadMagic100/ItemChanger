@@ -4,10 +4,10 @@ using ItemChanger.Containers;
 using ItemChanger.Costs;
 using ItemChanger.Events;
 using ItemChanger.Events.Args;
+using ItemChanger.Locations;
 using ItemChanger.Serialization;
 using ItemChanger.Tags;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace ItemChanger.Placements;
 
@@ -65,7 +65,7 @@ public class DualPlacement(string Name)
     }
 
     // MutablePlacement implementation of GetContainer
-    public void GetContainer(Location location, out GameObject obj, out string containerType)
+    public void GetContainer(Location location, out Container container, out ContainerInfo info)
     {
         if (this.ContainerType == ContainerRegistry.UnknownContainerType)
         {
@@ -78,23 +78,22 @@ public class DualPlacement(string Name)
 
         ContainerRegistry reg = ItemChangerHost.Singleton.ContainerRegistry;
 
-        containerType = this.ContainerType;
-        Container? container = reg.GetContainer(containerType);
-        if (container is null || !container.SupportsInstantiate)
+        string containerType = this.ContainerType;
+        Container? candidateContainer = reg.GetContainer(containerType);
+        if (candidateContainer is null || !candidateContainer.SupportsInstantiate)
         {
             // this means that the container that was chosen on load isn't valid
             // most likely due from switching from a noninstantiatable ECL to a CL
             // so, we make a shiny but we don't modify the saved container type
             containerType = reg.DefaultSingleItemContainer.Name;
-            container = reg.DefaultSingleItemContainer;
+            candidateContainer = reg.DefaultSingleItemContainer;
         }
 
-        obj = container.GetNewContainer(
-            new ContainerInfo(container.Name, this, location.FlingType, Cost)
-            {
-                ContainerType = containerType,
-            }
-        );
+        container = candidateContainer;
+        info = new ContainerInfo(candidateContainer.Name, this, location.FlingType, Cost)
+        {
+            ContainerType = containerType,
+        };
     }
 
     private void SetContainerType()

@@ -4,7 +4,7 @@ using ItemChanger.Enums;
 using ItemChanger.Placements;
 using Newtonsoft.Json;
 
-namespace ItemChanger;
+namespace ItemChanger.Locations;
 
 /// <summary>
 /// The base class for all locations. Locations are used by placements to place items.

@@ -1,5 +1,6 @@
 ﻿using System;
 using ItemChanger.Items;
+using ItemChanger.Locations;
 using ItemChanger.Placements;
 
 namespace ItemChanger.Tags.Constraints;

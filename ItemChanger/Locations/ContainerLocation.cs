@@ -1,5 +1,8 @@
-﻿using ItemChanger.Placements;
-using UnityEngine;
+﻿using System;
+using ItemChanger.Containers;
+using ItemChanger.Placements;
+using ItemChanger.Tags;
+using Newtonsoft.Json;
 
 namespace ItemChanger.Locations;
 
@@ -13,18 +16,28 @@ public abstract class ContainerLocation : Location
     /// </summary>
     public bool ForceDefaultContainer { get; init; }
 
-    public void GetContainer(out GameObject obj, out string containerType)
+    /// <summary>
+    /// The original container type associated with this
+    /// </summary>
+    [JsonIgnore]
+    public string? OriginalContainerType => GetTag<OriginalContainerTag>()?.ContainerType;
+
+    public void GetContainer(out Container container, out ContainerInfo info)
     {
-        ((IContainerPlacement)Placement).GetContainer(this, out obj, out containerType);
+        if (Placement is not IContainerPlacement cp)
+        {
+            throw new InvalidOperationException(
+                $"Cannot get container for {nameof(ContainerLocation)} {Name} because the placement {Placement?.Name} is not an {nameof(IContainerPlacement)}"
+            );
+        }
+        cp.GetContainer(this, out container, out info);
     }
 
     public virtual bool Supports(string containerType)
     {
-        return
-            containerType
-            == ItemChangerHost.Singleton.ContainerRegistry.DefaultSingleItemContainer.Name
-            ? true
-            : !ForceDefaultContainer;
+        return containerType
+                == ItemChangerHost.Singleton.ContainerRegistry.DefaultSingleItemContainer.Name
+            || !ForceDefaultContainer;
     }
 
     public override Placement Wrap()

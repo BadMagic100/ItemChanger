@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿using ItemChanger.Containers;
 
 namespace ItemChanger.Locations;
 
@@ -12,5 +12,10 @@ public abstract class PlaceableLocation : ContainerLocation
     /// </summary>
     public required bool Managed { get; init; }
 
-    public abstract void PlaceContainer(GameObject obj, string containerType);
+    /// <summary>
+    /// Creates and places a container of the given type.
+    /// </summary>
+    /// <param name="container">The container type to be placed</param>
+    /// <param name="info">The container info to be applied to the container during creation</param>
+    public abstract void PlaceContainer(Container container, ContainerInfo info);
 }

@@ -1,6 +1,7 @@
 ﻿using ItemChanger.Enums;
 using ItemChanger.Events.Args;
 using ItemChanger.Items;
+using ItemChanger.Locations;
 using ItemChanger.Placements;
 using ItemChanger.Serialization;
 

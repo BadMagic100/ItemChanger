@@ -6,7 +6,6 @@ using ItemChanger.Costs;
 using ItemChanger.Items;
 using ItemChanger.Locations;
 using ItemChanger.Tags;
-using UnityEngine;
 
 namespace ItemChanger.Placements;
 
@@ -41,26 +40,29 @@ public class MutablePlacement(string Name)
         Cost?.UnloadOnce();
     }
 
-    public void GetContainer(Location location, out GameObject obj, out string containerType)
+    public void GetContainer(Location location, out Container container, out ContainerInfo info)
     {
+        string containerType;
         if (this.ContainerType == ContainerRegistry.UnknownContainerType)
         {
             this.ContainerType = ChooseContainerType(this, location as ContainerLocation, Items);
         }
 
         containerType = this.ContainerType;
-        Container? container = ItemChangerHost.Singleton.ContainerRegistry.GetContainer(
+        Container? candidateContainer = ItemChangerHost.Singleton.ContainerRegistry.GetContainer(
             containerType
         );
-        if (container == null || !container.SupportsInstantiate)
+        if (candidateContainer == null || !candidateContainer.SupportsInstantiate)
         {
             this.ContainerType = containerType = ChooseContainerType(
                 this,
                 location as ContainerLocation,
                 Items
             );
-            container = ItemChangerHost.Singleton.ContainerRegistry.GetContainer(containerType);
-            if (container == null)
+            candidateContainer = ItemChangerHost.Singleton.ContainerRegistry.GetContainer(
+                containerType
+            );
+            if (candidateContainer == null)
             {
                 throw new InvalidOperationException(
                     $"Unable to resolve container type {containerType} for placement {Name}!"
@@ -68,12 +70,11 @@ public class MutablePlacement(string Name)
             }
         }
 
-        obj = container.GetNewContainer(
-            new ContainerInfo(container.Name, this, location.FlingType, Cost)
-            {
-                ContainerType = containerType,
-            }
-        );
+        container = candidateContainer;
+        info = new ContainerInfo(candidateContainer.Name, this, location.FlingType, Cost)
+        {
+            ContainerType = containerType,
+        };
     }
 
     public static string ChooseContainerType<T>(
@@ -107,6 +108,42 @@ public class MutablePlacement(string Name)
                 .Select(t => t.ContainerType),
         ];
 
+        OriginalContainerTag? originalContainerTag = placement
+            .GetPlacementAndLocationTags()
+            .OfType<OriginalContainerTag>()
+            .FirstOrDefault();
+
+        // if original container has priority over item preferences, determine whether it is meets the location's needs and force as needed
+        if (
+            originalContainerTag != null
+            && (originalContainerTag.Force || originalContainerTag.Priority)
+        )
+        {
+            Container? originalContainer = ItemChangerHost.Singleton.ContainerRegistry.GetContainer(
+                originalContainerTag.ContainerType
+            );
+            if (originalContainer != null)
+            {
+                if (
+                    !unsupported.Contains(originalContainerTag.ContainerType)
+                    && originalContainer.SupportsAll(false, requestedCapabilities)
+                )
+                {
+                    return originalContainerTag.ContainerType;
+                }
+                else if (originalContainerTag.Force)
+                {
+                    LoggerProxy.LogWarn(
+                        $"During container selection for {placement.Name}, the container "
+                            + $"{originalContainer.Name} was forced despite being unsupported by the location or missing "
+                            + $"necessary capabilities."
+                    );
+                    return originalContainerTag.ContainerType;
+                }
+            }
+        }
+
+        // original container was not prioritized, try item preferences first
         string? containerType = items
             .Select(i => i.GetPreferredContainer())
             .FirstOrDefault(c =>
@@ -118,16 +155,12 @@ public class MutablePlacement(string Name)
         if (string.IsNullOrEmpty(containerType))
         {
             if (
-                placement
-                    .GetPlacementAndLocationTags()
-                    .OfType<PreferredDefaultContainerTag>()
-                    .FirstOrDefault()
-                    is PreferredDefaultContainerTag t
-                && reg.GetContainer(t.ContainerType)?.SupportsAll(true, requestedCapabilities)
-                    == true
+                originalContainerTag != null
+                && reg.GetContainer(originalContainerTag.ContainerType)
+                    ?.SupportsAll(true, requestedCapabilities) == true
             )
             {
-                containerType = t.ContainerType;
+                containerType = originalContainerTag.ContainerType;
             }
             // has more than 1 item and can support the default multi item container
             else if (

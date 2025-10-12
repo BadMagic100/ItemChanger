@@ -69,7 +69,7 @@ public static class GameEvents
     /// <summary>
     /// Removes the action from the scene-specific active scene hook.
     /// </summary>
-    public static void RemoveSceneChangeEdit(string sceneName, Action<Scene> action)
+    public static void RemoveSceneEdit(string sceneName, Action<Scene> action)
     {
         if (sceneEdits.TryGetValue(sceneName, out List<Action<Scene>>? list))
         {

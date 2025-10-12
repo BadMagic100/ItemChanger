@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using ItemChanger.Events.Args;
 using ItemChanger.Items;
+using ItemChanger.Locations;
 
 namespace ItemChanger;
 
