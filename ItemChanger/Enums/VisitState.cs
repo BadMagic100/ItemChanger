@@ -21,18 +21,22 @@ public enum VisitState
     Previewed = 1 << 1,
 
     /// <summary>
-    /// Corresponds to opening a container, such as opening a chest.
+    /// The state of the related container is permanently changed. When reloading, the
+    /// container should retain the new state. For example, a chest is opened and remains open.
     /// </summary>
     Opened = 1 << 2,
 
     /// <summary>
-    /// Applies to enemy drop items.
+    /// The event which causes the location to produce a container has been completed. If respawned or revisited
+    /// without collecting items, the container should appear. For example, an enemy location drops the container
+    /// after being defeated and does not need to be re-fought to respawn the container.
     /// </summary>
     Dropped = 1 << 3,
 
     /// <summary>
-    /// Applies to placements offered by NPCs or other mechanisms.
-    /// Usually set to indicate that the placement can respawn the items without prompting the player again.
+    /// The in-game event tied to the location has been completed. If respawned, it should be replaced by a container.
+    /// For example, an NPC offers you an item and you accept the item. The NPC will be replaced by container if the
+    /// item is respawned.
     /// </summary>
     Accepted = 1 << 4,
 
