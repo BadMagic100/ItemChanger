@@ -5,56 +5,54 @@ using UnityEngine.SceneManagement;
 
 namespace ItemChanger.Events;
 
-public static class GameEvents
+public sealed class GameEvents
 {
     /// <summary>
     /// Called after persistent items reset.
     /// </summary>
-    public static event Action OnPersistentUpdate
+    public event Action OnPersistentUpdate
     {
         add => onPersistentUpdateSubscribers.Add(value);
         remove => onPersistentUpdateSubscribers.Remove(value);
     }
-    private static readonly List<Action> onPersistentUpdateSubscribers = [];
+    private readonly List<Action> onPersistentUpdateSubscribers = [];
 
     /// <summary>
     /// Called after semipersistent data resets. Semi-persistent resets occur less frequently than persistent resets, and
     /// are only triggered by certain events, such as resting.
     /// </summary>
-    public static event Action OnSemiPersistentUpdate
+    public event Action OnSemiPersistentUpdate
     {
         add => onSemiPersistentUpdateSubscribers.Add(value);
         remove => onSemiPersistentUpdateSubscribers.Remove(value);
     }
-    private static readonly List<Action> onSemiPersistentUpdateSubscribers = [];
+    private readonly List<Action> onSemiPersistentUpdateSubscribers = [];
 
     /// <summary>
     /// Called immediately prior to loading a new scene, including both additive loads and full transitions.
     /// Hosts which modify which scene will be loaded must do so before invoking this event.
     /// </summary>
-    public static event Action<BeforeSceneLoadedEventArgs> BeforeNextSceneLoaded
+    public event Action<BeforeSceneLoadedEventArgs> BeforeNextSceneLoaded
     {
         add => beforeNextSceneLoadedSubscribers.Add(value);
         remove => beforeNextSceneLoadedSubscribers.Remove(value);
     }
-    private static readonly List<
-        Action<BeforeSceneLoadedEventArgs>
-    > beforeNextSceneLoadedSubscribers = [];
+    private readonly List<Action<BeforeSceneLoadedEventArgs>> beforeNextSceneLoadedSubscribers = [];
 
     /// <summary>
     /// Called whenever a new scene is loaded, including both additive scene loads and full scene transitions.
     /// </summary>
-    public static event Action<SceneLoadedEventArgs> OnNextSceneLoaded
+    public event Action<SceneLoadedEventArgs> OnNextSceneLoaded
     {
         add => onNextSceneLoadedSubscribers.Add(value);
         remove => onNextSceneLoadedSubscribers.Remove(value);
     }
-    private static readonly List<Action<SceneLoadedEventArgs>> onNextSceneLoadedSubscribers = [];
+    private readonly List<Action<SceneLoadedEventArgs>> onNextSceneLoadedSubscribers = [];
 
     /// <summary>
     /// Registers a scene edit to be invoked whenever sceneName is loaded.
     /// </summary>
-    public static void AddSceneEdit(string sceneName, Action<Scene> action)
+    public void AddSceneEdit(string sceneName, Action<Scene> action)
     {
         if (sceneEdits.ContainsKey(sceneName))
         {
@@ -69,7 +67,7 @@ public static class GameEvents
     /// <summary>
     /// Removes the action from the scene-specific active scene hook.
     /// </summary>
-    public static void RemoveSceneEdit(string sceneName, Action<Scene> action)
+    public void RemoveSceneEdit(string sceneName, Action<Scene> action)
     {
         if (sceneEdits.TryGetValue(sceneName, out List<Action<Scene>>? list))
         {
@@ -83,19 +81,19 @@ public static class GameEvents
      *************************************************************************************
     */
 
-    private static readonly Dictionary<string, List<Action<Scene>>> sceneEdits = [];
+    private readonly Dictionary<string, List<Action<Scene>>> sceneEdits = [];
 
-    internal static void Hook()
+    internal void Hook()
     {
         SceneManager.sceneLoaded += InvokeSceneLoadedEvent;
     }
 
-    internal static void Unhook()
+    internal void Unhook()
     {
         SceneManager.sceneLoaded -= InvokeSceneLoadedEvent;
     }
 
-    private static void InvokeSceneLoadedEvent(Scene to, LoadSceneMode _)
+    private void InvokeSceneLoadedEvent(Scene to, LoadSceneMode _)
     {
         SceneLoadedEventArgs args = new SceneLoadedEventArgs(to);
         InvokeHelper.InvokeList(args, onNextSceneLoadedSubscribers);
@@ -107,15 +105,20 @@ public static class GameEvents
 
     public class Invoker
     {
-        internal Invoker() { }
+        private readonly GameEvents events;
+
+        internal Invoker(GameEvents events)
+        {
+            this.events = events;
+        }
 
         public void NotifyPersistentUpdate() =>
-            InvokeHelper.InvokeList(onPersistentUpdateSubscribers);
+            InvokeHelper.InvokeList(events.onPersistentUpdateSubscribers);
 
         public void NotifySemiPersistentUpdate() =>
-            InvokeHelper.InvokeList(onSemiPersistentUpdateSubscribers);
+            InvokeHelper.InvokeList(events.onSemiPersistentUpdateSubscribers);
 
         public void NotifyBeforeNextSceneLoaded(BeforeSceneLoadedEventArgs args) =>
-            InvokeHelper.InvokeList(args, beforeNextSceneLoadedSubscribers);
+            InvokeHelper.InvokeList(args, events.beforeNextSceneLoadedSubscribers);
     }
 }

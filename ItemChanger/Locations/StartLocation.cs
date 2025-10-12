@@ -1,5 +1,4 @@
 ﻿using ItemChanger.Enums;
-using ItemChanger.Events;
 using ItemChanger.Items;
 using ItemChanger.Placements;
 
@@ -14,12 +13,12 @@ public class StartLocation : AutoLocation
 
     protected override void DoLoad()
     {
-        LifecycleEvents.OnSafeToGiveItems += OnSafeToGiveItems;
+        ItemChangerHost.Singleton.LifecycleEvents.OnSafeToGiveItems += OnSafeToGiveItems;
     }
 
     protected override void DoUnload()
     {
-        LifecycleEvents.OnSafeToGiveItems -= OnSafeToGiveItems;
+        ItemChangerHost.Singleton.LifecycleEvents.OnSafeToGiveItems -= OnSafeToGiveItems;
     }
 
     private void OnSafeToGiveItems()

@@ -32,6 +32,16 @@ public abstract class ItemChangerHost
     /// </summary>
     public abstract ILogger Logger { get; }
 
+    /// <summary>
+    /// Lifecycle event hooks encompassing itemchanger startup and teardown.
+    /// </summary>
+    public LifecycleEvents LifecycleEvents { get; } = new();
+
+    /// <summary>
+    /// Game event hooks encompassing key game events such as scene loads.
+    /// </summary>
+    public GameEvents GameEvents { get; } = new();
+
     private ItemChangerProfile? activeProfile;
 
     /// <summary>

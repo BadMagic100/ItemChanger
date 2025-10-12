@@ -1,6 +1,5 @@
 ﻿using System;
 using ItemChanger.Containers;
-using ItemChanger.Events;
 using ItemChanger.Extensions;
 using ItemChanger.Tags;
 using UnityEngine;
@@ -15,12 +14,12 @@ public class ObjectLocation : ContainerLocation, IReplaceableLocation
 
     protected override void DoLoad()
     {
-        GameEvents.AddSceneEdit(UnsafeSceneName, OnSceneLoaded);
+        ItemChangerHost.Singleton.GameEvents.AddSceneEdit(UnsafeSceneName, OnSceneLoaded);
     }
 
     protected override void DoUnload()
     {
-        GameEvents.RemoveSceneEdit(UnsafeSceneName, OnSceneLoaded);
+        ItemChangerHost.Singleton.GameEvents.RemoveSceneEdit(UnsafeSceneName, OnSceneLoaded);
     }
 
     protected virtual void OnSceneLoaded(Scene to)

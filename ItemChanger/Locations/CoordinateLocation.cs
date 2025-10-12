@@ -1,5 +1,4 @@
 ﻿using ItemChanger.Containers;
-using ItemChanger.Events;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -16,12 +15,12 @@ public class CoordinateLocation : PlaceableLocation
 
     protected override void DoLoad()
     {
-        GameEvents.AddSceneEdit(UnsafeSceneName, OnActiveSceneChanged);
+        ItemChangerHost.Singleton.GameEvents.AddSceneEdit(UnsafeSceneName, OnActiveSceneChanged);
     }
 
     protected override void DoUnload()
     {
-        GameEvents.RemoveSceneEdit(UnsafeSceneName, OnActiveSceneChanged);
+        ItemChangerHost.Singleton.GameEvents.RemoveSceneEdit(UnsafeSceneName, OnActiveSceneChanged);
     }
 
     protected void OnActiveSceneChanged(Scene to)

@@ -35,22 +35,19 @@ public class ItemChangerProfile : IDisposable
     private bool hooked = false;
     internal LoadState state = LoadState.Unloaded;
 
-    private readonly ItemChangerHost host;
-    private readonly LifecycleEvents.Invoker lifecycleInvoker;
-    private readonly GameEvents.Invoker gameInvoker;
+    private ItemChangerHost host;
+    private LifecycleEvents.Invoker lifecycleInvoker;
+    private GameEvents.Invoker gameInvoker;
 
     [JsonConstructor]
-    private ItemChangerProfile()
-    {
-        lifecycleInvoker = new LifecycleEvents.Invoker();
-        gameInvoker = new GameEvents.Invoker();
-    }
+    private ItemChangerProfile() { }
 
     public ItemChangerProfile(ItemChangerHost host)
-        : this()
     {
         host.ActiveProfile = this;
         this.host = host;
+        lifecycleInvoker = new LifecycleEvents.Invoker(host.LifecycleEvents);
+        gameInvoker = new GameEvents.Invoker(host.GameEvents);
 
         Modules = new(this);
         foreach (Module mod in host.BuildDefaultModules())
@@ -249,7 +246,7 @@ public class ItemChangerProfile : IDisposable
             return;
         }
 
-        GameEvents.Hook();
+        host.GameEvents.Hook();
         host.PrepareEvents(lifecycleInvoker, gameInvoker);
         foreach (Container c in host.ContainerRegistry)
         {
@@ -273,7 +270,7 @@ public class ItemChangerProfile : IDisposable
             c.Unload();
         }
         host.UnhookEvents(lifecycleInvoker, gameInvoker);
-        GameEvents.Unhook();
+        host.GameEvents.Unhook();
 
         lifecycleInvoker.NotifyUnhooked();
 

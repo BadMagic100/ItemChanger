@@ -2,7 +2,6 @@
 using System.Linq;
 using ItemChanger.Containers;
 using ItemChanger.Costs;
-using ItemChanger.Events;
 using ItemChanger.Events.Args;
 using ItemChanger.Locations;
 using ItemChanger.Serialization;
@@ -43,14 +42,14 @@ public class DualPlacement(string Name)
         SetContainerType();
         Location.LoadOnce();
         Cost?.LoadOnce();
-        GameEvents.BeforeNextSceneLoaded += BeforeNextSceneLoaded;
+        ItemChangerHost.Singleton.GameEvents.BeforeNextSceneLoaded += BeforeNextSceneLoaded;
     }
 
     protected override void DoUnload()
     {
         Location.UnloadOnce();
         Cost?.UnloadOnce();
-        GameEvents.BeforeNextSceneLoaded -= BeforeNextSceneLoaded;
+        ItemChangerHost.Singleton.GameEvents.BeforeNextSceneLoaded -= BeforeNextSceneLoaded;
     }
 
     private void BeforeNextSceneLoaded(BeforeSceneLoadedEventArgs _)
