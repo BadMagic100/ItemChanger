@@ -57,7 +57,8 @@ public class ProgressiveItemGroupModule : Module
     /// <summary>
     /// Retrieves the item by name, by default using <see cref="Finder.GetItem(string)"/>.
     /// </summary>
-    protected virtual Item GetItem(string name) => Finder.GetItem(name) ?? throw new KeyNotFoundException($"Failed to find item {name} in Finder.");
+    protected virtual Item GetItem(string name) => ItemChangerHost.Singleton.Finder.GetItem(name)
+        ?? throw new KeyNotFoundException($"Failed to find item {name} in Finder.");
 
     /// <summary>
     /// Records the tag's data and its item to be managed by the module.

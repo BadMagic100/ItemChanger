@@ -30,16 +30,18 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
     [InlineData((string[])["S", "R", "S", "L"], (string[])["L", "R", "S", "S"])]
     public void LeftBiasedSplitCloakProgressionTest(string[] input, string[] expectedOutput)
     {
+        // profile setup
+        using TestHost host = CreateHost();
+        using ItemChangerProfile profile = host.Profile;
+
         // item/placement setup
         Item l = CreateTaggedItem("L");
         Item r = CreateTaggedItem("R");
         Item s = CreateTaggedItem("S");
         Dictionary<string, Item> items = ((Item[])[l, r, s]).ToDictionary(i => i.name);
         Placement p = CreatePlacement(input.Select(i => items[i].Clone()));
-        // profile setup
-        using TestHost host = CreateHost();
-        using ItemChangerProfile profile = host.Profile;
         profile.AddPlacement(p);
+
         profile.Modules.Add(new ProgressiveItemGroupModule
         {
             GroupID = "test",
@@ -51,6 +53,7 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
                 ["S"] = ["L"],
             },
         });
+
         // prepare to monitor item order
         List<string> resultOrder = [];
         void AddToResult(ReadOnlyGiveEventArgs args) => resultOrder.Add(args.Item.name);
@@ -74,16 +77,18 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
     [InlineData((string[])["R"], (string[])["S", "L"], (string[])["R", "L", "S"])]
     public void LateItemLoadProgressionTest(string[] firstInput, string[] secondInput, string[] expectedOutput)
     {
+        // profile setup
+        using TestHost host = CreateHost();
+        using ItemChangerProfile profile = host.Profile;
+
         // item/placement setup
         Item l = CreateTaggedItem("L");
         Item r = CreateTaggedItem("R");
         Item s = CreateTaggedItem("S");
         Dictionary<string, Item> items = ((Item[])[l, r, s]).ToDictionary(i => i.name);
         Placement p1 = CreatePlacement(firstInput.Select(i => items[i].Clone()));
-        // profile setup
-        using TestHost host = CreateHost();
-        using ItemChangerProfile profile = host.Profile;
         profile.AddPlacement(p1);
+
         profile.Modules.Add(new ProgressiveItemGroupModule
         {
             GroupID = "test",
@@ -141,16 +146,18 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
     [InlineData((string[])["C", "C", "N", "E"], (string[])["N", "C", "C", "E"])]
     public void NeedolinProgressionTest(string[] input, string[] expectedOutput)
     {
+        // profile setup
+        using TestHost host = CreateHost();
+        using ItemChangerProfile profile = host.Profile;
+
         // item/placement setup
         Item n = CreateTaggedItem("N");
         Item c = CreateTaggedItem("C");
         Item e = CreateTaggedItem("E");
         Dictionary<string, Item> items = ((Item[])[n, c, e]).ToDictionary(i => i.name);
         Placement p = CreatePlacement(input.Select(i => items[i].Clone()));
-        // profile setup
-        using TestHost host = CreateHost();
-        using ItemChangerProfile profile = host.Profile;
         profile.AddPlacement(p);
+
         profile.Modules.Add(new ProgressiveItemGroupModule
         {
             GroupID = "test",
@@ -200,6 +207,10 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
     // M -> M, S -> S, H1 -> H1, H1 -> H1 (dupe), H1 -> H1 (dupe), H2 -> H2, H2 -> H2 (dupe), H2 -> H2 (dupe); new item is H2 (dupe)
     public void FourItemProgressionTest(string[] input, string[] expectedOutput)
     {
+        // profile setup
+        using TestHost host = CreateHost();
+        using ItemChangerProfile profile = host.Profile;
+
         // item/placement setup
         Item m = CreateTaggedItem("M");
         Item s = CreateTaggedItem("S");
@@ -207,10 +218,8 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
         Item h2 = CreateTaggedItem("H2");
         Dictionary<string, Item> items = ((Item[])[m, s, h1, h2]).ToDictionary(i => i.name);
         Placement p = CreatePlacement(input.Select(i => items[i].Clone()));
-        // profile setup
-        using TestHost host = CreateHost();
-        using ItemChangerProfile profile = host.Profile;
         profile.AddPlacement(p);
+
         profile.Modules.Add(new ProgressiveItemGroupModule
         {
             GroupID = "test",
@@ -402,16 +411,17 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
     [Fact]
     public void UnexpectedMemberTest()
     {
+        // profile setup
+        using TestHost host = CreateHost();
+        using ItemChangerProfile profile = host.Profile;
+
         // item/placement setup
         Item x = CreateTaggedItem("X");
         Item y = CreateTaggedItem("Y");
         Item z = CreateTaggedItem("Z");
         Placement p = CreatePlacement([x, y, z]);
-        // profile setup
-        using TestHost host = CreateHost();
-        using ItemChangerProfile profile = host.Profile;
-
         profile.AddPlacement(p);
+
         profile.Modules.Add(new ProgressiveItemGroupModule
         {
             GroupID = "test",
@@ -437,7 +447,7 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
     {
         Item i = new NullItem { name = name, };
         i.AddTag(new ProgressiveItemGroupTag { GroupID = "test", });
-        Finder.DefineItem(i, overwrite: true);
+        ItemChangerHost.Singleton.Finder.DefineItem(i, overwrite: true);
         return i.Clone();
     }
 

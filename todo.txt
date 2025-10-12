@@ -4,7 +4,6 @@ use :new() in type constraints throughout to enforce/encourage json-friendly con
 Audit fields -> properties and usage of required throughout
 make taggableobject.tags private, it's unsafe
 see if there is a good way to dejank single/multicost placements
-allow callers to specify Finder sheets
 Bring back objectlocation (see https://github.com/BadMagic100/ItemChanger/commit/a21ef4f582a22cf72eff92ed3a5ea14ddae1a175)
   * rename default container tag to original container tag
   * support priority and forced original container usage

@@ -61,10 +61,12 @@ internal class TestHost : ItemChangerHost, IDisposable
     {
         get
         {
-            FakedContainer fake = new FakedContainer();
+            FakedContainer fake = new();
             return field ??= new ContainerRegistry() { DefaultSingleItemContainer = fake, DefaultMultiItemContainer = fake };
         }
     }
+
+    public override Finder Finder { get; } = new();
 
     public override IEnumerable<Module> BuildDefaultModules() => [];
 

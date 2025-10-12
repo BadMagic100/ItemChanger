@@ -56,6 +56,11 @@ public abstract class ItemChangerHost
     public abstract ContainerRegistry ContainerRegistry { get; }
 
     /// <summary>
+    /// Finder instance to search for item and location definitions.
+    /// </summary>
+    public abstract Finder Finder { get; }
+
+    /// <summary>
     /// Constructs default modules for the host. Called during profile creation.
     /// </summary>
     public abstract IEnumerable<Module> BuildDefaultModules();
