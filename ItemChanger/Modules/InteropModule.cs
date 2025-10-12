@@ -11,6 +11,7 @@ public interface IInteropModule
     /// A description of the module that can be recognized by consumers.
     /// </summary>
     string Message { get; }
+
     /// <summary>
     /// Returns true if the property name corresponds to a non-null value of the specified type, and outputs the casted value.
     /// </summary>
@@ -27,7 +28,12 @@ public class InteropModule : Module, IInteropModule
 
     public bool TryGetProperty<T>(string propertyName, out T? value)
     {
-        if (propertyName == null || Properties == null || !Properties.TryGetValue(propertyName, out object? val) || val is not T t)
+        if (
+            propertyName == null
+            || Properties == null
+            || !Properties.TryGetValue(propertyName, out object? val)
+            || val is not T t
+        )
         {
             value = default;
             return false;
@@ -39,6 +45,7 @@ public class InteropModule : Module, IInteropModule
 
     /// <inheritdoc/>
     protected override void DoLoad() { }
+
     /// <inheritdoc/>
     protected override void DoUnload() { }
 }

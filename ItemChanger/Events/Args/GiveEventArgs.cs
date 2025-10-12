@@ -1,11 +1,17 @@
-﻿using ItemChanger.Enums;
+﻿using System;
+using ItemChanger.Enums;
 using ItemChanger.Items;
 using ItemChanger.Placements;
-using System;
 
 namespace ItemChanger.Events.Args;
 
-public class GiveEventArgs(Item orig, Item item, Placement? placement, GiveInfo? info, ObtainState state) : EventArgs
+public class GiveEventArgs(
+    Item orig,
+    Item item,
+    Placement? placement,
+    GiveInfo? info,
+    ObtainState state
+) : EventArgs
 {
     public Item Orig { get; } = orig;
     public Item? Item { get; set; } = item;

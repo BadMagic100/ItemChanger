@@ -1,9 +1,9 @@
-﻿using ItemChanger.Containers;
+﻿using System;
+using ItemChanger.Containers;
 using ItemChanger.Enums;
 using ItemChanger.Items;
 using ItemChanger.Placements;
 using Newtonsoft.Json;
-using System;
 using UnityEngine;
 
 namespace ItemChanger.Locations;
@@ -46,10 +46,6 @@ public abstract class AutoLocation : Location
 
     public override Placement Wrap()
     {
-        return new Placements.AutoPlacement(Name)
-        {
-            Location = this,
-        };
+        return new Placements.AutoPlacement(Name) { Location = this };
     }
-
 }

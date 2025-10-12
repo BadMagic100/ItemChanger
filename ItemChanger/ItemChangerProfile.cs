@@ -1,4 +1,8 @@
-﻿using ItemChanger.Containers;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using ItemChanger.Containers;
 using ItemChanger.Enums;
 using ItemChanger.Events;
 using ItemChanger.Items;
@@ -6,10 +10,6 @@ using ItemChanger.Modules;
 using ItemChanger.Placements;
 using ItemChanger.Tags;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 
 namespace ItemChanger;
 
@@ -46,7 +46,8 @@ public class ItemChangerProfile : IDisposable
         gameInvoker = new GameEvents.Invoker();
     }
 
-    public ItemChangerProfile(ItemChangerHost host) : this()
+    public ItemChangerProfile(ItemChangerHost host)
+        : this()
     {
         host.ActiveProfile = this;
         this.host = host;
@@ -102,12 +103,18 @@ public class ItemChangerProfile : IDisposable
     {
         if (persistence == Persistence.NonPersistent)
         {
-            throw new ArgumentException($"Cannot reset non-persistent items (persistence {nameof(Persistence.NonPersistent)})", nameof(persistence));
+            throw new ArgumentException(
+                $"Cannot reset non-persistent items (persistence {nameof(Persistence.NonPersistent)})",
+                nameof(persistence)
+            );
         }
 
         foreach (Item item in GetItems())
         {
-            if (item.GetTag<IPersistenceTag>(out IPersistenceTag? tag) && tag.Persistence == persistence)
+            if (
+                item.GetTag<IPersistenceTag>(out IPersistenceTag? tag)
+                && tag.Persistence == persistence
+            )
             {
                 item.RefreshObtained();
             }
@@ -118,7 +125,9 @@ public class ItemChangerProfile : IDisposable
     {
         if (state != LoadState.Unloaded)
         {
-            throw new InvalidOperationException($"Cannot load an already loaded profile. Current state is {state}");
+            throw new InvalidOperationException(
+                $"Cannot load an already loaded profile. Current state is {state}"
+            );
         }
 
         state = LoadState.LoadStarted;
@@ -141,7 +150,9 @@ public class ItemChangerProfile : IDisposable
     {
         if (state != LoadState.LoadCompleted)
         {
-            throw new InvalidOperationException($"Cannot unload an unloaded or partially loaded profile. Current state is {state}");
+            throw new InvalidOperationException(
+                $"Cannot unload an unloaded or partially loaded profile. Current state is {state}"
+            );
         }
 
         state = LoadState.PlacementsLoadCompleted;
@@ -158,11 +169,16 @@ public class ItemChangerProfile : IDisposable
         state = LoadState.Unloaded;
     }
 
-    public void AddPlacement(Placement placement, PlacementConflictResolution conflictResolution = PlacementConflictResolution.MergeKeepingNew)
+    public void AddPlacement(
+        Placement placement,
+        PlacementConflictResolution conflictResolution = PlacementConflictResolution.MergeKeepingNew
+    )
     {
         if (state == LoadState.PlacementsLoadStarted)
         {
-            throw new InvalidOperationException("Cannot add a placement while placement loading is in progress");
+            throw new InvalidOperationException(
+                "Cannot add a placement while placement loading is in progress"
+            );
         }
 
         if (placements.TryGetValue(placement.Name, out Placement? existP))
@@ -198,7 +214,9 @@ public class ItemChangerProfile : IDisposable
                     break;
                 case PlacementConflictResolution.Throw:
                 default:
-                    throw new ArgumentException($"A placement named {placement.Name} already exists");
+                    throw new ArgumentException(
+                        $"A placement named {placement.Name} already exists"
+                    );
             }
         }
         else
@@ -213,7 +231,10 @@ public class ItemChangerProfile : IDisposable
         }
     }
 
-    public void AddPlacements(IEnumerable<Placement> placements, PlacementConflictResolution conflictResolution = PlacementConflictResolution.MergeKeepingNew)
+    public void AddPlacements(
+        IEnumerable<Placement> placements,
+        PlacementConflictResolution conflictResolution = PlacementConflictResolution.MergeKeepingNew
+    )
     {
         foreach (Placement placement in placements)
         {

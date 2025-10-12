@@ -22,7 +22,6 @@ public class StartLocation : AutoLocation
         LifecycleEvents.OnSafeToGiveItems -= OnSafeToGiveItems;
     }
 
-
     private void OnSafeToGiveItems()
     {
         GiveItems();
@@ -32,23 +31,21 @@ public class StartLocation : AutoLocation
     {
         if (!Placement.AllObtained())
         {
-            Placement.GiveAll(new GiveInfo
-            {
-                MessageType = MessageType,
-                Container = "Start",
-                FlingType = FlingType,
-                Transform = null,
-                Callback = null,
-            });
+            Placement.GiveAll(
+                new GiveInfo
+                {
+                    MessageType = MessageType,
+                    Container = "Start",
+                    FlingType = FlingType,
+                    Transform = null,
+                    Callback = null,
+                }
+            );
         }
     }
 
-
     public override Placement Wrap()
     {
-        return new Placements.AutoPlacement(Name)
-        {
-            Location = this,
-        };
+        return new Placements.AutoPlacement(Name) { Location = this };
     }
 }

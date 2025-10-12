@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using System.IO;
+﻿using System.IO;
+using Newtonsoft.Json;
 
 namespace ItemChanger.Serialization;
 
@@ -35,10 +35,7 @@ public static class SerializationHelper
     /// <param name="stream">The stream to read from</param>
     public static T? DeserializeResource<T>(Stream stream)
     {
-        JsonSerializer js = new()
-        {
-            TypeNameHandling = TypeNameHandling.Auto,
-        };
+        JsonSerializer js = new() { TypeNameHandling = TypeNameHandling.Auto };
         js.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
         using StreamReader sr = new(stream);
         return js.Deserialize<T>(new JsonTextReader(sr));

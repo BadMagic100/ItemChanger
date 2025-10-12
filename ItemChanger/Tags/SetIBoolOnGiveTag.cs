@@ -54,7 +54,10 @@ public class SetIBoolOnGiveTag : Tag
 
     private void OnVisitStateChanged(VisitStateChangedEventArgs obj)
     {
-        if (obj.NewFlags.HasFlag(VisitState.ObtainedAnyItem) && !obj.Orig.HasFlag(VisitState.ObtainedAnyItem))
+        if (
+            obj.NewFlags.HasFlag(VisitState.ObtainedAnyItem)
+            && !obj.Orig.HasFlag(VisitState.ObtainedAnyItem)
+        )
         {
             Bool.Value = Value;
         }

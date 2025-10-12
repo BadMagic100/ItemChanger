@@ -1,7 +1,7 @@
-﻿using ItemChanger.Costs;
+﻿using System.Collections.Generic;
+using ItemChanger.Costs;
 using ItemChanger.Items;
 using ItemChanger.Placements;
-using System.Collections.Generic;
 
 namespace ItemChanger.Containers;
 

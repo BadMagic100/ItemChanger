@@ -1,6 +1,5 @@
-﻿
+﻿using System;
 using Newtonsoft.Json;
-using System;
 
 namespace ItemChanger.Costs;
 
@@ -14,10 +13,12 @@ public abstract record Cost
     /// </summary>
     [JsonIgnore]
     public bool Loaded { get; private set; }
+
     /// <summary>
     /// Method to implement optional loading logic, called once during loading.
     /// </summary>
     protected virtual void DoLoad() { }
+
     /// <summary>
     /// Method to implement optional unloading logic, called once during unloading.
     /// </summary>
@@ -113,7 +114,7 @@ public abstract record Cost
     public abstract string GetCostText();
 
     /// <summary>
-    /// Points to the root-level cost for pattern-matching contexts such as CostDisplayer. Primarily intended 
+    /// Points to the root-level cost for pattern-matching contexts such as CostDisplayer. Primarily intended
     /// for implementation by costs which wrap a single other cost to apply additional functionality.
     /// </summary>
     /// <remarks>

@@ -12,6 +12,7 @@ public interface IInteropTag
     /// A description of the tag that can be recognized by consumers.
     /// </summary>
     string Message { get; }
+
     /// <summary>
     /// Returns true if the property name corresponds to a non-null value of the specified type, and outputs the casted value.
     /// </summary>
@@ -25,6 +26,7 @@ public class InteropTag : Tag, IInteropTag
 {
     /// <inheritdoc/>
     public required string Message { get; init; }
+
     /// <summary>
     /// A read/writable dictionary of properties
     /// </summary>
@@ -33,7 +35,12 @@ public class InteropTag : Tag, IInteropTag
     /// <inheritdoc/>
     public bool TryGetProperty<T>(string propertyName, [NotNullWhen(true)] out T? value)
     {
-        if (propertyName == null || Properties == null || !Properties.TryGetValue(propertyName, out object? val) || val is not T t)
+        if (
+            propertyName == null
+            || Properties == null
+            || !Properties.TryGetValue(propertyName, out object? val)
+            || val is not T t
+        )
         {
             value = default;
             return false;

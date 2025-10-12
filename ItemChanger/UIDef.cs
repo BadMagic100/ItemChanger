@@ -1,5 +1,5 @@
-﻿using ItemChanger.Enums;
-using System;
+﻿using System;
+using ItemChanger.Enums;
 using UnityEngine;
 
 namespace ItemChanger;

@@ -6,7 +6,6 @@ using ItemChanger.Modules;
 using ItemChanger.Placements;
 using ItemChanger.Tags;
 
-
 namespace ItemChangerTests;
 
 [CollectionDefinition("Tests", DisableParallelization = true)]
@@ -42,17 +41,19 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
         Placement p = CreatePlacement(input.Select(i => items[i].Clone()));
         profile.AddPlacement(p);
 
-        profile.Modules.Add(new ProgressiveItemGroupModule
-        {
-            GroupID = "test",
-            OrderedMemberList = ["L", "R", "S"],
-            OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+        profile.Modules.Add(
+            new ProgressiveItemGroupModule
             {
-                ["L"] = [],
-                ["R"] = [],
-                ["S"] = ["L"],
-            },
-        });
+                GroupID = "test",
+                OrderedMemberList = ["L", "R", "S"],
+                OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+                {
+                    ["L"] = [],
+                    ["R"] = [],
+                    ["S"] = ["L"],
+                },
+            }
+        );
 
         // prepare to monitor item order
         List<string> resultOrder = [];
@@ -75,7 +76,11 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
     [InlineData((string[])["L", "R"], (string[])["S"], (string[])["L", "R", "S"])]
     [InlineData((string[])["S", "R"], (string[])["L"], (string[])["L", "R", "S"])]
     [InlineData((string[])["R"], (string[])["S", "L"], (string[])["R", "L", "S"])]
-    public void LateItemLoadProgressionTest(string[] firstInput, string[] secondInput, string[] expectedOutput)
+    public void LateItemLoadProgressionTest(
+        string[] firstInput,
+        string[] secondInput,
+        string[] expectedOutput
+    )
     {
         // profile setup
         using TestHost host = CreateHost();
@@ -89,17 +94,19 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
         Placement p1 = CreatePlacement(firstInput.Select(i => items[i].Clone()));
         profile.AddPlacement(p1);
 
-        profile.Modules.Add(new ProgressiveItemGroupModule
-        {
-            GroupID = "test",
-            OrderedMemberList = ["L", "R", "S"],
-            OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+        profile.Modules.Add(
+            new ProgressiveItemGroupModule
             {
-                ["L"] = [],
-                ["R"] = [],
-                ["S"] = ["L"],
-            },
-        });
+                GroupID = "test",
+                OrderedMemberList = ["L", "R", "S"],
+                OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+                {
+                    ["L"] = [],
+                    ["R"] = [],
+                    ["S"] = ["L"],
+                },
+            }
+        );
         // prepare to monitor item order
         List<string> resultOrder = [];
         void AddToResult(ReadOnlyGiveEventArgs args) => resultOrder.Add(args.Item.name);
@@ -158,17 +165,19 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
         Placement p = CreatePlacement(input.Select(i => items[i].Clone()));
         profile.AddPlacement(p);
 
-        profile.Modules.Add(new ProgressiveItemGroupModule
-        {
-            GroupID = "test",
-            OrderedMemberList = ["N", "E", "C"],
-            OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+        profile.Modules.Add(
+            new ProgressiveItemGroupModule
             {
-                ["N"] = [],
-                ["C"] = ["N"],
-                ["E"] = ["N"],
-            },
-        });
+                GroupID = "test",
+                OrderedMemberList = ["N", "E", "C"],
+                OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+                {
+                    ["N"] = [],
+                    ["C"] = ["N"],
+                    ["E"] = ["N"],
+                },
+            }
+        );
         // prepare to monitor item order
         List<string> resultOrder = [];
         void AddToResult(ReadOnlyGiveEventArgs args) => resultOrder.Add(args.Item.name);
@@ -195,7 +204,10 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
     [InlineData((string[])["H2", "H1", "S", "M"], (string[])["S", "M", "H2", "H1"])]
     [InlineData((string[])["H1", "H2", "S", "M"], (string[])["M", "S", "H2", "H1"])]
     [InlineData((string[])["H1", "H2", "M", "S"], (string[])["M", "S", "H2", "H1"])]
-    [InlineData((string[])["H2", "H2", "H1", "H1", "M", "S", "H1", "H2"], (string[])["S", "M", "H2", "H2", "H1", "H1", "H1", "H2"])]
+    [InlineData(
+        (string[])["H2", "H2", "H1", "H1", "M", "S", "H1", "H2"],
+        (string[])["S", "M", "H2", "H2", "H1", "H1", "H1", "H2"]
+    )]
     // to explain this last case, recall that items are sorted according to member order before being replaced by the module. So the output is obtained by:
     // H2 -> S; new item is S
     // H2 -> S, H2 -> M; new item is M
@@ -220,18 +232,20 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
         Placement p = CreatePlacement(input.Select(i => items[i].Clone()));
         profile.AddPlacement(p);
 
-        profile.Modules.Add(new ProgressiveItemGroupModule
-        {
-            GroupID = "test",
-            OrderedMemberList = ["M", "S", "H1", "H2"],
-            OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+        profile.Modules.Add(
+            new ProgressiveItemGroupModule
             {
-                ["M"] = [],
-                ["S"] = [],
-                ["H1"] = ["M", "S"],
-                ["H2"] = ["S", "M"],
-            },
-        });
+                GroupID = "test",
+                OrderedMemberList = ["M", "S", "H1", "H2"],
+                OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+                {
+                    ["M"] = [],
+                    ["S"] = [],
+                    ["H1"] = ["M", "S"],
+                    ["H2"] = ["S", "M"],
+                },
+            }
+        );
         // prepare to monitor item order
         List<string> resultOrder = [];
         void AddToResult(ReadOnlyGiveEventArgs args) => resultOrder.Add(args.Item.name);
@@ -254,25 +268,30 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
         // profile setup
         using TestHost host = CreateHost();
         using ItemChangerProfile profile = host.Profile;
-        profile.Modules.Add(new ProgressiveItemGroupModule
-        {
-            GroupID = "test",
-            OrderedMemberList = ["X", "Y", "Z"],
-            OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+        profile.Modules.Add(
+            new ProgressiveItemGroupModule
             {
-                ["X"] = [],
-                ["Y"] = ["X"],
-            },
-        });
+                GroupID = "test",
+                OrderedMemberList = ["X", "Y", "Z"],
+                OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+                {
+                    ["X"] = [],
+                    ["Y"] = ["X"],
+                },
+            }
+        );
         // start IC w/ errors
         Assert.False(host.RunStartNewLifecycle());
         // retrieve error message
         string err = Assert.Single(host.ErrorMessages)!;
         Output.WriteLine(err);
-        Assert.StartsWith("Error initializing module ProgressiveItemGroupModule:\n" +
-            "System.InvalidOperationException: " +
-            "Item Z appears in data of ProgressiveItemGroupModule with GroupID test, " +
-            "but item is not both an entry of the member list and a key of the predecessor lookup.", err);
+        Assert.StartsWith(
+            "Error initializing module ProgressiveItemGroupModule:\n"
+                + "System.InvalidOperationException: "
+                + "Item Z appears in data of ProgressiveItemGroupModule with GroupID test, "
+                + "but item is not both an entry of the member list and a key of the predecessor lookup.",
+            err
+        );
     }
 
     [Fact]
@@ -281,26 +300,31 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
         // profile setup
         using TestHost host = CreateHost();
         using ItemChangerProfile profile = host.Profile;
-        profile.Modules.Add(new ProgressiveItemGroupModule
-        {
-            GroupID = "test",
-            OrderedMemberList = ["X", "Y"],
-            OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+        profile.Modules.Add(
+            new ProgressiveItemGroupModule
             {
-                ["X"] = [],
-                ["Y"] = ["X"],
-                ["Z"] = ["X"],
-            },
-        });
+                GroupID = "test",
+                OrderedMemberList = ["X", "Y"],
+                OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+                {
+                    ["X"] = [],
+                    ["Y"] = ["X"],
+                    ["Z"] = ["X"],
+                },
+            }
+        );
         // start IC w/ errors
         Assert.False(host.RunStartNewLifecycle());
         // retrieve error message
         string err = Assert.Single(host.ErrorMessages)!;
         Output.WriteLine(err);
-        Assert.StartsWith("Error initializing module ProgressiveItemGroupModule:\n" +
-            "System.InvalidOperationException: " +
-            "Item Z appears in data of ProgressiveItemGroupModule with GroupID test, " +
-            "but item is not both an entry of the member list and a key of the predecessor lookup.", err);
+        Assert.StartsWith(
+            "Error initializing module ProgressiveItemGroupModule:\n"
+                + "System.InvalidOperationException: "
+                + "Item Z appears in data of ProgressiveItemGroupModule with GroupID test, "
+                + "but item is not both an entry of the member list and a key of the predecessor lookup.",
+            err
+        );
     }
 
     [Fact]
@@ -309,25 +333,30 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
         // profile setup
         using TestHost host = CreateHost();
         using ItemChangerProfile profile = host.Profile;
-        profile.Modules.Add(new ProgressiveItemGroupModule
-        {
-            GroupID = "test",
-            OrderedMemberList = ["X", "Y"],
-            OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+        profile.Modules.Add(
+            new ProgressiveItemGroupModule
             {
-                ["X"] = ["Z"],
-                ["Y"] = ["X"],
-            },
-        });
+                GroupID = "test",
+                OrderedMemberList = ["X", "Y"],
+                OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+                {
+                    ["X"] = ["Z"],
+                    ["Y"] = ["X"],
+                },
+            }
+        );
         // start IC w/ errors
         Assert.False(host.RunStartNewLifecycle());
         // retrieve error message
         string err = Assert.Single(host.ErrorMessages)!;
         Output.WriteLine(err);
-        Assert.StartsWith("Error initializing module ProgressiveItemGroupModule:\n" +
-            "System.InvalidOperationException: " +
-            "Item Z appears in data of ProgressiveItemGroupModule with GroupID test, " +
-            "but item is not both an entry of the member list and a key of the predecessor lookup.", err);
+        Assert.StartsWith(
+            "Error initializing module ProgressiveItemGroupModule:\n"
+                + "System.InvalidOperationException: "
+                + "Item Z appears in data of ProgressiveItemGroupModule with GroupID test, "
+                + "but item is not both an entry of the member list and a key of the predecessor lookup.",
+            err
+        );
     }
 
     [Fact]
@@ -336,25 +365,30 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
         // profile setup
         using TestHost host = CreateHost();
         using ItemChangerProfile profile = host.Profile;
-        profile.Modules.Add(new ProgressiveItemGroupModule
-        {
-            GroupID = "test",
-            OrderedMemberList = ["X", "Y", "Z"],
-            OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+        profile.Modules.Add(
+            new ProgressiveItemGroupModule
             {
-                ["X"] = [],
-                ["Y"] = ["X"],
-                ["Z"] = ["Y"],
-            },
-        });
+                GroupID = "test",
+                OrderedMemberList = ["X", "Y", "Z"],
+                OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+                {
+                    ["X"] = [],
+                    ["Y"] = ["X"],
+                    ["Z"] = ["Y"],
+                },
+            }
+        );
         // start IC w/ errors
         Assert.False(host.RunStartNewLifecycle());
         // retrieve error message
         string err = Assert.Single(host.ErrorMessages)!;
         Output.WriteLine(err);
-        Assert.StartsWith("Error initializing module ProgressiveItemGroupModule:\n" +
-            "System.InvalidOperationException: " +
-            "ProgressiveItemGroupTag for Z with GroupID test is missing the transitive predecessor X of Y.", err);
+        Assert.StartsWith(
+            "Error initializing module ProgressiveItemGroupModule:\n"
+                + "System.InvalidOperationException: "
+                + "ProgressiveItemGroupTag for Z with GroupID test is missing the transitive predecessor X of Y.",
+            err
+        );
     }
 
     [Fact]
@@ -363,23 +397,28 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
         // profile setup
         using TestHost host = CreateHost();
         using ItemChangerProfile profile = host.Profile;
-        profile.Modules.Add(new ProgressiveItemGroupModule
-        {
-            GroupID = "test",
-            OrderedMemberList = ["X"],
-            OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+        profile.Modules.Add(
+            new ProgressiveItemGroupModule
             {
-                ["X"] = ["X"],
-            },
-        });
+                GroupID = "test",
+                OrderedMemberList = ["X"],
+                OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+                {
+                    ["X"] = ["X"],
+                },
+            }
+        );
         // start IC w/ errors
         Assert.False(host.RunStartNewLifecycle());
         // retrieve error message
         string err = Assert.Single(host.ErrorMessages)!;
         Output.WriteLine(err);
-        Assert.StartsWith("Error initializing module ProgressiveItemGroupModule:\n" +
-            "System.InvalidOperationException: " +
-            "ProgressiveItemGroupTag for X with GroupID test declares X as its own predecessor.", err);
+        Assert.StartsWith(
+            "Error initializing module ProgressiveItemGroupModule:\n"
+                + "System.InvalidOperationException: "
+                + "ProgressiveItemGroupTag for X with GroupID test declares X as its own predecessor.",
+            err
+        );
     }
 
     [Fact]
@@ -388,24 +427,29 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
         // profile setup
         using TestHost host = CreateHost();
         using ItemChangerProfile profile = host.Profile;
-        profile.Modules.Add(new ProgressiveItemGroupModule
-        {
-            GroupID = "test",
-            OrderedMemberList = ["Y", "X"],
-            OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+        profile.Modules.Add(
+            new ProgressiveItemGroupModule
             {
-                ["X"] = [],
-                ["Y"] = ["X"],
-            },
-        });
+                GroupID = "test",
+                OrderedMemberList = ["Y", "X"],
+                OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+                {
+                    ["X"] = [],
+                    ["Y"] = ["X"],
+                },
+            }
+        );
         // start IC w/ errors
         Assert.False(host.RunStartNewLifecycle());
         // retrieve error message
         string err = Assert.Single(host.ErrorMessages)!;
         Output.WriteLine(err);
-        Assert.StartsWith("Error initializing module ProgressiveItemGroupModule:\n" +
-            "System.InvalidOperationException: " +
-            "Y is declared as a predecessor of X, but Y occurs after X in the OrderedMemberList for ProgressiveItemGroupModule with GroupID test.", err);
+        Assert.StartsWith(
+            "Error initializing module ProgressiveItemGroupModule:\n"
+                + "System.InvalidOperationException: "
+                + "Y is declared as a predecessor of X, but Y occurs after X in the OrderedMemberList for ProgressiveItemGroupModule with GroupID test.",
+            err
+        );
     }
 
     [Fact]
@@ -422,38 +466,45 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
         Placement p = CreatePlacement([x, y, z]);
         profile.AddPlacement(p);
 
-        profile.Modules.Add(new ProgressiveItemGroupModule
-        {
-            GroupID = "test",
-            OrderedMemberList = ["X", "Y"],
-            OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+        profile.Modules.Add(
+            new ProgressiveItemGroupModule
             {
-                ["X"] = [],
-                ["Y"] = ["X"],
-            },
-        });
+                GroupID = "test",
+                OrderedMemberList = ["X", "Y"],
+                OrderedTransitivePredecessorsLookup = new Dictionary<string, List<string>>
+                {
+                    ["X"] = [],
+                    ["Y"] = ["X"],
+                },
+            }
+        );
         // start IC w/ errors
         Assert.False(host.RunStartNewLifecycle());
         // retrieve error message
         string err = Assert.Single(host.ErrorMessages)!;
         Output.WriteLine(err);
-        Assert.StartsWith("Error loading ProgressiveItemGroupTag:\n" +
-            "System.InvalidOperationException: " +
-            "Item Z tagged with ProgressiveItemGroupTag with GroupID test was not declared on the module.", err);
+        Assert.StartsWith(
+            "Error loading ProgressiveItemGroupTag:\n"
+                + "System.InvalidOperationException: "
+                + "Item Z tagged with ProgressiveItemGroupTag with GroupID test was not declared on the module.",
+            err
+        );
     }
-
 
     private Item CreateTaggedItem(string name)
     {
-        Item i = new NullItem { name = name, };
-        i.AddTag(new ProgressiveItemGroupTag { GroupID = "test", });
+        Item i = new NullItem { name = name };
+        i.AddTag(new ProgressiveItemGroupTag { GroupID = "test" });
         ItemChangerHost.Singleton.Finder.DefineItem(i, overwrite: true);
         return i.Clone();
     }
 
     private Placement CreatePlacement(IEnumerable<Item> items)
     {
-        return new AutoPlacement("Test placement") { Location = new EmptyLocation { Name = "Test location" } }.Add(items);
+        return new AutoPlacement("Test placement")
+        {
+            Location = new EmptyLocation { Name = "Test location" },
+        }.Add(items);
     }
 
     private TestHost CreateHost()

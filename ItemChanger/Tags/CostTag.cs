@@ -9,10 +9,12 @@ namespace ItemChanger;
 public class CostTag : Tag
 {
     public Cost Cost { get; set; }
+
     protected override void DoLoad(TaggableObject parent)
     {
         Cost?.LoadOnce();
     }
+
     protected override void DoUnload(TaggableObject parent)
     {
         Cost?.UnloadOnce();

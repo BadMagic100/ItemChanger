@@ -1,8 +1,8 @@
-﻿using ItemChanger.Costs;
+﻿using System.Collections.Generic;
+using ItemChanger.Costs;
 using ItemChanger.Enums;
 using ItemChanger.Items;
 using ItemChanger.Placements;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace ItemChanger.Containers;
@@ -21,14 +21,17 @@ public class ContainerInfo
     /// Creates ContainerInfo with standard ContainerGiveInfo.
     /// </summary>
     public ContainerInfo(string containerType, Placement placement, FlingType flingType)
-        : this(containerType, placement, placement.Items, flingType)
-    {
-    }
+        : this(containerType, placement, placement.Items, flingType) { }
 
     /// <summary>
     /// Creates ContainerInfo with standard ContainerGiveInfo.
     /// </summary>
-    public ContainerInfo(string containerType, Placement placement, IEnumerable<Item> items, FlingType flingType)
+    public ContainerInfo(
+        string containerType,
+        Placement placement,
+        IEnumerable<Item> items,
+        FlingType flingType
+    )
         : this()
     {
         ContainerType = containerType;
@@ -44,14 +47,18 @@ public class ContainerInfo
     /// Creates ContainerInfo with standard ContainerGiveInfo. If the cost parameter is not null, initializes costInfo with the cost.
     /// </summary>
     public ContainerInfo(string containerType, Placement placement, FlingType flingType, Cost? cost)
-        : this(containerType, placement, placement.Items, flingType, cost)
-    {
-    }
+        : this(containerType, placement, placement.Items, flingType, cost) { }
 
     /// <summary>
     /// Creates ContainerInfo with standard ContainerGiveInfo. If the cost parameter is not null, initializes costInfo with the cost.
     /// </summary>
-    public ContainerInfo(string containerType, Placement placement, IEnumerable<Item> items, FlingType flingType, Cost? cost)
+    public ContainerInfo(
+        string containerType,
+        Placement placement,
+        IEnumerable<Item> items,
+        FlingType flingType,
+        Cost? cost
+    )
         : this(containerType, placement, items, flingType)
     {
         if (cost is not null)
@@ -65,20 +72,21 @@ public class ContainerInfo
         }
     }
 
-    public ContainerInfo(string containerType, ContainerGiveInfo giveInfo, ContainerCostInfo? costInfo)
+    public ContainerInfo(
+        string containerType,
+        ContainerGiveInfo giveInfo,
+        ContainerCostInfo? costInfo
+    )
     {
         ContainerType = containerType;
         GiveInfo = giveInfo;
         CostInfo = costInfo;
     }
 
-
     /// <summary>
     /// Creates uninitialized ContainerInfo. The giveInfo and containerType fields must be initialized before use.
     /// </summary>
-    public ContainerInfo()
-    {
-    }
+    public ContainerInfo() { }
 
     /// <summary>
     /// Searches for ContainerInfo on a ContainerInfoComponent. Returns null if neither is found.

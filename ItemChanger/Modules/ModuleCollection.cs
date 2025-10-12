@@ -1,16 +1,15 @@
-﻿using ItemChanger.Enums;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ItemChanger.Enums;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ItemChanger.Modules;
 
 public class ModuleCollection : IEnumerable<Module>
 {
-
     [JsonConverter(typeof(ModuleListDeserializer))]
     [JsonProperty]
     private readonly List<Module> modules = [];
@@ -57,7 +56,8 @@ public class ModuleCollection : IEnumerable<Module>
         return m;
     }
 
-    public T Add<T>() where T : Module, new()
+    public T Add<T>()
+        where T : Module, new()
     {
         T t = new();
         return (T)Add(t);
@@ -72,7 +72,9 @@ public class ModuleCollection : IEnumerable<Module>
         }
         catch (Exception e)
         {
-            LoggerProxy.LogError($"Unable to instantiate module of type {T.Name} through reflection:\n{e}");
+            LoggerProxy.LogError(
+                $"Unable to instantiate module of type {T.Name} through reflection:\n{e}"
+            );
             throw;
         }
     }
@@ -85,7 +87,8 @@ public class ModuleCollection : IEnumerable<Module>
         return modules.OfType<T>().FirstOrDefault();
     }
 
-    public T GetOrAdd<T>() where T : Module, new()
+    public T GetOrAdd<T>()
+        where T : Module, new()
     {
         T? t = modules.OfType<T>().FirstOrDefault();
         t ??= Add<T>();
@@ -103,7 +106,10 @@ public class ModuleCollection : IEnumerable<Module>
 
     public void Remove(Module m)
     {
-        if (modules.Remove(m) && backingProfile.state >= ItemChangerProfile.LoadState.ModuleLoadCompleted)
+        if (
+            modules.Remove(m)
+            && backingProfile.state >= ItemChangerProfile.LoadState.ModuleLoadCompleted
+        )
         {
             m.UnloadOnce();
         }
@@ -147,11 +153,23 @@ public class ModuleCollection : IEnumerable<Module>
         public override bool CanRead => false;
         public override bool CanWrite => true;
         public bool RemoveNewProfileModules;
-        public override List<Module> ReadJson(JsonReader reader, Type objectType, List<Module>? existingValue, bool hasExistingValue, JsonSerializer serializer)
+
+        public override List<Module> ReadJson(
+            JsonReader reader,
+            Type objectType,
+            List<Module>? existingValue,
+            bool hasExistingValue,
+            JsonSerializer serializer
+        )
         {
             throw new NotImplementedException();
         }
-        public override void WriteJson(JsonWriter writer, List<Module>? value, JsonSerializer serializer)
+
+        public override void WriteJson(
+            JsonWriter writer,
+            List<Module>? value,
+            JsonSerializer serializer
+        )
         {
             if (value is null)
             {
@@ -161,7 +179,12 @@ public class ModuleCollection : IEnumerable<Module>
 
             if (RemoveNewProfileModules)
             {
-                value = [.. value.Where(t => !t.ModuleHandlingProperties.HasFlag(ModuleHandlingFlags.RemoveOnNewProfile))];
+                value =
+                [
+                    .. value.Where(t =>
+                        !t.ModuleHandlingProperties.HasFlag(ModuleHandlingFlags.RemoveOnNewProfile)
+                    ),
+                ];
             }
 
             serializer.Serialize(writer, value.ToArray());
@@ -173,7 +196,13 @@ public class ModuleCollection : IEnumerable<Module>
         public override bool CanRead => true;
         public override bool CanWrite => false;
 
-        public override List<Module>? ReadJson(JsonReader reader, Type objectType, List<Module>? existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override List<Module>? ReadJson(
+            JsonReader reader,
+            Type objectType,
+            List<Module>? existingValue,
+            bool hasExistingValue,
+            JsonSerializer serializer
+        )
         {
             JToken jt = JToken.Load(reader);
             if (jt.Type == JTokenType.Null)
@@ -193,14 +222,14 @@ public class ModuleCollection : IEnumerable<Module>
                     }
                     catch (Exception e)
                     {
-                        ModuleHandlingFlags flags = ((JObject)jModule).GetValue(nameof(Module.ModuleHandlingProperties))?.ToObject<ModuleHandlingFlags>(serializer) ?? ModuleHandlingFlags.None;
+                        ModuleHandlingFlags flags =
+                            ((JObject)jModule)
+                                .GetValue(nameof(Module.ModuleHandlingProperties))
+                                ?.ToObject<ModuleHandlingFlags>(serializer)
+                            ?? ModuleHandlingFlags.None;
                         if (flags.HasFlag(ModuleHandlingFlags.AllowDeserializationFailure))
                         {
-                            t = new InvalidModule
-                            {
-                                JSON = jModule,
-                                DeserializationError = e,
-                            };
+                            t = new InvalidModule { JSON = jModule, DeserializationError = e };
                         }
                         else
                         {
@@ -211,10 +240,16 @@ public class ModuleCollection : IEnumerable<Module>
                 }
                 return list;
             }
-            throw new JsonSerializationException("Unable to handle tag list pattern: " + jt.ToString());
+            throw new JsonSerializationException(
+                "Unable to handle tag list pattern: " + jt.ToString()
+            );
         }
 
-        public override void WriteJson(JsonWriter writer, List<Module>? value, JsonSerializer serializer)
+        public override void WriteJson(
+            JsonWriter writer,
+            List<Module>? value,
+            JsonSerializer serializer
+        )
         {
             throw new NotImplementedException();
         }

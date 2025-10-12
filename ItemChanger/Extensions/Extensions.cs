@@ -1,9 +1,9 @@
-﻿using ItemChanger.Enums;
-using ItemChanger.Items;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ItemChanger.Enums;
+using ItemChanger.Items;
 
 namespace ItemChanger.Extensions;
 
@@ -15,7 +15,11 @@ public static class Extensions
     /// <summary>
     /// An implementation of GetValueOrDefault, which apparently does not exist pre-.net6
     /// </summary>
-    public static TValue? GetOrDefault<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, TValue? defaultValue = default)
+    public static TValue? GetOrDefault<TKey, TValue>(
+        this Dictionary<TKey, TValue> dict,
+        TKey key,
+        TValue? defaultValue = default
+    )
     {
         if (dict.TryGetValue(key, out TValue? value))
         {
@@ -24,7 +28,8 @@ public static class Extensions
         return defaultValue;
     }
 
-    public static string CapLength(this string s, int length) => s.Length > length ? s.Substring(0, length) : s;
+    public static string CapLength(this string s, int length) =>
+        s.Length > length ? s.Substring(0, length) : s;
 
     /// <summary>
     /// Returns true when the collection has a previously given item, or is null or empty.
@@ -34,7 +39,8 @@ public static class Extensions
         return items == null || !items.Any() || items.Any(i => i.WasEverObtained());
     }
 
-    public static bool Compare<T>(this T t, ComparisonOperator op, T u) where T : IComparable
+    public static bool Compare<T>(this T t, ComparisonOperator op, T u)
+        where T : IComparable
     {
         return op switch
         {
@@ -92,7 +98,11 @@ public static class Extensions
                 }
             }
 
-            if (char.IsDigit(uiname[i]) && !char.IsDigit(uiname[i - 1]) && !char.IsWhiteSpace(uiname[i - 1]))
+            if (
+                char.IsDigit(uiname[i])
+                && !char.IsDigit(uiname[i - 1])
+                && !char.IsWhiteSpace(uiname[i - 1])
+            )
             {
                 uiname.Insert(i, " ");
             }

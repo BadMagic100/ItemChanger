@@ -15,7 +15,7 @@ namespace ItemChanger.Containers;
 /// <example>
 /// This example shows a sample implementation of an intermediary container loosely based on the original Container class
 /// from Hollow Knight ItemChanger.
-/// 
+///
 /// <code>
 /// abstract class FsmContainer : Container
 /// {
@@ -31,43 +31,43 @@ namespace ItemChanger.Containers;
 ///     private void FsmHook(On.PlayMakerFSM.orig_OnEnable orig, PlayMakerFSM fsm)
 ///     {
 ///         orig(self);
-/// 
+///
 ///         ContainerInfo? info = ContainerInfo.FindContainerInfo(fsm.gameObject);
 ///         if (info == null)
 ///         {
 ///             return;
 ///         }
-/// 
+///
 ///         if (info.ContainerType == this.ContainerType)
 ///         {
 ///             return;
 ///         }
-/// 
+///
 ///         if (info.GiveInfo is ContainerGiveInfo gi &amp;&amp; !gi.Applied)
 ///         {
 ///             fc.AddGiveEffectToFsm(fsm, gi);
 ///             gi.Applied = true;
 ///         }
-/// 
+///
 ///         if (info.CostInfo is ContainerCostInfo ci &amp;&amp; !ci.Applied)
 ///         {
 ///             fc.AddGiveEffectToFsm(fsm, ci);
 ///             ci.Applied = true;
 ///         }
 ///     }
-/// 
+///
 ///     protected abstract void AddGiveEffectToFsm(PlayMakerFSM fsm, ContainerGiveInfo info);
 ///     protected virtual void AddCostToFsm(PlayMakerFSM fsm, ContainerCostInfo info) { }
 /// }
-/// 
+///
 /// class ChestContainer : FsmContainer
 /// {
 ///     public override string Name => "Chest";
-/// 
+///
 ///     public override bool SupportsInstantiate => true;
-/// 
+///
 ///     public override uint SupportedCapabilities => ContainerCapabilities.NONE;
-/// 
+///
 ///     protected override void AddGiveEffectToFsm(PlayMakerFSM fsm, ContainerGiveInfo info)
 ///     {
 ///         // ...

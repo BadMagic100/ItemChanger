@@ -1,6 +1,6 @@
-﻿using ItemChanger.Items;
+﻿using System;
+using ItemChanger.Items;
 using ItemChanger.Placements;
-using System;
 
 namespace ItemChanger.Tags.Constraints;
 
@@ -9,7 +9,8 @@ namespace ItemChanger.Tags.Constraints;
 /// <br/>If the tag has multiple copies of the attribute, it can be placed on any of the specified types. The attribute is not inherited.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
-public class TagConstrainedToAttribute<T> : Attribute where T : TaggableObject
+public class TagConstrainedToAttribute<T> : Attribute
+    where T : TaggableObject
 {
     /// <summary>
     /// The type of object that the tag is constrained to

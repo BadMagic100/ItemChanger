@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
 
 namespace ItemChanger.Tags;
 
@@ -14,6 +14,7 @@ public sealed class InvalidTag : Tag
     /// The raw data of the tag, as a JToken.
     /// </summary>
     public JToken JSON { get; init; }
+
     /// <summary>
     /// The error thrown during deserialization.
     /// </summary>
@@ -27,12 +28,22 @@ public sealed class InvalidTag : Tag
         public override bool CanRead => false;
         public override bool CanWrite => true;
 
-        public override InvalidTag? ReadJson(JsonReader reader, Type objectType, InvalidTag? existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override InvalidTag? ReadJson(
+            JsonReader reader,
+            Type objectType,
+            InvalidTag? existingValue,
+            bool hasExistingValue,
+            JsonSerializer serializer
+        )
         {
             throw new NotImplementedException();
         }
 
-        public override void WriteJson(JsonWriter writer, InvalidTag? value, JsonSerializer serializer)
+        public override void WriteJson(
+            JsonWriter writer,
+            InvalidTag? value,
+            JsonSerializer serializer
+        )
         {
             if (value is null)
             {

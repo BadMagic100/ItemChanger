@@ -9,12 +9,14 @@ public enum FlingType
     /// Any fling behavior is acceptable.
     /// </summary>
     Everywhere,
+
     /// <summary>
     /// Items should not be flung horizontally.
     /// </summary>
     StraightUp,
+
     /// <summary>
     /// Items should not be flung at all.
     /// </summary>
-    DirectDeposit
+    DirectDeposit,
 }

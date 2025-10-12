@@ -20,16 +20,15 @@ public abstract class ContainerLocation : Location
 
     public virtual bool Supports(string containerType)
     {
-        return containerType == ItemChangerHost.Singleton.ContainerRegistry.DefaultSingleItemContainer.Name
+        return
+            containerType
+            == ItemChangerHost.Singleton.ContainerRegistry.DefaultSingleItemContainer.Name
             ? true
             : !ForceDefaultContainer;
     }
 
     public override Placement Wrap()
     {
-        return new MutablePlacement(Name)
-        {
-            Location = this,
-        };
+        return new MutablePlacement(Name) { Location = this };
     }
 }

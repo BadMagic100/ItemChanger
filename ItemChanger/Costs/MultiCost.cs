@@ -1,9 +1,9 @@
-﻿using ItemChanger.Extensions;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ItemChanger.Extensions;
+using Newtonsoft.Json;
 
 namespace ItemChanger.Costs;
 
@@ -20,7 +20,10 @@ public sealed record MultiCost : Cost, IReadOnlyList<Cost>
     public int Count => Costs.Length;
 
     /// <inheritdoc/>
-    public Cost this[int index] { get => Costs[index]; }
+    public Cost this[int index]
+    {
+        get => Costs[index];
+    }
 
     private static IEnumerable<Cost> Flatten(Cost c)
     {
@@ -46,17 +49,15 @@ public sealed record MultiCost : Cost, IReadOnlyList<Cost>
     [JsonConstructor]
     public MultiCost(IEnumerable<Cost> Costs)
     {
-        this.Costs = Costs
-            .Where(c => c != null)
-            .SelectMany(Flatten)
-            .ToArray();
+        this.Costs = Costs.Where(c => c != null).SelectMany(Flatten).ToArray();
     }
 
     /// <summary>
     /// Constructs a MultiCost of the provided costs, flattening nested MultiCosts.
     /// </summary>
     /// <param name="Costs">The costs to include</param>
-    public MultiCost(params Cost[] Costs) : this((IEnumerable<Cost>)Costs) { }
+    public MultiCost(params Cost[] Costs)
+        : this((IEnumerable<Cost>)Costs) { }
 
     /// <inheritdoc/>
     public override bool CanPay()

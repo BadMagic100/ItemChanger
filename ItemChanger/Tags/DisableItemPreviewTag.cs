@@ -7,6 +7,4 @@ namespace ItemChanger.Tags;
 /// </summary>
 [ItemTag]
 [PlacementTag]
-public class DisableItemPreviewTag : Tag
-{
-}
+public class DisableItemPreviewTag : Tag { }

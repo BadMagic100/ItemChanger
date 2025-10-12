@@ -27,7 +27,6 @@ public abstract record ThresholdBoolCost : Cost
 /// </summary>
 public abstract record ConsumableBoolCost : Cost
 {
-
     /// <summary>
     /// The value to use to evaluate and pay the cost
     /// </summary>

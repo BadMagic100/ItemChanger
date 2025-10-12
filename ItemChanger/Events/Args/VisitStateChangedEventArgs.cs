@@ -1,6 +1,6 @@
-﻿using ItemChanger.Enums;
+﻿using System;
+using ItemChanger.Enums;
 using ItemChanger.Placements;
-using System;
 
 namespace ItemChanger.Events.Args;
 

@@ -9,14 +9,17 @@ namespace ItemChanger.Enums;
 public enum MessageType
 {
     None = 0,
+
     /// <summary>
     /// A message which shows a sprite and text without taking control.
     /// </summary>
     SmallPopup = 1 << 0,
+
     /// <summary>
     /// A message which takes control and shows a fullscreen popup.
     /// </summary>
     LargePopup = 1 << 1,
+
     /// <summary>
     /// A message which takes control and starts a dialog prompt, similar to speaking to an NPC.
     /// </summary>

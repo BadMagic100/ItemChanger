@@ -1,12 +1,12 @@
-﻿using ItemChanger.Containers;
+﻿using System.Collections.Generic;
+using System.Linq;
+using ItemChanger.Containers;
 using ItemChanger.Costs;
 using ItemChanger.Events;
 using ItemChanger.Events.Args;
 using ItemChanger.Serialization;
 using ItemChanger.Tags;
 using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace ItemChanger.Placements;
@@ -14,7 +14,11 @@ namespace ItemChanger.Placements;
 /// <summary>
 /// Placement which handles switching between two possible locations according to a test.
 /// </summary>
-public class DualPlacement(string Name) : Placement(Name), IContainerPlacement, ISingleCostPlacement, IPrimaryLocationPlacement
+public class DualPlacement(string Name)
+    : Placement(Name),
+        IContainerPlacement,
+        ISingleCostPlacement,
+        IPrimaryLocationPlacement
 {
     public required Location TrueLocation { get; init; }
     public required Location FalseLocation { get; init; }
@@ -65,7 +69,11 @@ public class DualPlacement(string Name) : Placement(Name), IContainerPlacement, 
     {
         if (this.ContainerType == ContainerRegistry.UnknownContainerType)
         {
-            this.ContainerType = MutablePlacement.ChooseContainerType(this, location as Locations.ContainerLocation, Items);
+            this.ContainerType = MutablePlacement.ChooseContainerType(
+                this,
+                location as Locations.ContainerLocation,
+                Items
+            );
         }
 
         ContainerRegistry reg = ItemChangerHost.Singleton.ContainerRegistry;
@@ -81,8 +89,12 @@ public class DualPlacement(string Name) : Placement(Name), IContainerPlacement, 
             container = reg.DefaultSingleItemContainer;
         }
 
-        obj = container.GetNewContainer(new ContainerInfo(container.Name, this, location.FlingType, Cost)
-        { ContainerType = containerType });
+        obj = container.GetNewContainer(
+            new ContainerInfo(container.Name, this, location.FlingType, Cost)
+            {
+                ContainerType = containerType,
+            }
+        );
     }
 
     private void SetContainerType()
@@ -102,7 +114,9 @@ public class DualPlacement(string Name) : Placement(Name), IContainerPlacement, 
             return;
         }
 
-        Locations.ContainerLocation? cl = (FalseLocation as Locations.ContainerLocation) ?? (TrueLocation as Locations.ContainerLocation);
+        Locations.ContainerLocation? cl =
+            (FalseLocation as Locations.ContainerLocation)
+            ?? (TrueLocation as Locations.ContainerLocation);
         if (cl == null)
         {
             return;

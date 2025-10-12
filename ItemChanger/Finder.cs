@@ -1,9 +1,9 @@
-﻿using ItemChanger.Events.Args;
-using ItemChanger.Items;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using ItemChanger.Events.Args;
+using ItemChanger.Items;
 
 namespace ItemChanger;
 
@@ -28,6 +28,7 @@ public class Finder
     /// <br/>Otherwise, the ItemChanger internal implementation of that item is cloned and returned, if it exists. Otherwise, null is returned.
     /// </summary>
     public event Action<GetItemEventArgs>? GetItemOverride;
+
     /// <summary>
     /// Invoked by Finder.GetLocation. The initial arguments are the requested name, and null. If the event finishes with a non-null location, that location is returned to the requester.
     /// <br/>Otherwise, the ItemChanger internal implementation of that location is cloned and returned, if it exists. Otherwise, null is returned.
@@ -39,8 +40,10 @@ public class Finder
 
     private readonly List<FinderSheet<Item>> ItemSheets = [];
     private readonly List<FinderSheet<Location>> LocationSheets = [];
-    public IEnumerable<string> ItemNames => Items.Keys.Concat(ItemSheets.SelectMany(s => s.Names)).Distinct();
-    public IEnumerable<string> LocationNames => Locations.Keys.Concat(LocationSheets.SelectMany(s => s.Names)).Distinct();
+    public IEnumerable<string> ItemNames =>
+        Items.Keys.Concat(ItemSheets.SelectMany(s => s.Names)).Distinct();
+    public IEnumerable<string> LocationNames =>
+        Locations.Keys.Concat(LocationSheets.SelectMany(s => s.Names)).Distinct();
 
     /// <summary>
     /// The most general method for looking up an item. Invokes an event to allow subscribers to modify the search result. Return value defaults to that of GetItemInternal.
@@ -118,7 +121,9 @@ public class Finder
     {
         if (Items.ContainsKey(item.name) && !overwrite)
         {
-            throw new ArgumentException($"Item {item.name} is already defined (type is {item.GetType()}).");
+            throw new ArgumentException(
+                $"Item {item.name} is already defined (type is {item.GetType()})."
+            );
         }
 
         Items[item.name] = item;
@@ -128,7 +133,9 @@ public class Finder
     {
         if (Locations.ContainsKey(loc.Name) && !overwrite)
         {
-            throw new ArgumentException($"Location {loc.Name} is already defined (type is {loc.GetType()}).");
+            throw new ArgumentException(
+                $"Location {loc.Name} is already defined (type is {loc.GetType()})."
+            );
         }
 
         Locations[loc.Name] = loc;

@@ -9,6 +9,7 @@ public static class ContainerCapabilities
     /// Describes a container with no particular capabilities.
     /// </summary>
     public const uint NONE = 0;
+
     /// <summary>
     /// Describes a container which can offer the player an option to pay a cost.
     /// </summary>

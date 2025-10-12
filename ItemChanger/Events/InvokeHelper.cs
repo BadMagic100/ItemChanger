@@ -21,7 +21,11 @@ internal static class InvokeHelper
         }
     }
 
-    internal static void InvokeList<T>(T t, List<Action<T>> list, [CallerMemberName] string caller = "")
+    internal static void InvokeList<T>(
+        T t,
+        List<Action<T>> list,
+        [CallerMemberName] string caller = ""
+    )
     {
         foreach (Action<T> a in list)
         {
@@ -31,12 +35,19 @@ internal static class InvokeHelper
             }
             catch (Exception e)
             {
-                LoggerProxy.LogError($"Error thrown by a subscriber during {caller} with {t}:\n{e}");
+                LoggerProxy.LogError(
+                    $"Error thrown by a subscriber during {caller} with {t}:\n{e}"
+                );
             }
         }
     }
 
-    internal static void InvokeList<T1, T2>(T1 t1, T2 t2, List<Action<T1, T2>> list, [CallerMemberName] string caller = "")
+    internal static void InvokeList<T1, T2>(
+        T1 t1,
+        T2 t2,
+        List<Action<T1, T2>> list,
+        [CallerMemberName] string caller = ""
+    )
     {
         foreach (Action<T1, T2> a in list)
         {
@@ -46,7 +57,9 @@ internal static class InvokeHelper
             }
             catch (Exception e)
             {
-                LoggerProxy.LogError($"Error thrown by a subscriber during {caller} with {t1}, {t2}:\n{e}");
+                LoggerProxy.LogError(
+                    $"Error thrown by a subscriber during {caller} with {t1}, {t2}:\n{e}"
+                );
             }
         }
     }

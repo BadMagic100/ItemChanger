@@ -7,12 +7,10 @@
     <LangVersion>preview</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Nullable>enable</Nullable>
-    
     <RestoreAdditionalProjectSources>
         https://nuget.bepinex.dev/v3/index.json
     </RestoreAdditionalProjectSources>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="PolySharp" Version="1.14.1">
       <PrivateAssets>all</PrivateAssets>
@@ -20,5 +18,23 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="UnityEngine" Version="5.6.1" />
+    <PackageReference Include="CSharpier.MsBuild" Version="1.1.2" />
   </ItemGroup>
+  <Target
+    Name="Husky"
+    BeforeTargets="Restore;CollectPackageReferences"
+    Condition="'$(HUSKY)' != 0 and '$(IsCrossTargetingBuild)' == 'true'"
+  >
+    <Exec
+      Command="dotnet tool restore"
+      StandardOutputImportance="Low"
+      StandardErrorImportance="High"
+    />
+    <Exec
+      Command="dotnet husky install"
+      StandardOutputImportance="Low"
+      StandardErrorImportance="High"
+      WorkingDirectory=".."
+    />
+  </Target>
 </Project>

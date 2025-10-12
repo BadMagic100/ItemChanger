@@ -1,9 +1,9 @@
-﻿using ItemChanger.Enums;
+﻿using System.Collections.Generic;
+using System.Linq;
+using ItemChanger.Enums;
 using ItemChanger.Extensions;
 using ItemChanger.Placements;
 using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ItemChanger.Serialization;
 
@@ -45,16 +45,17 @@ public class BoxedBool(bool value) : IWritableBool
 /// IBool which represents comparison on a PlayerData int.
 /// <br/>Supports IWritableBool in one direction only (direction depends on comparison operator).
 /// </summary>
-public class IntComparisonBool(IInteger Int, int Amount, ComparisonOperator op = ComparisonOperator.Ge) : IBool
+public class IntComparisonBool(
+    IInteger Int,
+    int Amount,
+    ComparisonOperator op = ComparisonOperator.Ge
+) : IBool
 {
     /// <inheritdoc/>
     [JsonIgnore]
     public bool Value
     {
-        get
-        {
-            return Int.Value.Compare(op, Amount);
-        }
+        get { return Int.Value.Compare(op, Amount); }
     }
 
     public IBool Clone() => (IBool)MemberwiseClone();
@@ -64,7 +65,8 @@ public class IntComparisonBool(IInteger Int, int Amount, ComparisonOperator op =
 /// IBool which searches for a placement by name and checks whether all items on the placement are obtained.
 /// <br/>If the placement does not exist, defaults to the value of missingPlacementTest, or true if missingPlacementTest is null.
 /// </summary>
-public class PlacementAllObtainedBool(string placementName, IBool? missingPlacementTest = null) : IBool
+public class PlacementAllObtainedBool(string placementName, IBool? missingPlacementTest = null)
+    : IBool
 {
     public string PlacementName => placementName;
     public IBool? MissingPlacementTest => missingPlacementTest;
@@ -74,7 +76,13 @@ public class PlacementAllObtainedBool(string placementName, IBool? missingPlacem
     {
         get
         {
-            if (ItemChangerHost.Singleton.ActiveProfile!.TryGetPlacement(placementName, out Placement? p) && p != null)
+            if (
+                ItemChangerHost.Singleton.ActiveProfile!.TryGetPlacement(
+                    placementName,
+                    out Placement? p
+                )
+                && p != null
+            )
             {
                 return p.AllObtained();
             }
@@ -93,10 +101,15 @@ public class PlacementAllObtainedBool(string placementName, IBool? missingPlacem
 /// IBool which searches for a placement by name and checks whether its VisitState includes specified flags.
 /// <br/>If the placement does not exist, defaults to the value of missingPlacementTest, or true if missingPlacementTest is null.
 /// </summary>
-public class PlacementVisitStateBool(string placementName, VisitState requiredFlags, IBool missingPlacementTest) : IBool
+public class PlacementVisitStateBool(
+    string placementName,
+    VisitState requiredFlags,
+    IBool missingPlacementTest
+) : IBool
 {
     public string placementName = placementName;
     public VisitState requiredFlags = requiredFlags;
+
     /// <summary>
     /// If true, requires any flag in requiredFlags to be contained in the VisitState. If false, requires all flags in requiredFlags to be contained in VisitState. Defaults to false.
     /// </summary>
@@ -108,9 +121,17 @@ public class PlacementVisitStateBool(string placementName, VisitState requiredFl
     {
         get
         {
-            if (ItemChangerHost.Singleton.ActiveProfile!.TryGetPlacement(placementName, out Placement? p) && p != null)
+            if (
+                ItemChangerHost.Singleton.ActiveProfile!.TryGetPlacement(
+                    placementName,
+                    out Placement? p
+                )
+                && p != null
+            )
             {
-                return requireAny ? p.CheckVisitedAny(requiredFlags) : p.CheckVisitedAll(requiredFlags);
+                return requireAny
+                    ? p.CheckVisitedAny(requiredFlags)
+                    : p.CheckVisitedAll(requiredFlags);
             }
             return missingPlacementTest?.Value ?? true;
         }
@@ -127,11 +148,14 @@ public class PlacementVisitStateBool(string placementName, VisitState requiredFl
 public class Disjunction : IBool
 {
     public List<IBool> bools = new();
+
     public Disjunction() { }
+
     public Disjunction(IEnumerable<IBool> bools)
     {
         this.bools.AddRange(bools);
     }
+
     public Disjunction(params IBool[] bools)
     {
         this.bools.AddRange(bools);
@@ -145,17 +169,21 @@ public class Disjunction : IBool
         return new Disjunction(bools.Select(b => b.Clone()));
     }
 
-    public Disjunction OrWith(IBool b) => b is Disjunction d ? new([.. bools, .. d.bools]) : new([.. bools, b]);
+    public Disjunction OrWith(IBool b) =>
+        b is Disjunction d ? new([.. bools, .. d.bools]) : new([.. bools, b]);
 }
 
 public class Conjunction : IBool
 {
     public List<IBool> bools = new();
+
     public Conjunction() { }
+
     public Conjunction(IEnumerable<IBool> bools)
     {
         this.bools.AddRange(bools);
     }
+
     public Conjunction(params IBool[] bools)
     {
         this.bools.AddRange(bools);
@@ -171,7 +199,8 @@ public class Conjunction : IBool
         return new Conjunction(bools.Select(b => b.Clone()));
     }
 
-    public Conjunction AndWith(IBool b) => b is Conjunction c ? new([.. bools, .. c.bools]) : new([.. bools, b]);
+    public Conjunction AndWith(IBool b) =>
+        b is Conjunction c ? new([.. bools, .. c.bools]) : new([.. bools, b]);
 }
 
 [method: JsonConstructor]

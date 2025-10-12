@@ -1,7 +1,7 @@
-﻿using ItemChanger.Items;
+﻿using System.Linq;
+using ItemChanger.Items;
 using ItemChanger.Modules;
 using ItemChanger.Tags.Constraints;
-using System.Linq;
 
 namespace ItemChanger.Tags;
 
@@ -20,7 +20,8 @@ public class ProgressiveItemGroupTag : Tag
     protected override void DoLoad(TaggableObject parent)
     {
         base.DoLoad(parent);
-        ItemChangerHost.Singleton.ActiveProfile!.Modules.OfType<ProgressiveItemGroupModule>()
+        ItemChangerHost
+            .Singleton.ActiveProfile!.Modules.OfType<ProgressiveItemGroupModule>()
             .First(m => m.GroupID == GroupID)
             .RegisterItem(this, (Item)parent);
     }

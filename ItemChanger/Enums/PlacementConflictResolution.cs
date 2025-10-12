@@ -9,20 +9,24 @@ public enum PlacementConflictResolution
     /// Keep new placement, discard old placement, and append items of old placement to new placement.
     /// </summary>
     MergeKeepingNew,
+
     /// <summary>
     /// Keep old placement, discard new placement, and append items of new placement to old placement.
     /// </summary>
     MergeKeepingOld,
+
     /// <summary>
     /// Keep new placement, discard old placement
     /// </summary>
     Replace,
+
     /// <summary>
     /// Keep old placement, discard new placement
     /// </summary>
     Ignore,
+
     /// <summary>
     /// A duplicate placement will result in an ArgumentException.
     /// </summary>
-    Throw
+    Throw,
 }

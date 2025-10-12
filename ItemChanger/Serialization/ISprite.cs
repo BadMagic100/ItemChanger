@@ -12,6 +12,7 @@ public interface ISprite
     /// Gets the defined sprite.
     /// </summary>
     Sprite Value { get; }
+
     /// <summary>
     /// Creates a deep clone of this sprite.
     /// </summary>
@@ -31,10 +32,12 @@ public abstract class EmbeddedSprite : ISprite
     /// <summary>
     /// The sprite manager which will provide the sprite implementation.
     /// </summary>
-    [JsonIgnore] public abstract SpriteManager SpriteManager { get; }
+    [JsonIgnore]
+    public abstract SpriteManager SpriteManager { get; }
 
     /// <inheritdoc/>
-    [JsonIgnore] public Sprite Value => SpriteManager.GetSprite(key);
+    [JsonIgnore]
+    public Sprite Value => SpriteManager.GetSprite(key);
 
     /// <inheritdoc/>
     public ISprite Clone() => (ISprite)MemberwiseClone();
@@ -46,6 +49,7 @@ public abstract class EmbeddedSprite : ISprite
 public class EmptySprite : ISprite
 {
     private Sprite? cachedSprite;
+
     /// <inheritdoc/>
     [JsonIgnore]
     public Sprite Value
@@ -63,6 +67,7 @@ public class EmptySprite : ISprite
             return cachedSprite;
         }
     }
+
     /// <inheritdoc/>
     public ISprite Clone() => new EmptySprite();
 }
@@ -77,7 +82,9 @@ public class DualSprite(IBool Test, ISprite TrueSprite, ISprite FalseSprite) : I
     public ISprite FalseSprite = FalseSprite;
 
     /// <inheritdoc/>
-    [JsonIgnore] public Sprite Value => Test.Value ? TrueSprite.Value : FalseSprite.Value;
+    [JsonIgnore]
+    public Sprite Value => Test.Value ? TrueSprite.Value : FalseSprite.Value;
+
     /// <inheritdoc/>
     public ISprite Clone() => (ISprite)MemberwiseClone();
 }

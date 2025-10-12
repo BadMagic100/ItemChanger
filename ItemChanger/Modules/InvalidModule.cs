@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
 
 namespace ItemChanger.Modules;
 
@@ -14,6 +14,7 @@ public sealed class InvalidModule : Module
     /// The raw data of the module, as a JToken.
     /// </summary>
     public JToken JSON { get; init; }
+
     /// <summary>
     /// The error thrown during deserialization.
     /// </summary>
@@ -21,6 +22,7 @@ public sealed class InvalidModule : Module
 
     /// <inheritdoc/>
     protected override void DoLoad() { }
+
     /// <inheritdoc/>
     protected override void DoUnload() { }
 
@@ -32,12 +34,22 @@ public sealed class InvalidModule : Module
         public override bool CanRead => false;
         public override bool CanWrite => true;
 
-        public override InvalidModule? ReadJson(JsonReader reader, Type objectType, InvalidModule? existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override InvalidModule? ReadJson(
+            JsonReader reader,
+            Type objectType,
+            InvalidModule? existingValue,
+            bool hasExistingValue,
+            JsonSerializer serializer
+        )
         {
             throw new NotImplementedException();
         }
 
-        public override void WriteJson(JsonWriter writer, InvalidModule? value, JsonSerializer serializer)
+        public override void WriteJson(
+            JsonWriter writer,
+            InvalidModule? value,
+            JsonSerializer serializer
+        )
         {
             if (value is null)
             {

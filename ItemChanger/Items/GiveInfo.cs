@@ -1,5 +1,5 @@
-﻿using ItemChanger.Enums;
-using System;
+﻿using System;
+using ItemChanger.Enums;
 using UnityEngine;
 
 namespace ItemChanger.Items;
@@ -13,18 +13,22 @@ public class GiveInfo
     /// The best description of the most specific container for this item.
     /// </summary>
     public string? Container { get; set; }
+
     /// <summary>
     /// How geo and similar objects are allowed to be flung.
     /// </summary>
     public FlingType FlingType { get; set; }
+
     /// <summary>
     /// The transform to use for flinging and similar actions. May be null.
     /// </summary>
     public Transform? Transform { get; set; }
+
     /// <summary>
     /// A flag enumeration of the allowed message types for the UIDef after the item is given.
     /// </summary>
     public MessageType MessageType { get; set; }
+
     /// <summary>
     /// A callback set by the location or placement to be executed by the UIDef when its message is complete.
     /// </summary>

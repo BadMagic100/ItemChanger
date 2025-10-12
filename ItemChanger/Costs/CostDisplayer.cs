@@ -1,6 +1,6 @@
-﻿using ItemChanger.Serialization;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using ItemChanger.Serialization;
 
 namespace ItemChanger.Costs;
 
@@ -24,7 +24,7 @@ public abstract class CostDisplayer
     public virtual bool Cumulative { get; set; } = false;
 
     /// <summary>
-    /// Gets the amount to display alongside the cost, e.g. in the shop item list.  For multicosts, 
+    /// Gets the amount to display alongside the cost, e.g. in the shop item list.  For multicosts,
     /// the maximum amount for single matching costs is displayed if the displayer is cumulative;
     /// the sum of amounts is used if the displayer is non-cumulative.
     /// </summary>
@@ -68,8 +68,10 @@ public abstract class CostDisplayer
         Cost baseCost = cost.GetBaseCost();
         if (baseCost is MultiCost mc)
         {
-            return string.Join(", ", mc.Where(c => !SupportsCost(c.GetBaseCost()))
-                .Select(c => c.GetCostText()).ToArray());
+            return string.Join(
+                ", ",
+                mc.Where(c => !SupportsCost(c.GetBaseCost())).Select(c => c.GetCostText()).ToArray()
+            );
         }
         else if (!SupportsCost(baseCost))
         {
@@ -85,7 +87,7 @@ public abstract class CostDisplayer
     /// Whether this displayer can support a given cost.
     /// </summary>
     /// <remarks>
-    /// Implementers may assume that any wrapper costs have been removed (i.e. directly type checking 
+    /// Implementers may assume that any wrapper costs have been removed (i.e. directly type checking
     /// a given cost without calling GetBaseCost is acceptable).
     /// </remarks>
     /// <param name="cost">The cost to evaluate support for</param>

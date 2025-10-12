@@ -15,6 +15,7 @@ public static class UnityExtensions
         Transform t = g.transform.Find(name);
         return t != null ? t.gameObject : null;
     }
+
     public static GameObject FindChild(this GameObject g, IEnumerable<string> steps)
     {
         Transform t = g.transform;
@@ -25,6 +26,7 @@ public static class UnityExtensions
 
         return t.gameObject;
     }
+
     public static string GetPathInHierarchy(this Transform t)
     {
         if (t.parent == null)
@@ -36,7 +38,9 @@ public static class UnityExtensions
             return $"{t.parent.GetPathInHierarchy()}/{t.name}";
         }
     }
+
     static readonly List<GameObject> rootObjects = new List<GameObject>(500);
+
     /// <summary>
     /// Finds a GameObject in the given scene by its full path.
     /// </summary>
@@ -64,6 +68,7 @@ public static class UnityExtensions
         rootObjects.Clear();
         return result;
     }
+
     /// <summary>
     /// Breadth first search through the entire hierarchy. Returns the first GameObject with the given name, or null.
     /// </summary>
@@ -93,6 +98,7 @@ public static class UnityExtensions
         rootObjects.Clear();
         return result;
     }
+
     /// <summary>
     /// Returns a list of objects in the scene hierarchy, ordered by depth-first-search.
     /// <br/>The list consists of pairs where the first entry is the object path and the second entry is the object.
@@ -107,7 +113,12 @@ public static class UnityExtensions
         }
         return results;
     }
-    private static void TraverseInternal(string path, Transform t, List<(string, GameObject)> results)
+
+    private static void TraverseInternal(
+        string path,
+        Transform t,
+        List<(string, GameObject)> results
+    )
     {
         path = $"{path}/{t.name}";
         results.Add((path, t.gameObject));
@@ -116,6 +127,7 @@ public static class UnityExtensions
             TraverseInternal(path, u, results);
         }
     }
+
     /// <summary>
     /// Breadth first search. Returns GameObject with given name, or null if not found. Parent object not included in search.
     /// </summary>

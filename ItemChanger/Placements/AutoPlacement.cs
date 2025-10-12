@@ -1,15 +1,18 @@
-﻿using ItemChanger.Costs;
+﻿using System.Collections.Generic;
+using System.Linq;
+using ItemChanger.Costs;
 using ItemChanger.Locations;
 using ItemChanger.Tags;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ItemChanger.Placements;
 
 /// <summary>
 /// Placement for self-implementing locations, usually acting through cutscene or conversation fsms.
 /// </summary>
-public class AutoPlacement(string Name) : Placement(Name), IPrimaryLocationPlacement, ISingleCostPlacement
+public class AutoPlacement(string Name)
+    : Placement(Name),
+        IPrimaryLocationPlacement,
+        ISingleCostPlacement
 {
     public required AutoLocation Location { get; init; }
 

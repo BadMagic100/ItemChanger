@@ -11,7 +11,6 @@ internal class TestLogger : ILogger
     private readonly ITestOutputHelper output;
     public List<string?> ErrorMessages { get; } = [];
 
-
     public TestLogger(ITestOutputHelper output)
     {
         this.output = output;
@@ -41,7 +40,8 @@ internal class TestLogger : ILogger
 
 internal class TestHost : ItemChangerHost, IDisposable
 {
-    public TestHost(ITestOutputHelper output) : base()
+    public TestHost(ITestOutputHelper output)
+        : base()
     {
         Logger = new TestLogger(output);
         Profile = new(this);
@@ -53,7 +53,10 @@ internal class TestHost : ItemChangerHost, IDisposable
     }
 
     public override ILogger Logger { get; }
-    public List<string?> ErrorMessages { get => ((TestLogger)Logger).ErrorMessages; }
+    public List<string?> ErrorMessages
+    {
+        get => ((TestLogger)Logger).ErrorMessages;
+    }
 
     public ItemChangerProfile Profile { get; }
 
@@ -62,7 +65,11 @@ internal class TestHost : ItemChangerHost, IDisposable
         get
         {
             FakedContainer fake = new();
-            return field ??= new ContainerRegistry() { DefaultSingleItemContainer = fake, DefaultMultiItemContainer = fake };
+            return field ??= new ContainerRegistry()
+            {
+                DefaultSingleItemContainer = fake,
+                DefaultMultiItemContainer = fake,
+            };
         }
     }
 
@@ -70,13 +77,19 @@ internal class TestHost : ItemChangerHost, IDisposable
 
     public override IEnumerable<Module> BuildDefaultModules() => [];
 
-    public override void PrepareEvents(LifecycleEvents.Invoker lifecycleInvoker, GameEvents.Invoker gameInvoker)
+    public override void PrepareEvents(
+        LifecycleEvents.Invoker lifecycleInvoker,
+        GameEvents.Invoker gameInvoker
+    )
     {
         LifecycleEventsInvoker = lifecycleInvoker;
         GameEventsInvoker = gameInvoker;
     }
 
-    public override void UnhookEvents(LifecycleEvents.Invoker lifecycleInvoker, GameEvents.Invoker gameInvoker)
+    public override void UnhookEvents(
+        LifecycleEvents.Invoker lifecycleInvoker,
+        GameEvents.Invoker gameInvoker
+    )
     {
         LifecycleEventsInvoker = null;
         GameEventsInvoker = null;
@@ -157,11 +170,7 @@ internal class TestHost : ItemChangerHost, IDisposable
             throw new NullReferenceException(nameof(LifecycleEventsInvoker));
         }
 
-        IEnumerable<Action> cycle =
-        [
-            LifecycleEventsInvoker.NotifyOnLeaveGame,
-            Profile.Unload,
-        ];
+        IEnumerable<Action> cycle = [LifecycleEventsInvoker.NotifyOnLeaveGame, Profile.Unload];
 
         foreach (Action a in cycle)
         {
@@ -174,7 +183,6 @@ internal class TestHost : ItemChangerHost, IDisposable
 
         return true;
     }
-
 
     public LifecycleEvents.Invoker? LifecycleEventsInvoker { get; private set; }
     public GameEvents.Invoker? GameEventsInvoker { get; private set; }

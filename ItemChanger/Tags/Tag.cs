@@ -1,6 +1,6 @@
-﻿using ItemChanger.Enums;
+﻿using System;
+using ItemChanger.Enums;
 using Newtonsoft.Json;
-using System;
 
 namespace ItemChanger.Tags;
 

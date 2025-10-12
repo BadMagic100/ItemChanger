@@ -1,8 +1,8 @@
-﻿using ItemChanger.Enums;
+﻿using System;
+using System.Linq;
+using ItemChanger.Enums;
 using ItemChanger.Placements;
 using Newtonsoft.Json;
-using System;
-using System.Linq;
 
 namespace ItemChanger;
 
@@ -33,7 +33,9 @@ public abstract class Location : TaggableObject
     /// </summary>
     /// <exception cref="NullReferenceException"></exception>
     [JsonIgnore]
-    public string UnsafeSceneName => SceneName ?? throw new NullReferenceException($"Scene name of location {Name} is not defined.");
+    public string UnsafeSceneName =>
+        SceneName
+        ?? throw new NullReferenceException($"Scene name of location {Name} is not defined.");
 
     /// <summary>
     /// The flingType of the location, specifying how geo and similar objects are to be flung.

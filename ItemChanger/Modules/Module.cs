@@ -1,6 +1,6 @@
-﻿using ItemChanger.Enums;
+﻿using System;
+using ItemChanger.Enums;
 using Newtonsoft.Json;
-using System;
 
 namespace ItemChanger.Modules;
 
@@ -16,10 +16,12 @@ public abstract class Module
     public bool Loaded { get; private set; }
 
     public string Name => GetType().Name;
+
     /// <summary>
     /// Method allowing derived classes to perform loading logic. Called once during loading.
     /// </summary>
     protected abstract void DoLoad();
+
     /// <summary>
     /// Method allowing derived classes to perform unloading logic. Called once during unloading.
     /// </summary>

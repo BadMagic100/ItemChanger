@@ -77,7 +77,10 @@ public class ContainerRegistry : IEnumerable<Container>
     {
         if (containers.ContainsKey(container.Name))
         {
-            throw new ArgumentException($"It is not allowed to redefine the existing container type {container.Name}", nameof(container));
+            throw new ArgumentException(
+                $"It is not allowed to redefine the existing container type {container.Name}",
+                nameof(container)
+            );
         }
         containers[container.Name] = container;
     }

@@ -1,7 +1,7 @@
-﻿using ItemChanger.Events.Args;
+﻿using System;
+using ItemChanger.Events.Args;
 using ItemChanger.Items;
 using ItemChanger.Tags.Constraints;
-using System;
 
 namespace ItemChanger.Tags;
 
@@ -17,6 +17,7 @@ public class ItemChainTag : Tag
     /// The previous item in the item chain
     /// </summary>
     public string? Predecessor { get; set; }
+
     /// <summary>
     /// The subsequent item in the item chain
     /// </summary>
@@ -34,10 +35,11 @@ public class ItemChainTag : Tag
         item.ModifyItem -= ModifyItem;
     }
 
-
     protected virtual Item GetItem(string name)
     {
-        return ItemChangerHost.Singleton.Finder.GetItem(name) ?? throw new NullReferenceException("Could not find item " + name);
+        return ItemChangerHost.Singleton.Finder.GetItem(name) ?? throw new NullReferenceException(
+                "Could not find item " + name
+            );
     }
 
     private void ModifyItem(GiveEventArgs args)
@@ -49,7 +51,11 @@ public class ItemChainTag : Tag
 
         if (args.Item.Redundant())
         {
-            while (args.Item is not null && args.Item.GetTag<ItemChainTag>()?.Successor is string succ && !string.IsNullOrEmpty(succ))
+            while (
+                args.Item is not null
+                && args.Item.GetTag<ItemChainTag>()?.Successor is string succ
+                && !string.IsNullOrEmpty(succ)
+            )
             {
                 args.Item = GetItem(succ);
                 if (!args.Item.Redundant())
@@ -63,7 +69,10 @@ public class ItemChainTag : Tag
         }
         else
         {
-            while (args.Item?.GetTag<ItemChainTag>()?.Predecessor is string pred && !string.IsNullOrEmpty(pred))
+            while (
+                args.Item?.GetTag<ItemChainTag>()?.Predecessor is string pred
+                && !string.IsNullOrEmpty(pred)
+            )
             {
                 Item item = GetItem(pred);
                 if (item.Redundant())

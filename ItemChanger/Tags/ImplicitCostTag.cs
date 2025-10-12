@@ -11,6 +11,7 @@ namespace ItemChanger.Tags;
 public class ImplicitCostTag : Tag
 {
     public required Cost Cost { get; init; }
+
     /// <summary>
     /// An inherent cost always applies. A non-inherent cost applies as a substitute when the placement does not have a (non-null) cost.
     /// </summary>

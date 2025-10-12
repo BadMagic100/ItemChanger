@@ -20,8 +20,10 @@ public class SoundManager(Assembly a, string resourcePrefix)
 {
     private readonly Assembly _assembly = a;
     private readonly Dictionary<string, string> _resourcePaths = a.GetManifestResourceNames()
-            .Where(n => n.EndsWith(".wav") && n.StartsWith(resourcePrefix))
-            .ToDictionary(n => n.Substring(resourcePrefix.Length, n.Length - resourcePrefix.Length - ".wav".Length));
+        .Where(n => n.EndsWith(".wav") && n.StartsWith(resourcePrefix))
+        .ToDictionary(n =>
+            n.Substring(resourcePrefix.Length, n.Length - resourcePrefix.Length - ".wav".Length)
+        );
     private readonly Dictionary<string, AudioClip> _cachedClips = new();
 
     /// <summary>
@@ -81,7 +83,9 @@ public class SoundManager(Assembly a, string resourcePrefix)
     /// </summary>
     public static void SaveAs(AudioClip clip, string fileName)
     {
-        using FileStream fs = File.Create(Path.Combine(Path.GetDirectoryName(typeof(SoundManager).Assembly.Location)!, fileName));
+        using FileStream fs = File.Create(
+            Path.Combine(Path.GetDirectoryName(typeof(SoundManager).Assembly.Location)!, fileName)
+        );
         using BinaryWriter bw = new(fs, Encoding.ASCII);
 
         const short bitsPerSample = 16;
@@ -161,7 +165,13 @@ public class SoundManager(Assembly a, string resourcePrefix)
             data[i] = br.ReadInt16() / scale;
         }
 
-        AudioClip clip = AudioClip.Create(name, data.Length / channels, channels, sampleRate, false);
+        AudioClip clip = AudioClip.Create(
+            name,
+            data.Length / channels,
+            channels,
+            sampleRate,
+            false
+        );
         clip.SetData(data, 0);
 
         return clip;
@@ -170,5 +180,7 @@ public class SoundManager(Assembly a, string resourcePrefix)
     /// <summary>
     /// The Actors AudioMixerGroup, from global resources. Used as the mixer for SoundManager.PlayClipAtPoint.
     /// </summary>
-    public static readonly AudioMixerGroup actors = Resources.FindObjectsOfTypeAll<AudioMixerGroup>().First(amg => amg.name.StartsWith("Actors"));
+    public static readonly AudioMixerGroup actors = Resources
+        .FindObjectsOfTypeAll<AudioMixerGroup>()
+        .First(amg => amg.name.StartsWith("Actors"));
 }

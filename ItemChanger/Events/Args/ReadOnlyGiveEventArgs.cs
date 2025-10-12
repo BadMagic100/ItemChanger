@@ -1,12 +1,18 @@
-﻿using ItemChanger.Enums;
+﻿using System;
+using ItemChanger.Enums;
 using ItemChanger.Items;
 using ItemChanger.Placements;
-using System;
 using UnityEngine;
 
 namespace ItemChanger.Events.Args;
 
-public class ReadOnlyGiveEventArgs(Item orig, Item item, Placement? placement, GiveInfo info, ObtainState state) : EventArgs
+public class ReadOnlyGiveEventArgs(
+    Item orig,
+    Item item,
+    Placement? placement,
+    GiveInfo info,
+    ObtainState state
+) : EventArgs
 {
     private readonly GiveInfo info = info;
 

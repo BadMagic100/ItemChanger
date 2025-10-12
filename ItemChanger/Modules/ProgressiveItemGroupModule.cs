@@ -1,9 +1,9 @@
-﻿using ItemChanger.Events.Args;
-using ItemChanger.Items;
-using ItemChanger.Tags;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ItemChanger.Events.Args;
+using ItemChanger.Items;
+using ItemChanger.Tags;
 
 namespace ItemChanger.Modules;
 
@@ -17,14 +17,19 @@ public class ProgressiveItemGroupModule : Module
     /// An id which matches the id on each <see cref="ProgressiveItemGroupTag"/> for the group.
     /// </summary>
     public required string GroupID { get; init; }
+
     /// <summary>
     /// A list of unique members of the group. The order is used to determine the order in which collected items are resolved to actual items.
     /// </summary>
     public required List<string> OrderedMemberList { get; init; }
+
     /// <summary>
     /// A lookup of the group's predecessor partial ordering populated by <see cref="RegisterItem(ProgressiveItemGroupTag, Item)"/>.
     /// </summary>
-    public required Dictionary<string, List<string>> OrderedTransitivePredecessorsLookup { get; init; }
+    public required Dictionary<
+        string,
+        List<string>
+    > OrderedTransitivePredecessorsLookup { get; init; }
 
     /// <summary>
     /// The list of items associated to the group which have been collected, prior to replacement. Includes duplicates with multiplicity.
@@ -32,7 +37,6 @@ public class ProgressiveItemGroupModule : Module
     public List<string> CollectedItemList { get; } = [];
 
     private readonly List<Item> registeredItems = [];
-
 
     /// <inheritdoc/>
     protected override void DoLoad()
@@ -57,8 +61,10 @@ public class ProgressiveItemGroupModule : Module
     /// <summary>
     /// Retrieves the item by name, by default using <see cref="Finder.GetItem(string)"/>.
     /// </summary>
-    protected virtual Item GetItem(string name) => ItemChangerHost.Singleton.Finder.GetItem(name)
-        ?? throw new KeyNotFoundException($"Failed to find item {name} in Finder.");
+    protected virtual Item GetItem(string name) =>
+        ItemChangerHost.Singleton.Finder.GetItem(name) ?? throw new KeyNotFoundException(
+            $"Failed to find item {name} in Finder."
+        );
 
     /// <summary>
     /// Records the tag's data and its item to be managed by the module.
@@ -80,11 +86,23 @@ public class ProgressiveItemGroupModule : Module
     /// </summary>
     protected void ModifyItem(GiveEventArgs args)
     {
-        Dictionary<string, int> prevMultiset = GetActualItems(CollectedItemList, OrderedMemberList, OrderedTransitivePredecessorsLookup);
+        Dictionary<string, int> prevMultiset = GetActualItems(
+            CollectedItemList,
+            OrderedMemberList,
+            OrderedTransitivePredecessorsLookup
+        );
         CollectedItemList.Add(args.Orig.name);
-        Dictionary<string, int> nextMultiset = GetActualItems(CollectedItemList, OrderedMemberList, OrderedTransitivePredecessorsLookup);
+        Dictionary<string, int> nextMultiset = GetActualItems(
+            CollectedItemList,
+            OrderedMemberList,
+            OrderedTransitivePredecessorsLookup
+        );
         // the two multisets differ by 1 in exactly one key, as a guarantee of GetActualItems
-        string next = nextMultiset.Single(kvp => kvp.Value > (prevMultiset.TryGetValue(kvp.Key, out int value) ? value : 0)).Key;
+        string next = nextMultiset
+            .Single(kvp =>
+                kvp.Value > (prevMultiset.TryGetValue(kvp.Key, out int value) ? value : 0)
+            )
+            .Key;
         args.Item = GetItem(next);
     }
 
@@ -93,7 +111,11 @@ public class ProgressiveItemGroupModule : Module
     /// The sequence is first resorted according to the order of the main item list. Then each item is replaced by its first predecessor not yet in the result, or else unmodified.
     /// If an item is added when it and all of its predecessors are given, its multiplicity in the dictionary may be incremented beyond 1.
     /// </summary>
-    public static Dictionary<string, int> GetActualItems(IEnumerable<string> collectedItems, List<string> itemList, Dictionary<string, List<string>> predecessors)
+    public static Dictionary<string, int> GetActualItems(
+        IEnumerable<string> collectedItems,
+        List<string> itemList,
+        Dictionary<string, List<string>> predecessors
+    )
     {
         Dictionary<string, int> result = [];
 
@@ -135,7 +157,9 @@ public class ProgressiveItemGroupModule : Module
         }
         if (OrderedMemberList.Count != OrderedTransitivePredecessorsLookup.Count)
         {
-            throw IncompletelyDefinedItem(OrderedTransitivePredecessorsLookup.Keys.Except(OrderedMemberList).First());
+            throw IncompletelyDefinedItem(
+                OrderedTransitivePredecessorsLookup.Keys.Except(OrderedMemberList).First()
+            );
         }
         foreach (string p in OrderedTransitivePredecessorsLookup.Values.SelectMany(l => l))
         {
@@ -152,7 +176,10 @@ public class ProgressiveItemGroupModule : Module
         {
             foreach (string p in kvp.Value)
             {
-                if (OrderedTransitivePredecessorsLookup[p].Except(kvp.Value).FirstOrDefault() is string s)
+                if (
+                    OrderedTransitivePredecessorsLookup[p].Except(kvp.Value).FirstOrDefault()
+                    is string s
+                )
                 {
                     throw TransitivityViolation(s, p, kvp.Key);
                 }
@@ -179,23 +206,38 @@ public class ProgressiveItemGroupModule : Module
             items.Remove(OrderedMemberList[i + 1]);
             if (!items.IsSupersetOf(OrderedTransitivePredecessorsLookup[OrderedMemberList[i]]))
             {
-                string missingPred = OrderedTransitivePredecessorsLookup[OrderedMemberList[i]].Except(items).First();
+                string missingPred = OrderedTransitivePredecessorsLookup[OrderedMemberList[i]]
+                    .Except(items)
+                    .First();
                 throw OrderConsistencyViolation(missingPred, OrderedMemberList[i]);
             }
         }
     }
 
-    private Exception IncompletelyDefinedItem(string name)
-        => new InvalidOperationException($"Item {name} appears in data of {nameof(ProgressiveItemGroupModule)} with GroupID {GroupID}, " +
-            $"but item is not both an entry of the member list and a key of the predecessor lookup.");
+    private Exception IncompletelyDefinedItem(string name) =>
+        new InvalidOperationException(
+            $"Item {name} appears in data of {nameof(ProgressiveItemGroupModule)} with GroupID {GroupID}, "
+                + $"but item is not both an entry of the member list and a key of the predecessor lookup."
+        );
 
-    private Exception UnexpectedMember(string name)
-        => new InvalidOperationException($"Item {name} tagged with {nameof(ProgressiveItemGroupTag)} with GroupID {GroupID} was not declared on the module.");
-    private Exception TransitivityViolation(string x, string y, string z)
-        => new InvalidOperationException($"{nameof(ProgressiveItemGroupTag)} for {z} with GroupID {GroupID} is missing the transitive predecessor {x} of {y}.");
-    private Exception IrreflexivityViolation(string name)
-        => new InvalidOperationException($"{nameof(ProgressiveItemGroupTag)} for {name} with GroupID {GroupID} declares {name} as its own predecessor.");
-    private Exception OrderConsistencyViolation(string x, string y)
-        => new InvalidOperationException($"{y} is declared as a predecessor of {x}, but {y} occurs after {x}" +
-            $" in the {nameof(OrderedMemberList)} for {nameof(ProgressiveItemGroupModule)} with GroupID {GroupID}.");
+    private Exception UnexpectedMember(string name) =>
+        new InvalidOperationException(
+            $"Item {name} tagged with {nameof(ProgressiveItemGroupTag)} with GroupID {GroupID} was not declared on the module."
+        );
+
+    private Exception TransitivityViolation(string x, string y, string z) =>
+        new InvalidOperationException(
+            $"{nameof(ProgressiveItemGroupTag)} for {z} with GroupID {GroupID} is missing the transitive predecessor {x} of {y}."
+        );
+
+    private Exception IrreflexivityViolation(string name) =>
+        new InvalidOperationException(
+            $"{nameof(ProgressiveItemGroupTag)} for {name} with GroupID {GroupID} declares {name} as its own predecessor."
+        );
+
+    private Exception OrderConsistencyViolation(string x, string y) =>
+        new InvalidOperationException(
+            $"{y} is declared as a predecessor of {x}, but {y} occurs after {x}"
+                + $" in the {nameof(OrderedMemberList)} for {nameof(ProgressiveItemGroupModule)} with GroupID {GroupID}."
+        );
 }

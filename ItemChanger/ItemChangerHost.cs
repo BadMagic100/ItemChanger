@@ -1,9 +1,9 @@
-﻿using ItemChanger.Containers;
+﻿using System;
+using System.Collections.Generic;
+using ItemChanger.Containers;
 using ItemChanger.Events;
 using ItemChanger.Logging;
 using ItemChanger.Modules;
-using System;
-using System.Collections.Generic;
 
 namespace ItemChanger;
 
@@ -17,11 +17,15 @@ namespace ItemChanger;
 public abstract class ItemChangerHost
 {
     private static ItemChangerHost? singleton;
+
     /// <summary>
     /// The global host singleton. A host must be created before using any ItemChanger functionality.
     /// </summary>
-    public static ItemChangerHost Singleton => singleton
-        ?? throw new InvalidOperationException("Cannot use singleton host before a host is created.");
+    public static ItemChangerHost Singleton =>
+        singleton
+        ?? throw new InvalidOperationException(
+            "Cannot use singleton host before a host is created."
+        );
 
     /// <summary>
     /// The logger to be used by ItemChanger to emit log output to the game.
@@ -29,6 +33,7 @@ public abstract class ItemChangerHost
     public abstract ILogger Logger { get; }
 
     private ItemChangerProfile? activeProfile;
+
     /// <summary>
     /// The active ItemChanger profile, if one is active.
     /// </summary>
@@ -70,14 +75,20 @@ public abstract class ItemChangerHost
     /// </summary>
     /// <param name="lifecycleInvoker">Invoker for ItemChanger lifecycle events such as starting a new game.</param>
     /// <param name="gameInvoker">Invoker for game events such as scene transitions.</param>
-    public abstract void PrepareEvents(LifecycleEvents.Invoker lifecycleInvoker, GameEvents.Invoker gameInvoker);
+    public abstract void PrepareEvents(
+        LifecycleEvents.Invoker lifecycleInvoker,
+        GameEvents.Invoker gameInvoker
+    );
 
     /// <summary>
     /// Allows hosts to undo hooks set in <see cref="PrepareEvents(LifecycleEvents.Invoker, GameEvents.Invoker)"/>
     /// </summary>
     /// <param name="lifecycleInvoker">Invoker for ItemChanger lifecycle events such as starting a new game.</param>
     /// <param name="gameInvoker">Invoker for game events such as scene transitions.</param>
-    public abstract void UnhookEvents(LifecycleEvents.Invoker lifecycleInvoker, GameEvents.Invoker gameInvoker);
+    public abstract void UnhookEvents(
+        LifecycleEvents.Invoker lifecycleInvoker,
+        GameEvents.Invoker gameInvoker
+    );
 
     /// <summary>
     /// Initializes the host as the global singleton host.

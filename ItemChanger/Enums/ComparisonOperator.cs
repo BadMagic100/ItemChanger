@@ -10,5 +10,5 @@ public enum ComparisonOperator
     Lt,
     Le,
     Gt,
-    Ge
+    Ge,
 }

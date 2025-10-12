@@ -34,7 +34,8 @@ public class CoordinateLocation : PlaceableLocation
 
     public override void PlaceContainer(GameObject obj, string containerType)
     {
-        ItemChangerHost.Singleton.ContainerRegistry.GetContainer(containerType)!
+        ItemChangerHost
+            .Singleton.ContainerRegistry.GetContainer(containerType)!
             .ApplyTargetContext(obj, new Vector3(X, Y, Z), Vector3.zero);
         if (!obj.activeSelf)
         {

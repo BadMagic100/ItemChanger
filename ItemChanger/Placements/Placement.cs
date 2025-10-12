@@ -1,12 +1,12 @@
-﻿using ItemChanger.Containers;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ItemChanger.Containers;
 using ItemChanger.Enums;
 using ItemChanger.Events.Args;
 using ItemChanger.Items;
 using ItemChanger.Tags;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ItemChanger.Placements;
 
@@ -94,7 +94,9 @@ public abstract class Placement(string Name) : TaggableObject
     /// </summary>
     public string GetUIName(int maxLength)
     {
-        IEnumerable<string> itemNames = Items.Where(i => !i.IsObtained()).Select(i => i.GetPreviewName(this) ?? "Unknown Item");
+        IEnumerable<string> itemNames = Items
+            .Where(i => !i.IsObtained())
+            .Select(i => i.GetPreviewName(this) ?? "Unknown Item");
         string itemText = string.Join(", ", [.. itemNames]);
         if (itemText.Length > maxLength)
         {
@@ -197,7 +199,6 @@ public abstract class Placement(string Name) : TaggableObject
         }
     }
 
-
     /// <summary>
     /// Method allowing derived placement classes to initialize and place hooks. Called once during loading.
     /// </summary>
@@ -218,6 +219,7 @@ public abstract class Placement(string Name) : TaggableObject
     /// </summary>
     [field: JsonIgnore]
     public event Action<VisitStateChangedEventArgs>? OnVisitStateChanged;
+
     private void InvokeVisitStateChanged(VisitState newFlags)
     {
         VisitStateChangedEventArgs args = new(this, newFlags);
@@ -244,7 +246,6 @@ public abstract class Placement(string Name) : TaggableObject
     {
         return tags ?? Enumerable.Empty<Tag>();
     }
-
 
     /// <summary>
     /// Adds an item to the item list.
