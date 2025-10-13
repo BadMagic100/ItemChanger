@@ -138,7 +138,7 @@ public class ItemChangerProfile : IDisposable
         return placements.TryGetValue(name, out placement);
     }
 
-    public void ResetPersistentItems(Persistence persistence)
+    internal void ResetPersistentItems(Persistence persistence)
     {
         if (persistence == Persistence.NonPersistent)
         {
@@ -287,7 +287,7 @@ public class ItemChangerProfile : IDisposable
         host.ActiveProfile = this;
         this.host = host;
         lifecycleInvoker = new LifecycleEvents.Invoker(host.LifecycleEvents);
-        gameInvoker = new GameEvents.Invoker(host.GameEvents);
+        gameInvoker = new GameEvents.Invoker(this, host.GameEvents);
     }
 
     private void DoHook()

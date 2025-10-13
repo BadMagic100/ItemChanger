@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ItemChanger.Enums;
 using ItemChanger.Events.Args;
 using UnityEngine.SceneManagement;
 
@@ -105,18 +106,26 @@ public sealed class GameEvents
 
     public class Invoker
     {
+        private readonly ItemChangerProfile profile;
         private readonly GameEvents events;
 
-        internal Invoker(GameEvents events)
+        internal Invoker(ItemChangerProfile profile, GameEvents events)
         {
+            this.profile = profile;
             this.events = events;
         }
 
-        public void NotifyPersistentUpdate() =>
+        public void NotifyPersistentUpdate()
+        {
+            profile.ResetPersistentItems(Persistence.Persistent);
             InvokeHelper.InvokeList(events.onPersistentUpdateSubscribers);
+        }
 
-        public void NotifySemiPersistentUpdate() =>
+        public void NotifySemiPersistentUpdate()
+        {
+            profile.ResetPersistentItems(Persistence.SemiPersistent);
             InvokeHelper.InvokeList(events.onSemiPersistentUpdateSubscribers);
+        }
 
         public void NotifyBeforeNextSceneLoaded(BeforeSceneLoadedEventArgs args) =>
             InvokeHelper.InvokeList(args, events.beforeNextSceneLoadedSubscribers);
