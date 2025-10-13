@@ -27,7 +27,7 @@ public abstract class EmbeddedSprite : ISprite
     /// <summary>
     /// The key of the sprite in the SpriteManager
     /// </summary>
-    public string key;
+    public required string Key { get; init; }
 
     /// <summary>
     /// The sprite manager which will provide the sprite implementation.
@@ -37,7 +37,7 @@ public abstract class EmbeddedSprite : ISprite
 
     /// <inheritdoc/>
     [JsonIgnore]
-    public Sprite Value => SpriteManager.GetSprite(key);
+    public Sprite Value => SpriteManager.GetSprite(Key);
 
     /// <inheritdoc/>
     public ISprite Clone() => (ISprite)MemberwiseClone();

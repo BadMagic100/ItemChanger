@@ -26,19 +26,19 @@ public abstract class AutoLocation : Location
 
     public void GiveAll()
     {
-        Placement.GiveAll(GetGiveInfo());
+        Placement!.GiveAll(GetGiveInfo());
     }
 
     public Action<Action> GiveAllAsync(Transform t)
     {
         GiveInfo gi = GetGiveInfo();
         gi.Transform = t;
-        return (callback) => Placement.GiveAll(gi, callback);
+        return (callback) => Placement!.GiveAll(gi, callback);
     }
 
     public void GiveAll(Action callback)
     {
-        Placement.GiveAll(GetGiveInfo(), callback);
+        Placement!.GiveAll(GetGiveInfo(), callback);
     }
 
     [JsonIgnore]
@@ -46,6 +46,6 @@ public abstract class AutoLocation : Location
 
     public override Placement Wrap()
     {
-        return new Placements.AutoPlacement(Name) { Location = this };
+        return new AutoPlacement(Name) { Location = this };
     }
 }

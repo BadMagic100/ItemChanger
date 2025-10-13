@@ -23,7 +23,7 @@ public class ProgressiveItemGroupTag : Tag
         ItemChangerHost
             .Singleton.ActiveProfile!.Modules.OfType<ProgressiveItemGroupModule>()
             .First(m => m.GroupID == GroupID)
-            .RegisterItem(this, (Item)parent);
+            .RegisterItem((Item)parent);
     }
 
     /// <inheritdoc/>

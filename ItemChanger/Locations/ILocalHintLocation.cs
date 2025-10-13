@@ -12,7 +12,7 @@ public static class LocalHintLocationExtensions
 {
     public static bool GetItemHintActive(this ILocalHintLocation ilhl)
     {
-        if (ilhl is Location loc && loc.Placement.HasTag<Tags.DisableItemPreviewTag>())
+        if (ilhl is Location loc && loc.Placement?.HasTag<Tags.DisableItemPreviewTag>() == true)
         {
             return false;
         }

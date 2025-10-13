@@ -28,7 +28,7 @@ public class StartLocation : AutoLocation
 
     private void GiveItems()
     {
-        if (!Placement.AllObtained())
+        if (!Placement!.AllObtained())
         {
             Placement.GiveAll(
                 new GiveInfo

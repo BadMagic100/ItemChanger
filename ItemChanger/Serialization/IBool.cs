@@ -161,7 +161,7 @@ public class PlacementVisitStateBool(
 public class Disjunction : IBool
 {
     [JsonProperty("Bools")]
-    private List<IBool> bools = [];
+    private readonly List<IBool> bools = [];
 
     public Disjunction() { }
 
@@ -192,7 +192,7 @@ public class Disjunction : IBool
 public class Conjunction : IBool
 {
     [JsonProperty("Bools")]
-    private List<IBool> bools = [];
+    private readonly List<IBool> bools = [];
 
     public Conjunction() { }
 
@@ -221,9 +221,9 @@ public class Conjunction : IBool
 }
 
 [method: JsonConstructor]
-public class Negation(IBool Bool) : IBool
+public class Negation(IBool @bool) : IBool
 {
-    public IBool Bool => Bool;
+    public IBool Bool => @bool;
 
     /// <inheritdoc/>
     [JsonIgnore]

@@ -8,7 +8,7 @@ namespace ItemChanger;
 
 public class TaggableObject
 {
-    [JsonProperty("Tags")]
+    [JsonProperty(nameof(Tags))]
     [JsonConverter(typeof(TagListDeserializer))]
     protected List<Tag> tags = [];
 
@@ -52,7 +52,7 @@ public class TaggableObject
     public T AddTag<T>()
         where T : Tag, new()
     {
-        tags ??= new();
+        tags ??= [];
         T t = new();
         if (_tagsLoaded)
         {
@@ -65,7 +65,7 @@ public class TaggableObject
 
     public void AddTag(Tag t)
     {
-        tags ??= new();
+        tags ??= [];
         if (_tagsLoaded)
         {
             t.LoadOnce(this);
@@ -76,7 +76,7 @@ public class TaggableObject
 
     public void AddTags(IEnumerable<Tag> ts)
     {
-        tags ??= new();
+        tags ??= [];
         if (_tagsLoaded)
         {
             foreach (Tag t in ts)
@@ -102,13 +102,13 @@ public class TaggableObject
 
     public IEnumerable<T> GetTags<T>()
     {
-        return tags?.OfType<T>() ?? Enumerable.Empty<T>();
+        return tags?.OfType<T>() ?? [];
     }
 
     public T GetOrAddTag<T>()
         where T : Tag, new()
     {
-        tags ??= new List<Tag>();
+        tags ??= [];
         return tags.OfType<T>().FirstOrDefault() ?? AddTag<T>();
     }
 
@@ -127,6 +127,6 @@ public class TaggableObject
                 t.UnloadOnce(this);
             }
         }
-        tags = tags?.Where(t => t is not T)?.ToList();
+        tags = tags?.Where(t => t is not T)?.ToList() ?? [];
     }
 }

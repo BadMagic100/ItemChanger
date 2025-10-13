@@ -20,6 +20,7 @@ public static class Extensions
         TKey key,
         TValue? defaultValue = default
     )
+        where TKey : notnull
     {
         if (dict.TryGetValue(key, out TValue? value))
         {

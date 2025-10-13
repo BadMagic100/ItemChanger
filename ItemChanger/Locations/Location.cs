@@ -44,7 +44,8 @@ public abstract class Location : TaggableObject
     public FlingType FlingType { get; init; }
 
     /// <summary>
-    /// The placement holding the location. This is usually set by the placement when the placement loads and before the location loads.
+    /// The placement holding the location. Location implementations can assume that this is non-null
+    /// by the time they are loaded.
     /// </summary>
     [JsonIgnore]
     public Placement? Placement { get; set; }
@@ -112,7 +113,7 @@ public abstract class Location : TaggableObject
     public virtual Location Clone()
     {
         Location location = (Location)MemberwiseClone();
-        location.tags = location.tags?.Select(t => t.Clone())?.ToList();
+        location.tags = location.tags?.Select(t => t.Clone())?.ToList() ?? [];
         return location;
     }
 }
