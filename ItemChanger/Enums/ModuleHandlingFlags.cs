@@ -13,10 +13,10 @@ public enum ModuleHandlingFlags
     /// <summary>
     /// If set, and an error occurs when deserializing this object as part of a ModuleCollection's modules list, an InvalidModule will be created with the data of this object, and deserialization will continue.
     /// </summary>
-    AllowDeserializationFailure = 1,
+    AllowDeserializationFailure = 1 << 0,
 
     /// <summary>
     /// If set, indicates to consumers that this module should be removed if the current IC data is copied into a new profile.
     /// </summary>
-    RemoveOnNewProfile = 2,
+    RemoveOnNewProfile = 1 << 1,
 }
