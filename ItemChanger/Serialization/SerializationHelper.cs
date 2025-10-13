@@ -9,7 +9,7 @@ namespace ItemChanger.Serialization;
 /// </summary>
 public static class SerializationHelper
 {
-    private static JsonSerializer Serializer
+    public static JsonSerializer Serializer
     {
         get
         {

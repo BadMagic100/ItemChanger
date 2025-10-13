@@ -60,14 +60,14 @@
   "Modules": [
     {
       "$type": "ItemChanger.Modules.InteropModule, ItemChanger",
-      "Properties": {},
       "Message": "foo",
+      "Properties": {},
       "Name": "InteropModule"
     },
     {
       "$type": "ItemChanger.Modules.InteropModule, ItemChanger",
-      "Properties": {},
       "Message": "bar",
+      "Properties": {},
       "Name": "InteropModule"
     }
   ]

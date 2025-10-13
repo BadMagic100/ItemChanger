@@ -1,0 +1,54 @@
+﻿{
+  "Placements": {
+    "Test placement": {
+      "$type": "ItemChanger.Placements.AutoPlacement, ItemChanger",
+      "Tags": [],
+      "Location": {
+        "$type": "ItemChanger.Locations.EmptyLocation, ItemChanger",
+        "Tags": [],
+        "Name": "Test location",
+        "SceneName": null,
+        "FlingType": "Everywhere"
+      },
+      "Cost": null,
+      "SupportsCost": false,
+      "Name": "Test placement",
+      "Items": [
+        {
+          "$type": "ItemChanger.Items.NullItem, ItemChanger",
+          "Tags": [
+            {
+              "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+              "Properties": {},
+              "Message": "test"
+            },
+            {
+              "Cost": {
+                "$type": "ItemChangerTests.Fixtures.DollarCost, ItemChangerTests",
+                "Source": {
+                  "$type": "ItemChanger.Serialization.BoxedInteger, ItemChanger",
+                  "Value": 50
+                },
+                "Amount": 1,
+                "Paid": false,
+                "Recurring": false,
+                "DiscountRate": 1.0
+              }
+            }
+          ],
+          "ObtainState": "Unobtained",
+          "Name": "A",
+          "UIDef": null
+        }
+      ],
+      "Visited": "None"
+    }
+  },
+  "Modules": [
+    {
+      "Message": "foo",
+      "Properties": {},
+      "Name": "InteropModule"
+    }
+  ]
+}

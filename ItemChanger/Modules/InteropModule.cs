@@ -24,7 +24,7 @@ public interface IInteropModule
 public class InteropModule : Module, IInteropModule
 {
     public required string Message { get; set; }
-    public Dictionary<string, object?> Properties = new();
+    public Dictionary<string, object?> Properties { get; set; } = new();
 
     public bool TryGetProperty<T>(string propertyName, out T? value)
     {

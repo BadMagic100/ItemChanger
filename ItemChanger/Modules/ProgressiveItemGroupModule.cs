@@ -4,6 +4,7 @@ using System.Linq;
 using ItemChanger.Events.Args;
 using ItemChanger.Items;
 using ItemChanger.Tags;
+using Newtonsoft.Json;
 
 namespace ItemChanger.Modules;
 
@@ -18,23 +19,34 @@ public class ProgressiveItemGroupModule : Module
     /// </summary>
     public required string GroupID { get; init; }
 
+    private List<string> orderedMemberList = [];
+
     /// <summary>
     /// A list of unique members of the group. The order is used to determine the order in which collected items are resolved to actual items.
     /// </summary>
-    public required List<string> OrderedMemberList { get; init; }
+    public required IReadOnlyList<string> OrderedMemberList
+    {
+        get => orderedMemberList;
+        init => orderedMemberList = [.. value];
+    }
 
     /// <summary>
     /// A lookup of the group's predecessor partial ordering populated by <see cref="RegisterItem(ProgressiveItemGroupTag, Item)"/>.
     /// </summary>
-    public required Dictionary<
-        string,
-        List<string>
-    > OrderedTransitivePredecessorsLookup { get; init; }
+    public required IReadOnlyDictionary<string, List<string>> OrderedTransitivePredecessorsLookup
+    {
+        get;
+        init => field = value.ToDictionary(x => x.Key, x => x.Value);
+    }
+
+    [JsonProperty(nameof(CollectedItemList))]
+    private List<string> collectedItemList = [];
 
     /// <summary>
     /// The list of items associated to the group which have been collected, prior to replacement. Includes duplicates with multiplicity.
     /// </summary>
-    public List<string> CollectedItemList { get; } = [];
+    [JsonIgnore]
+    public IReadOnlyList<string> CollectedItemList => collectedItemList;
 
     private readonly List<Item> registeredItems = [];
 
@@ -88,13 +100,13 @@ public class ProgressiveItemGroupModule : Module
     {
         Dictionary<string, int> prevMultiset = GetActualItems(
             CollectedItemList,
-            OrderedMemberList,
+            orderedMemberList,
             OrderedTransitivePredecessorsLookup
         );
-        CollectedItemList.Add(args.Orig.Name);
+        collectedItemList.Add(args.Orig.Name);
         Dictionary<string, int> nextMultiset = GetActualItems(
             CollectedItemList,
-            OrderedMemberList,
+            orderedMemberList,
             OrderedTransitivePredecessorsLookup
         );
         // the two multisets differ by 1 in exactly one key, as a guarantee of GetActualItems
@@ -114,7 +126,7 @@ public class ProgressiveItemGroupModule : Module
     public static Dictionary<string, int> GetActualItems(
         IEnumerable<string> collectedItems,
         List<string> itemList,
-        Dictionary<string, List<string>> predecessors
+        IReadOnlyDictionary<string, List<string>> predecessors
     )
     {
         Dictionary<string, int> result = [];

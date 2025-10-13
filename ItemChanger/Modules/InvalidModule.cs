@@ -1,4 +1,5 @@
 ﻿using System;
+using ItemChanger.Serialization.Converters;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -7,57 +8,22 @@ namespace ItemChanger.Modules;
 /// <summary>
 /// Module which failed to deserialize. Contains the raw data of the module and the error which prevented deserialization.
 /// </summary>
-[JsonConverter(typeof(InvalidModuleConverter))]
+[JsonConverter(typeof(InvalidModuleSerializer))]
 public sealed class InvalidModule : Module
 {
     /// <summary>
     /// The raw data of the module, as a JToken.
     /// </summary>
-    public JToken JSON { get; init; }
+    public required JToken JSON { get; init; }
 
     /// <summary>
     /// The error thrown during deserialization.
     /// </summary>
-    public Exception DeserializationError { get; init; }
+    public required Exception DeserializationError { get; init; }
 
     /// <inheritdoc/>
     protected override void DoLoad() { }
 
     /// <inheritdoc/>
     protected override void DoUnload() { }
-
-    /// <summary>
-    /// Converter which erases the InvalidModule during serialization and writes the JSON which it wraps.
-    /// </summary>
-    internal class InvalidModuleConverter : JsonConverter<InvalidModule>
-    {
-        public override bool CanRead => false;
-        public override bool CanWrite => true;
-
-        public override InvalidModule? ReadJson(
-            JsonReader reader,
-            Type objectType,
-            InvalidModule? existingValue,
-            bool hasExistingValue,
-            JsonSerializer serializer
-        )
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void WriteJson(
-            JsonWriter writer,
-            InvalidModule? value,
-            JsonSerializer serializer
-        )
-        {
-            if (value is null)
-            {
-                writer.WriteNull();
-                return;
-            }
-
-            value.JSON.WriteTo(writer);
-        }
-    }
 }

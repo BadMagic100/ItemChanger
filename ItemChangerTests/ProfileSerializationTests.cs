@@ -4,8 +4,10 @@ using ItemChanger.Items;
 using ItemChanger.Locations;
 using ItemChanger.Modules;
 using ItemChanger.Placements;
+using ItemChanger.Serialization;
 using ItemChanger.Tags;
 using ItemChangerTests.Fixtures;
+using Newtonsoft.Json.Linq;
 using Snapshooter.Xunit3;
 
 namespace ItemChangerTests;
@@ -78,7 +80,7 @@ public class ProfileSerializationTests : IDisposable
         Item a = CreateTaggedItem("A");
         Item b = CreateTaggedItem("B");
         Item c = CreateTaggedItem("C");
-        Placement p = CreatePlacement([a, b, c]);
+        Placement p = CreatePlacement(a, b, c);
         profile.AddPlacement(p);
 
         // new game
@@ -95,6 +97,40 @@ public class ProfileSerializationTests : IDisposable
         Snapshot.Match(snapshotJson);
     }
 
+    [Fact]
+    public void InvalidModulesAndTagSerializationMatchesSnapshot()
+    {
+        Item a = CreateTaggedItem("A");
+        CostTag ct = new() { Cost = new DollarCost() { Amount = 1 } };
+        Exception err = new TypeLoadException();
+        JToken tok = JToken.FromObject(ct, SerializationHelper.Serializer);
+        InvalidTag it = new() { JSON = tok, DeserializationError = err };
+        a.AddTag(it);
+        Placement p = CreatePlacement(a);
+
+        InteropModule mod = new() { Message = "foo" };
+        JToken tok2 = JToken.FromObject(mod, SerializationHelper.Serializer);
+        InvalidModule im = new() { JSON = tok2, DeserializationError = err };
+
+        profile.AddPlacement(p);
+        profile.Modules.Add(im);
+
+        // new game
+        host.RunStartNewLifecycle();
+
+        // save
+        using MemoryStream ms = new();
+        host.RunLeaveLifecycle();
+        profile.ToStream(ms);
+        profile.Dispose();
+        byte[] snapshot = ms.ToArray();
+        string snapshotJson = Encoding.UTF8.GetString(snapshot);
+
+        // note - in normal usage a serialization failure would be the cause here,
+        // and the loaded JToken would have type naming tokens. We don't have them in this snapshot.
+        Snapshot.Match(snapshotJson);
+    }
+
     private Item CreateTaggedItem(string name)
     {
         Item i = new NullItem { Name = name };
@@ -102,7 +138,7 @@ public class ProfileSerializationTests : IDisposable
         return i.Clone();
     }
 
-    private Placement CreatePlacement(IEnumerable<Item> items)
+    private Placement CreatePlacement(params Item[] items)
     {
         return new AutoPlacement("Test placement")
         {

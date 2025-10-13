@@ -72,9 +72,3 @@ public abstract class Module
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
     public virtual ModuleHandlingFlags ModuleHandlingProperties { get; set; }
 }
-
-/// <summary>
-/// Attribute which marks that a module should be included automatically in a new save. This functionality only applies to types declared in the ItemChangerMod assembly.
-/// </summary>
-[AttributeUsage(AttributeTargets.Class)]
-public class DefaultModuleAttribute : Attribute { }
