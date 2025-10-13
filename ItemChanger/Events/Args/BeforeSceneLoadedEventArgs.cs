@@ -11,5 +11,5 @@ public class BeforeSceneLoadedEventArgs(string targetScene) : EventArgs
     /// <summary>
     /// The name of the scene that will be loaded.
     /// </summary>
-    public string TargetScene { get; } = targetScene;
+    public string TargetScene => targetScene;
 }

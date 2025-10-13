@@ -1,7 +1,7 @@
-﻿using System;
-using ItemChanger.Enums;
+﻿using ItemChanger.Enums;
 using ItemChanger.Items;
 using ItemChanger.Placements;
+using System;
 
 namespace ItemChanger.Events.Args;
 
@@ -13,9 +13,9 @@ public class GiveEventArgs(
     ObtainState state
 ) : EventArgs
 {
-    public Item Orig { get; } = orig;
+    public Item Orig => orig;
     public Item? Item { get; set; } = item;
-    public Placement? Placement { get; } = placement;
+    public Placement? Placement => placement;
     public GiveInfo? Info { get; set; } = info;
-    public ObtainState OriginalState { get; } = state;
+    public ObtainState OriginalState => state;
 }
