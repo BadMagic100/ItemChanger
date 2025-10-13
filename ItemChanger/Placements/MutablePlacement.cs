@@ -184,6 +184,6 @@ public class MutablePlacement(string Name)
 
     public override IEnumerable<Tag> GetPlacementAndLocationTags()
     {
-        return base.GetPlacementAndLocationTags().Concat(Location.tags ?? Enumerable.Empty<Tag>());
+        return base.GetPlacementAndLocationTags().Concat(Location.Tags ?? Enumerable.Empty<Tag>());
     }
 }

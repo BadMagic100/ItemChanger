@@ -2,10 +2,10 @@
   "Placements": {
     "Test placement": {
       "$type": "ItemChanger.Placements.AutoPlacement, ItemChanger",
-      "tags": null,
+      "Tags": [],
       "Location": {
         "$type": "ItemChanger.Locations.EmptyLocation, ItemChanger",
-        "tags": null,
+        "Tags": [],
         "Name": "Test location",
         "SceneName": null,
         "FlingType": "Everywhere"
@@ -18,7 +18,7 @@
           "$type": "ItemChanger.Items.NullItem, ItemChanger",
           "name": "A",
           "UIDef": null,
-          "tags": [
+          "Tags": [
             {
               "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
               "Properties": {},
@@ -31,7 +31,7 @@
           "$type": "ItemChanger.Items.NullItem, ItemChanger",
           "name": "B",
           "UIDef": null,
-          "tags": [
+          "Tags": [
             {
               "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
               "Properties": {},
@@ -44,7 +44,7 @@
           "$type": "ItemChanger.Items.NullItem, ItemChanger",
           "name": "C",
           "UIDef": null,
-          "tags": [
+          "Tags": [
             {
               "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
               "Properties": {},

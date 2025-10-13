@@ -126,7 +126,7 @@ public class DualPlacement(string Name)
     public override IEnumerable<Tag> GetPlacementAndLocationTags()
     {
         return base.GetPlacementAndLocationTags()
-            .Concat(FalseLocation.tags ?? Enumerable.Empty<Tag>())
-            .Concat(TrueLocation.tags ?? Enumerable.Empty<Tag>());
+            .Concat(FalseLocation.Tags ?? Enumerable.Empty<Tag>())
+            .Concat(TrueLocation.Tags ?? Enumerable.Empty<Tag>());
     }
 }

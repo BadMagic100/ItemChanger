@@ -44,7 +44,7 @@ public class DualLocation : Location
             Test = Test,
             FalseLocation = FalseLocation,
             TrueLocation = TrueLocation,
-            tags = tags,
+            Tags = tags,
         };
     }
 }

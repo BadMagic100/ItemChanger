@@ -8,9 +8,16 @@ namespace ItemChanger;
 
 public class TaggableObject
 {
-    [JsonProperty]
+    [JsonProperty("Tags")]
     [JsonConverter(typeof(TagListDeserializer))]
-    public List<Tag>? tags;
+    protected List<Tag> tags = [];
+
+    [JsonIgnore]
+    public IReadOnlyList<Tag> Tags
+    {
+        get => tags;
+        init => tags = [.. value];
+    }
 
     private bool _tagsLoaded;
 
