@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using ItemChanger.Serialization.Converters;
 using Newtonsoft.Json;
 
 namespace ItemChanger.Serialization;
@@ -8,6 +9,27 @@ namespace ItemChanger.Serialization;
 /// </summary>
 public static class SerializationHelper
 {
+    private static JsonSerializer Serializer
+    {
+        get
+        {
+            if (field == null)
+            {
+                JsonSerializer js = new()
+                {
+                    DefaultValueHandling = DefaultValueHandling.Include,
+                    Formatting = Formatting.Indented,
+                    TypeNameHandling = TypeNameHandling.Auto,
+                };
+
+                js.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+                js.Converters.Add(new VectorConverter());
+                field = js;
+            }
+            return field;
+        }
+    }
+
     /// <summary>
     /// Utility to serialize an object with the necessary metadata for polymorphic deserialization
     /// </summary>
@@ -15,17 +37,8 @@ public static class SerializationHelper
     /// <param name="o">The object to be serialized</param>
     public static void Serialize(Stream stream, object o)
     {
-        JsonSerializer js = new()
-        {
-            DefaultValueHandling = DefaultValueHandling.Include,
-            Formatting = Formatting.Indented,
-            TypeNameHandling = TypeNameHandling.Auto,
-        };
-
-        js.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-
         using StreamWriter sw = new(stream);
-        js.Serialize(sw, o);
+        Serializer.Serialize(sw, o);
     }
 
     /// <summary>
@@ -35,9 +48,7 @@ public static class SerializationHelper
     /// <param name="stream">The stream to read from</param>
     public static T? DeserializeResource<T>(Stream stream)
     {
-        JsonSerializer js = new() { TypeNameHandling = TypeNameHandling.Auto };
-        js.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
         using StreamReader sr = new(stream);
-        return js.Deserialize<T>(new JsonTextReader(sr));
+        return Serializer.Deserialize<T>(new JsonTextReader(sr));
     }
 }

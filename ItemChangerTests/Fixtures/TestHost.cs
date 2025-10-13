@@ -4,50 +4,44 @@ using ItemChanger.Events;
 using ItemChanger.Logging;
 using ItemChanger.Modules;
 
-namespace ItemChangerTests;
+namespace ItemChangerTests.Fixtures;
 
 internal class TestLogger : ILogger
 {
-    private readonly ITestOutputHelper output;
     public List<string?> ErrorMessages { get; } = [];
-
-    public TestLogger(ITestOutputHelper output)
-    {
-        this.output = output;
-    }
 
     public void LogError(string? message)
     {
         ErrorMessages.Add(message);
-        output.WriteLine($"[ERROR]: {message}");
+        Console.WriteLine($"[ERROR]: {message}");
     }
 
     public void LogFine(string? message)
     {
-        output.WriteLine($"[FINE]: {message}");
+        Console.WriteLine($"[FINE]: {message}");
     }
 
     public void LogInfo(string? message)
     {
-        output.WriteLine($"[INFO]: {message}");
+        Console.WriteLine($"[INFO]: {message}");
     }
 
     public void LogWarn(string? message)
     {
-        output.WriteLine($"[WARN]: {message}");
+        Console.WriteLine($"[WARN]: {message}");
     }
 }
 
-internal class TestHost : ItemChangerHost, IDisposable
+public class TestHost : ItemChangerHost, IDisposable
 {
-    public TestHost(ITestOutputHelper output)
+    public TestHost()
         : base()
     {
-        Logger = new TestLogger(output);
+        Logger = new TestLogger();
         Profile = new(this);
     }
 
-    void IDisposable.Dispose()
+    public void Dispose()
     {
         DetachSingleton();
     }

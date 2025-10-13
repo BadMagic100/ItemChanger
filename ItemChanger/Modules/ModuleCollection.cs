@@ -2,26 +2,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ItemChanger.Enums;
+using ItemChanger.Serialization.Converters;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace ItemChanger.Modules;
 
+[JsonConverter(typeof(ModuleCollectionConverter))]
 public class ModuleCollection : IEnumerable<Module>
 {
-    [JsonConverter(typeof(ModuleListDeserializer))]
-    [JsonProperty]
-    private readonly List<Module> modules = [];
-
-    private readonly ItemChangerProfile backingProfile;
+    private readonly List<Module> modules;
 
     /// <inheritdoc/>
     public int Count => modules.Count;
 
-    internal ModuleCollection(ItemChangerProfile backingProfile)
+    internal ModuleCollection()
     {
-        this.backingProfile = backingProfile;
+        this.modules = [];
     }
 
     public void Load()
@@ -48,7 +44,11 @@ public class ModuleCollection : IEnumerable<Module>
         }
 
         modules.Add(m);
-        if (backingProfile.state >= ItemChangerProfile.LoadState.ModuleLoadCompleted)
+        if (
+            ItemChangerHost.Singleton.ActiveProfile != null
+            && ItemChangerHost.Singleton.ActiveProfile.state
+                >= ItemChangerProfile.LoadState.ModuleLoadCompleted
+        )
         {
             m.LoadOnce();
         }
@@ -108,7 +108,9 @@ public class ModuleCollection : IEnumerable<Module>
     {
         if (
             modules.Remove(m)
-            && backingProfile.state >= ItemChangerProfile.LoadState.ModuleLoadCompleted
+            && ItemChangerHost.Singleton.ActiveProfile != null
+            && ItemChangerHost.Singleton.ActiveProfile.state
+                >= ItemChangerProfile.LoadState.ModuleLoadCompleted
         )
         {
             m.UnloadOnce();
@@ -125,7 +127,11 @@ public class ModuleCollection : IEnumerable<Module>
 
     public void Remove(Type T)
     {
-        if (backingProfile.state >= ItemChangerProfile.LoadState.ModuleLoadCompleted)
+        if (
+            ItemChangerHost.Singleton.ActiveProfile != null
+            && ItemChangerHost.Singleton.ActiveProfile.state
+                >= ItemChangerProfile.LoadState.ModuleLoadCompleted
+        )
         {
             foreach (Module m in modules.Where(m => m.GetType() == T))
             {
@@ -147,111 +153,4 @@ public class ModuleCollection : IEnumerable<Module>
     public IEnumerator<Module> GetEnumerator() => modules.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    internal class ModuleListSerializer : JsonConverter<List<Module>>
-    {
-        public override bool CanRead => false;
-        public override bool CanWrite => true;
-        public bool RemoveNewProfileModules;
-
-        public override List<Module> ReadJson(
-            JsonReader reader,
-            Type objectType,
-            List<Module>? existingValue,
-            bool hasExistingValue,
-            JsonSerializer serializer
-        )
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void WriteJson(
-            JsonWriter writer,
-            List<Module>? value,
-            JsonSerializer serializer
-        )
-        {
-            if (value is null)
-            {
-                writer.WriteNull();
-                return;
-            }
-
-            if (RemoveNewProfileModules)
-            {
-                value =
-                [
-                    .. value.Where(t =>
-                        !t.ModuleHandlingProperties.HasFlag(ModuleHandlingFlags.RemoveOnNewProfile)
-                    ),
-                ];
-            }
-
-            serializer.Serialize(writer, value.ToArray());
-        }
-    }
-
-    internal class ModuleListDeserializer : JsonConverter<List<Module>>
-    {
-        public override bool CanRead => true;
-        public override bool CanWrite => false;
-
-        public override List<Module>? ReadJson(
-            JsonReader reader,
-            Type objectType,
-            List<Module>? existingValue,
-            bool hasExistingValue,
-            JsonSerializer serializer
-        )
-        {
-            JToken jt = JToken.Load(reader);
-            if (jt.Type == JTokenType.Null)
-            {
-                return null;
-            }
-            else if (jt.Type == JTokenType.Array)
-            {
-                JArray ja = (JArray)jt;
-                List<Module> list = new(ja.Count);
-                foreach (JToken jModule in ja)
-                {
-                    Module t;
-                    try
-                    {
-                        t = jModule.ToObject<Module>(serializer)!;
-                    }
-                    catch (Exception e)
-                    {
-                        ModuleHandlingFlags flags =
-                            ((JObject)jModule)
-                                .GetValue(nameof(Module.ModuleHandlingProperties))
-                                ?.ToObject<ModuleHandlingFlags>(serializer)
-                            ?? ModuleHandlingFlags.None;
-                        if (flags.HasFlag(ModuleHandlingFlags.AllowDeserializationFailure))
-                        {
-                            t = new InvalidModule { JSON = jModule, DeserializationError = e };
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                    list.Add(t);
-                }
-                return list;
-            }
-            throw new JsonSerializationException(
-                "Unable to handle tag list pattern: " + jt.ToString()
-            );
-        }
-
-        public override void WriteJson(
-            JsonWriter writer,
-            List<Module>? value,
-            JsonSerializer serializer
-        )
-        {
-            throw new NotImplementedException();
-        }
-    }
 }

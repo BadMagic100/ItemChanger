@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using ItemChanger.Containers;
 using ItemChanger.Enums;
@@ -8,6 +9,7 @@ using ItemChanger.Events;
 using ItemChanger.Items;
 using ItemChanger.Modules;
 using ItemChanger.Placements;
+using ItemChanger.Serialization;
 using ItemChanger.Tags;
 using Newtonsoft.Json;
 
@@ -26,11 +28,11 @@ public class ItemChangerProfile : IDisposable
         LoadCompleted = uint.MaxValue,
     }
 
-    [JsonProperty]
+    [JsonProperty("Placements")]
     private readonly Dictionary<string, Placement> placements = [];
 
     [JsonProperty]
-    public ModuleCollection Modules { get; }
+    public ModuleCollection Modules { get; init; } = [];
 
     private bool hooked = false;
     internal LoadState state = LoadState.Unloaded;
@@ -39,23 +41,46 @@ public class ItemChangerProfile : IDisposable
     private LifecycleEvents.Invoker lifecycleInvoker;
     private GameEvents.Invoker gameInvoker;
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor.
     [JsonConstructor]
     private ItemChangerProfile() { }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor.
 
+    /// <summary>
+    /// Initializes a new profile
+    /// </summary>
+    /// <param name="host">The associated host</param>
     public ItemChangerProfile(ItemChangerHost host)
     {
-        host.ActiveProfile = this;
-        this.host = host;
-        lifecycleInvoker = new LifecycleEvents.Invoker(host.LifecycleEvents);
-        gameInvoker = new GameEvents.Invoker(host.GameEvents);
+        AttachHost(host);
 
-        Modules = new(this);
-        foreach (Module mod in host.BuildDefaultModules())
-        {
-            Modules.Add(mod);
-        }
+        Modules = [.. host.BuildDefaultModules()];
 
         DoHook();
+    }
+
+    /// <summary>
+    /// Loads a profile from a stream
+    /// </summary>
+    /// <param name="host">The associated host</param>
+    /// <param name="stream">The stream to read from</param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException">The stream doesn't contain a profile.</exception>
+    public static ItemChangerProfile FromStream(ItemChangerHost host, Stream stream)
+    {
+        ItemChangerProfile? profile = SerializationHelper.DeserializeResource<ItemChangerProfile>(
+            stream
+        );
+        if (profile == null)
+        {
+            throw new ArgumentException(
+                "The provided stream did not contain a valid profile",
+                nameof(stream)
+            );
+        }
+        profile.AttachHost(host);
+        profile.DoHook();
+        return profile;
     }
 
     /// <summary>
@@ -66,9 +91,16 @@ public class ItemChangerProfile : IDisposable
         Dispose();
     }
 
+    private bool disposed = false;
+
     /// <inheritdoc/>
     public void Dispose()
     {
+        if (disposed)
+        {
+            return;
+        }
+
         if (state == LoadState.LoadCompleted)
         {
             Unload();
@@ -76,6 +108,16 @@ public class ItemChangerProfile : IDisposable
         DoUnhook();
         host.ActiveProfile = null;
         GC.SuppressFinalize(this);
+        disposed = true;
+    }
+
+    /// <summary>
+    /// Saves the profile to a stream as a JSON blob
+    /// </summary>
+    /// <param name="stream">The stream to save to.</param>
+    public void ToStream(Stream stream)
+    {
+        SerializationHelper.Serialize(stream, this);
     }
 
     public IEnumerable<Placement> GetPlacements() => placements.Values;
@@ -237,6 +279,15 @@ public class ItemChangerProfile : IDisposable
         {
             AddPlacement(placement, conflictResolution);
         }
+    }
+
+    [MemberNotNull(nameof(host), nameof(lifecycleInvoker), nameof(gameInvoker))]
+    private void AttachHost(ItemChangerHost host)
+    {
+        host.ActiveProfile = this;
+        this.host = host;
+        lifecycleInvoker = new LifecycleEvents.Invoker(host.LifecycleEvents);
+        gameInvoker = new GameEvents.Invoker(host.GameEvents);
     }
 
     private void DoHook()

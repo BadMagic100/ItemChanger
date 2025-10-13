@@ -23,7 +23,7 @@ public interface IInteropModule
 /// </summary>
 public class InteropModule : Module, IInteropModule
 {
-    public string Message { get; set; }
+    public required string Message { get; set; }
     public Dictionary<string, object?> Properties = new();
 
     public bool TryGetProperty<T>(string propertyName, out T? value)

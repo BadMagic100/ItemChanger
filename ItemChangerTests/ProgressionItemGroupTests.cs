@@ -5,12 +5,30 @@ using ItemChanger.Locations;
 using ItemChanger.Modules;
 using ItemChanger.Placements;
 using ItemChanger.Tags;
+using ItemChangerTests.Fixtures;
 
 namespace ItemChangerTests;
 
-[CollectionDefinition("Tests", DisableParallelization = true)]
-public class ProgressionItemGroupTests(ITestOutputHelper Output)
+[Collection(RequiresHostCollection.NAME)]
+public class ProgressionItemGroupTests : IDisposable
 {
+    private readonly ITestOutputHelper output;
+    private readonly TestHost host;
+    private readonly ItemChangerProfile profile;
+
+    public ProgressionItemGroupTests(ITestOutputHelper output)
+    {
+        this.output = output;
+        host = new TestHost();
+        profile = host.Profile;
+    }
+
+    public void Dispose()
+    {
+        profile.Dispose();
+        host.Dispose();
+    }
+
     // A model in which there are 3 items: L,R,S. (from Hollow Knight, Left_Mothwing_Cloak, Right_Mothwing_Cloak, Split_Shade_Cloak).
     // S cannot be given before one of L or R. If S is collected first, it must be replaced. There are no other constraints.
     // Say we are left-biased: S is replaced by L if collected first.
@@ -29,10 +47,6 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
     [InlineData((string[])["S", "R", "S", "L"], (string[])["L", "R", "S", "S"])]
     public void LeftBiasedSplitCloakProgressionTest(string[] input, string[] expectedOutput)
     {
-        // profile setup
-        using TestHost host = CreateHost();
-        using ItemChangerProfile profile = host.Profile;
-
         // item/placement setup
         Item l = CreateTaggedItem("L");
         Item r = CreateTaggedItem("R");
@@ -82,10 +96,6 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
         string[] expectedOutput
     )
     {
-        // profile setup
-        using TestHost host = CreateHost();
-        using ItemChangerProfile profile = host.Profile;
-
         // item/placement setup
         Item l = CreateTaggedItem("L");
         Item r = CreateTaggedItem("R");
@@ -153,10 +163,6 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
     [InlineData((string[])["C", "C", "N", "E"], (string[])["N", "C", "C", "E"])]
     public void NeedolinProgressionTest(string[] input, string[] expectedOutput)
     {
-        // profile setup
-        using TestHost host = CreateHost();
-        using ItemChangerProfile profile = host.Profile;
-
         // item/placement setup
         Item n = CreateTaggedItem("N");
         Item c = CreateTaggedItem("C");
@@ -219,10 +225,6 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
     // M -> M, S -> S, H1 -> H1, H1 -> H1 (dupe), H1 -> H1 (dupe), H2 -> H2, H2 -> H2 (dupe), H2 -> H2 (dupe); new item is H2 (dupe)
     public void FourItemProgressionTest(string[] input, string[] expectedOutput)
     {
-        // profile setup
-        using TestHost host = CreateHost();
-        using ItemChangerProfile profile = host.Profile;
-
         // item/placement setup
         Item m = CreateTaggedItem("M");
         Item s = CreateTaggedItem("S");
@@ -265,9 +267,6 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
     [Fact]
     public void MissingMemberTest1()
     {
-        // profile setup
-        using TestHost host = CreateHost();
-        using ItemChangerProfile profile = host.Profile;
         profile.Modules.Add(
             new ProgressiveItemGroupModule
             {
@@ -284,7 +283,7 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
         Assert.False(host.RunStartNewLifecycle());
         // retrieve error message
         string err = Assert.Single(host.ErrorMessages)!;
-        Output.WriteLine(err);
+        output.WriteLine(err);
         Assert.StartsWith(
             "Error initializing module ProgressiveItemGroupModule:\n"
                 + "System.InvalidOperationException: "
@@ -297,9 +296,6 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
     [Fact]
     public void MissingMemberTest2()
     {
-        // profile setup
-        using TestHost host = CreateHost();
-        using ItemChangerProfile profile = host.Profile;
         profile.Modules.Add(
             new ProgressiveItemGroupModule
             {
@@ -317,7 +313,7 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
         Assert.False(host.RunStartNewLifecycle());
         // retrieve error message
         string err = Assert.Single(host.ErrorMessages)!;
-        Output.WriteLine(err);
+        output.WriteLine(err);
         Assert.StartsWith(
             "Error initializing module ProgressiveItemGroupModule:\n"
                 + "System.InvalidOperationException: "
@@ -330,9 +326,6 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
     [Fact]
     public void MissingMemberTest3()
     {
-        // profile setup
-        using TestHost host = CreateHost();
-        using ItemChangerProfile profile = host.Profile;
         profile.Modules.Add(
             new ProgressiveItemGroupModule
             {
@@ -349,7 +342,7 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
         Assert.False(host.RunStartNewLifecycle());
         // retrieve error message
         string err = Assert.Single(host.ErrorMessages)!;
-        Output.WriteLine(err);
+        output.WriteLine(err);
         Assert.StartsWith(
             "Error initializing module ProgressiveItemGroupModule:\n"
                 + "System.InvalidOperationException: "
@@ -362,9 +355,6 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
     [Fact]
     public void TransitivityTest()
     {
-        // profile setup
-        using TestHost host = CreateHost();
-        using ItemChangerProfile profile = host.Profile;
         profile.Modules.Add(
             new ProgressiveItemGroupModule
             {
@@ -382,7 +372,7 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
         Assert.False(host.RunStartNewLifecycle());
         // retrieve error message
         string err = Assert.Single(host.ErrorMessages)!;
-        Output.WriteLine(err);
+        output.WriteLine(err);
         Assert.StartsWith(
             "Error initializing module ProgressiveItemGroupModule:\n"
                 + "System.InvalidOperationException: "
@@ -394,9 +384,6 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
     [Fact]
     public void IrreflexivityTest()
     {
-        // profile setup
-        using TestHost host = CreateHost();
-        using ItemChangerProfile profile = host.Profile;
         profile.Modules.Add(
             new ProgressiveItemGroupModule
             {
@@ -412,7 +399,7 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
         Assert.False(host.RunStartNewLifecycle());
         // retrieve error message
         string err = Assert.Single(host.ErrorMessages)!;
-        Output.WriteLine(err);
+        output.WriteLine(err);
         Assert.StartsWith(
             "Error initializing module ProgressiveItemGroupModule:\n"
                 + "System.InvalidOperationException: "
@@ -424,9 +411,6 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
     [Fact]
     public void OrderConsistencyTest()
     {
-        // profile setup
-        using TestHost host = CreateHost();
-        using ItemChangerProfile profile = host.Profile;
         profile.Modules.Add(
             new ProgressiveItemGroupModule
             {
@@ -443,7 +427,7 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
         Assert.False(host.RunStartNewLifecycle());
         // retrieve error message
         string err = Assert.Single(host.ErrorMessages)!;
-        Output.WriteLine(err);
+        output.WriteLine(err);
         Assert.StartsWith(
             "Error initializing module ProgressiveItemGroupModule:\n"
                 + "System.InvalidOperationException: "
@@ -455,10 +439,6 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
     [Fact]
     public void UnexpectedMemberTest()
     {
-        // profile setup
-        using TestHost host = CreateHost();
-        using ItemChangerProfile profile = host.Profile;
-
         // item/placement setup
         Item x = CreateTaggedItem("X");
         Item y = CreateTaggedItem("Y");
@@ -482,7 +462,7 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
         Assert.False(host.RunStartNewLifecycle());
         // retrieve error message
         string err = Assert.Single(host.ErrorMessages)!;
-        Output.WriteLine(err);
+        output.WriteLine(err);
         Assert.StartsWith(
             "Error loading ProgressiveItemGroupTag:\n"
                 + "System.InvalidOperationException: "
@@ -505,10 +485,5 @@ public class ProgressionItemGroupTests(ITestOutputHelper Output)
         {
             Location = new EmptyLocation { Name = "Test location" },
         }.Add(items);
-    }
-
-    private TestHost CreateHost()
-    {
-        return new(Output);
     }
 }
