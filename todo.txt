@@ -1,6 +1,5 @@
 Things to change
 
-Audit fields -> properties and usage of required throughout
 Improve loading strategy so that modules can safely add other modules (and placements can do the same and so on)
 incompatibility warning tag has some weird timing related edge cases (ie if I add something incompatible after load it doesn't get caught)
 
