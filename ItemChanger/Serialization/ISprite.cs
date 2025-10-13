@@ -75,11 +75,11 @@ public class EmptySprite : ISprite
 /// <summary>
 /// A sprite that can be changed based on an <see cref="IBool"/>
 /// </summary>
-public class DualSprite(IBool Test, ISprite TrueSprite, ISprite FalseSprite) : ISprite
+public class DualSprite(IBool test, ISprite trueSprite, ISprite falseSprite) : ISprite
 {
-    public IBool Test = Test;
-    public ISprite TrueSprite = TrueSprite;
-    public ISprite FalseSprite = FalseSprite;
+    public IBool Test => test;
+    public ISprite TrueSprite => trueSprite;
+    public ISprite FalseSprite => falseSprite;
 
     /// <inheritdoc/>
     [JsonIgnore]

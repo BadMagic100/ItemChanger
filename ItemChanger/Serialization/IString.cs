@@ -16,6 +16,9 @@ public interface IString
     IString Clone();
 }
 
+/// <summary>
+/// IString that represents a constant value
+/// </summary>
 public class BoxedString(string Value) : IString
 {
     /// <inheritdoc/>

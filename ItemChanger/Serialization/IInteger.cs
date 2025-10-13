@@ -21,6 +21,7 @@ public interface IInteger
 /// </summary>
 public interface IWritableInteger : IInteger
 {
+    /// <inheritdoc/>
     new int Value { get; set; }
 }
 

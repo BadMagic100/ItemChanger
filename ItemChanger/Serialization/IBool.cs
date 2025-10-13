@@ -28,6 +28,7 @@ public interface IBool
 /// </summary>
 public interface IWritableBool : IBool
 {
+    /// <inheritdoc/>
     new bool Value { get; set; }
 }
 
@@ -36,8 +37,10 @@ public interface IWritableBool : IBool
 /// </summary>
 public class BoxedBool(bool value) : IWritableBool
 {
+    /// <inheritdoc/>
     public bool Value { get; set; } = value;
 
+    /// <inheritdoc/>
     public IBool Clone() => (IBool)MemberwiseClone();
 }
 
@@ -71,6 +74,7 @@ public class PlacementAllObtainedBool(string placementName, IBool? missingPlacem
     public string PlacementName => placementName;
     public IBool? MissingPlacementTest => missingPlacementTest;
 
+    /// <inheritdoc/>
     [JsonIgnore]
     public bool Value
     {
@@ -90,6 +94,7 @@ public class PlacementAllObtainedBool(string placementName, IBool? missingPlacem
         }
     }
 
+    /// <inheritdoc/>
     public IBool Clone()
     {
         PlacementAllObtainedBool obj = (PlacementAllObtainedBool)MemberwiseClone();
@@ -104,18 +109,25 @@ public class PlacementAllObtainedBool(string placementName, IBool? missingPlacem
 public class PlacementVisitStateBool(
     string placementName,
     VisitState requiredFlags,
-    IBool missingPlacementTest
+    IBool? missingPlacementTest
 ) : IBool
 {
-    public string placementName = placementName;
-    public VisitState requiredFlags = requiredFlags;
+    public string PlacementName => placementName;
+    public VisitState RequiredFlags => requiredFlags;
 
     /// <summary>
     /// If true, requires any flag in requiredFlags to be contained in the VisitState. If false, requires all flags in requiredFlags to be contained in VisitState. Defaults to false.
     /// </summary>
-    public bool requireAny;
-    public IBool? missingPlacementTest = missingPlacementTest;
+    public bool RequireAny { get; }
 
+    private IBool? missingPlacementTest = missingPlacementTest;
+
+    /// <summary>
+    /// An optional test to use if the placement is not found.
+    /// </summary>
+    public IBool? MissingPlacementTest => this.missingPlacementTest;
+
+    /// <inheritdoc/>
     [JsonIgnore]
     public bool Value
     {
@@ -123,31 +135,33 @@ public class PlacementVisitStateBool(
         {
             if (
                 ItemChangerHost.Singleton.ActiveProfile!.TryGetPlacement(
-                    placementName,
+                    PlacementName,
                     out Placement? p
                 )
                 && p != null
             )
             {
-                return requireAny
-                    ? p.CheckVisitedAny(requiredFlags)
-                    : p.CheckVisitedAll(requiredFlags);
+                return RequireAny
+                    ? p.CheckVisitedAny(RequiredFlags)
+                    : p.CheckVisitedAll(RequiredFlags);
             }
-            return missingPlacementTest?.Value ?? true;
+            return MissingPlacementTest?.Value ?? true;
         }
     }
 
+    /// <inheritdoc/>
     public IBool Clone()
     {
         PlacementVisitStateBool obj = (PlacementVisitStateBool)MemberwiseClone();
-        obj.missingPlacementTest = obj.missingPlacementTest?.Clone();
+        obj.missingPlacementTest = obj.MissingPlacementTest?.Clone();
         return obj;
     }
 }
 
 public class Disjunction : IBool
 {
-    public List<IBool> bools = new();
+    [JsonProperty("Bools")]
+    private List<IBool> bools = [];
 
     public Disjunction() { }
 
@@ -161,9 +175,11 @@ public class Disjunction : IBool
         this.bools.AddRange(bools);
     }
 
+    /// <inheritdoc/>
     [JsonIgnore]
     public bool Value => bools.Any(b => b.Value);
 
+    /// <inheritdoc/>
     public IBool Clone()
     {
         return new Disjunction(bools.Select(b => b.Clone()));
@@ -175,7 +191,8 @@ public class Disjunction : IBool
 
 public class Conjunction : IBool
 {
-    public List<IBool> bools = new();
+    [JsonProperty("Bools")]
+    private List<IBool> bools = [];
 
     public Conjunction() { }
 
@@ -206,7 +223,7 @@ public class Conjunction : IBool
 [method: JsonConstructor]
 public class Negation(IBool Bool) : IBool
 {
-    public IBool Bool { get; } = Bool;
+    public IBool Bool => Bool;
 
     /// <inheritdoc/>
     [JsonIgnore]
