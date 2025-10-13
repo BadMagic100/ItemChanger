@@ -1,0 +1,74 @@
+﻿{
+  "Placements": {
+    "Test placement": {
+      "$type": "ItemChanger.Placements.AutoPlacement, ItemChanger",
+      "tags": null,
+      "Location": {
+        "$type": "ItemChanger.Locations.EmptyLocation, ItemChanger",
+        "tags": null,
+        "Name": "Test location",
+        "SceneName": null,
+        "FlingType": "Everywhere"
+      },
+      "Cost": null,
+      "SupportsCost": false,
+      "Name": "Test placement",
+      "Items": [
+        {
+          "$type": "ItemChanger.Items.NullItem, ItemChanger",
+          "name": "A",
+          "UIDef": null,
+          "tags": [
+            {
+              "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+              "Properties": {},
+              "Message": "test"
+            }
+          ],
+          "obtainState": "Unobtained"
+        },
+        {
+          "$type": "ItemChanger.Items.NullItem, ItemChanger",
+          "name": "B",
+          "UIDef": null,
+          "tags": [
+            {
+              "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+              "Properties": {},
+              "Message": "test"
+            }
+          ],
+          "obtainState": "Unobtained"
+        },
+        {
+          "$type": "ItemChanger.Items.NullItem, ItemChanger",
+          "name": "C",
+          "UIDef": null,
+          "tags": [
+            {
+              "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+              "Properties": {},
+              "Message": "test"
+            }
+          ],
+          "obtainState": "Unobtained"
+        }
+      ],
+      "Visited": "None"
+    }
+  },
+  "Modules": [
+    {
+      "$type": "ItemChanger.Modules.InteropModule, ItemChanger",
+      "Properties": {},
+      "Message": "foo",
+      "Name": "InteropModule"
+    },
+    {
+      "$type": "ItemChanger.Modules.InteropModule, ItemChanger",
+      "Properties": {},
+      "Message": "bar",
+      "Name": "InteropModule"
+    }
+  ]
+}

@@ -6,6 +6,7 @@ using ItemChanger.Modules;
 using ItemChanger.Placements;
 using ItemChanger.Tags;
 using ItemChangerTests.Fixtures;
+using Snapshooter.Xunit3;
 
 namespace ItemChangerTests;
 
@@ -64,7 +65,34 @@ public class ProfileSerializationTests : IDisposable
         // they'd better be the same!
         string firstJson = Encoding.UTF8.GetString(firstSaveSnapshot);
         string secondJson = Encoding.UTF8.GetString(secondSaveSnapshot);
+
         Assert.Equal(firstJson, secondJson);
+    }
+
+    [Fact]
+    public void NonTrivialSerializationMatchesSnapshot()
+    {
+        profile.Modules.Add(new InteropModule() { Message = "foo" });
+        profile.Modules.Add(new InteropModule() { Message = "bar" });
+
+        Item a = CreateTaggedItem("A");
+        Item b = CreateTaggedItem("B");
+        Item c = CreateTaggedItem("C");
+        Placement p = CreatePlacement([a, b, c]);
+        profile.AddPlacement(p);
+
+        // new game
+        host.RunStartNewLifecycle();
+
+        // save
+        using MemoryStream ms = new();
+        host.RunLeaveLifecycle();
+        profile.ToStream(ms);
+        profile.Dispose();
+        byte[] snapshot = ms.ToArray();
+        string snapshotJson = Encoding.UTF8.GetString(snapshot);
+
+        Snapshot.Match(snapshotJson);
     }
 
     private Item CreateTaggedItem(string name)

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net472;net8.0</TargetFrameworks>
+    <TargetFramework>net8.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <LangVersion>preview</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -23,11 +23,15 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
     <PackageReference Include="CSharpier.MsBuild" Version="1.1.2" />
+    <PackageReference Include="Snapshooter.Xunit3" Version="1.0.1" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ItemChanger\ItemChanger.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="__snapshots__\__mismatch__\" />
   </ItemGroup>
 </Project>
