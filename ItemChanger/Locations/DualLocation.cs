@@ -1,6 +1,6 @@
-﻿using System;
-using ItemChanger.Placements;
+﻿using ItemChanger.Placements;
 using ItemChanger.Serialization;
+using System;
 
 namespace ItemChanger.Locations;
 
@@ -24,7 +24,7 @@ public class DualLocation : Location
     /// <summary>
     /// A test to determine which location to use
     /// </summary>
-    public required IBool Test;
+    public required IBool Test { get; init; }
 
     /// <summary>
     /// The location to use when <see cref="Test"/> is <code>false</code>

@@ -11,7 +11,7 @@ public class CoordinateLocation : PlaceableLocation
 {
     public required float X { get; init; }
     public required float Y { get; init; }
-    public required float Z { get; init; }
+    public float Z { get; init; }
 
     protected override void DoLoad()
     {
