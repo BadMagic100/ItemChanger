@@ -51,7 +51,7 @@ public class ProgressionItemGroupTests : IDisposable
         Item l = CreateTaggedItem("L");
         Item r = CreateTaggedItem("R");
         Item s = CreateTaggedItem("S");
-        Dictionary<string, Item> items = ((Item[])[l, r, s]).ToDictionary(i => i.name);
+        Dictionary<string, Item> items = ((Item[])[l, r, s]).ToDictionary(i => i.Name);
         Placement p = CreatePlacement(input.Select(i => items[i].Clone()));
         profile.AddPlacement(p);
 
@@ -71,7 +71,7 @@ public class ProgressionItemGroupTests : IDisposable
 
         // prepare to monitor item order
         List<string> resultOrder = [];
-        void AddToResult(ReadOnlyGiveEventArgs args) => resultOrder.Add(args.Item.name);
+        void AddToResult(ReadOnlyGiveEventArgs args) => resultOrder.Add(args.Item.Name);
         foreach (Item i in p.Items)
         {
             i.AfterGive += AddToResult;
@@ -100,7 +100,7 @@ public class ProgressionItemGroupTests : IDisposable
         Item l = CreateTaggedItem("L");
         Item r = CreateTaggedItem("R");
         Item s = CreateTaggedItem("S");
-        Dictionary<string, Item> items = ((Item[])[l, r, s]).ToDictionary(i => i.name);
+        Dictionary<string, Item> items = ((Item[])[l, r, s]).ToDictionary(i => i.Name);
         Placement p1 = CreatePlacement(firstInput.Select(i => items[i].Clone()));
         profile.AddPlacement(p1);
 
@@ -119,7 +119,7 @@ public class ProgressionItemGroupTests : IDisposable
         );
         // prepare to monitor item order
         List<string> resultOrder = [];
-        void AddToResult(ReadOnlyGiveEventArgs args) => resultOrder.Add(args.Item.name);
+        void AddToResult(ReadOnlyGiveEventArgs args) => resultOrder.Add(args.Item.Name);
         foreach (Item i in p1.Items)
         {
             i.AfterGive += AddToResult;
@@ -167,7 +167,7 @@ public class ProgressionItemGroupTests : IDisposable
         Item n = CreateTaggedItem("N");
         Item c = CreateTaggedItem("C");
         Item e = CreateTaggedItem("E");
-        Dictionary<string, Item> items = ((Item[])[n, c, e]).ToDictionary(i => i.name);
+        Dictionary<string, Item> items = ((Item[])[n, c, e]).ToDictionary(i => i.Name);
         Placement p = CreatePlacement(input.Select(i => items[i].Clone()));
         profile.AddPlacement(p);
 
@@ -186,7 +186,7 @@ public class ProgressionItemGroupTests : IDisposable
         );
         // prepare to monitor item order
         List<string> resultOrder = [];
-        void AddToResult(ReadOnlyGiveEventArgs args) => resultOrder.Add(args.Item.name);
+        void AddToResult(ReadOnlyGiveEventArgs args) => resultOrder.Add(args.Item.Name);
         foreach (Item i in p.Items)
         {
             i.AfterGive += AddToResult;
@@ -230,7 +230,7 @@ public class ProgressionItemGroupTests : IDisposable
         Item s = CreateTaggedItem("S");
         Item h1 = CreateTaggedItem("H1");
         Item h2 = CreateTaggedItem("H2");
-        Dictionary<string, Item> items = ((Item[])[m, s, h1, h2]).ToDictionary(i => i.name);
+        Dictionary<string, Item> items = ((Item[])[m, s, h1, h2]).ToDictionary(i => i.Name);
         Placement p = CreatePlacement(input.Select(i => items[i].Clone()));
         profile.AddPlacement(p);
 
@@ -250,7 +250,7 @@ public class ProgressionItemGroupTests : IDisposable
         );
         // prepare to monitor item order
         List<string> resultOrder = [];
-        void AddToResult(ReadOnlyGiveEventArgs args) => resultOrder.Add(args.Item.name);
+        void AddToResult(ReadOnlyGiveEventArgs args) => resultOrder.Add(args.Item.Name);
         foreach (Item i in p.Items)
         {
             i.AfterGive += AddToResult;
@@ -473,7 +473,7 @@ public class ProgressionItemGroupTests : IDisposable
 
     private Item CreateTaggedItem(string name)
     {
-        Item i = new NullItem { name = name };
+        Item i = new NullItem { Name = name };
         i.AddTag(new ProgressiveItemGroupTag { GroupID = "test" });
         ItemChangerHost.Singleton.Finder.DefineItem(i, overwrite: true);
         return i.Clone();

@@ -72,9 +72,9 @@ public class ProgressiveItemGroupModule : Module
     /// <exception cref="InvalidOperationException">The item was not found in the <see cref="OrderedMemberList"/>.</exception>
     public void RegisterItem(ProgressiveItemGroupTag tag, Item item)
     {
-        if (!OrderedMemberList.Contains(item.name))
+        if (!OrderedMemberList.Contains(item.Name))
         {
-            throw UnexpectedMember(item.name);
+            throw UnexpectedMember(item.Name);
         }
 
         item.ModifyItem += ModifyItem;
@@ -91,7 +91,7 @@ public class ProgressiveItemGroupModule : Module
             OrderedMemberList,
             OrderedTransitivePredecessorsLookup
         );
-        CollectedItemList.Add(args.Orig.name);
+        CollectedItemList.Add(args.Orig.Name);
         Dictionary<string, int> nextMultiset = GetActualItems(
             CollectedItemList,
             OrderedMemberList,

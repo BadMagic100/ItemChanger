@@ -1,7 +1,7 @@
-﻿using ItemChanger.Enums;
+﻿using System;
+using ItemChanger.Enums;
 using ItemChanger.Items;
 using ItemChanger.Placements;
-using System;
 using UnityEngine;
 
 namespace ItemChanger.Events.Args;

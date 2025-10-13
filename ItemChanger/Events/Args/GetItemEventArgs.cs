@@ -1,5 +1,5 @@
-﻿using ItemChanger.Items;
-using System;
+﻿using System;
+using ItemChanger.Items;
 
 namespace ItemChanger.Events.Args;
 

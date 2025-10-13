@@ -120,14 +120,14 @@ public class Finder
 
     public void DefineItem(Item item, bool overwrite = false)
     {
-        if (Items.ContainsKey(item.name) && !overwrite)
+        if (Items.ContainsKey(item.Name) && !overwrite)
         {
             throw new ArgumentException(
-                $"Item {item.name} is already defined (type is {item.GetType()})."
+                $"Item {item.Name} is already defined (type is {item.GetType()})."
             );
         }
 
-        Items[item.name] = item;
+        Items[item.Name] = item;
     }
 
     public void DefineLocation(Location loc, bool overwrite = false)

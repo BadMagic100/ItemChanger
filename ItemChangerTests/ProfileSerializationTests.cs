@@ -97,7 +97,7 @@ public class ProfileSerializationTests : IDisposable
 
     private Item CreateTaggedItem(string name)
     {
-        Item i = new NullItem { name = name };
+        Item i = new NullItem { Name = name };
         i.AddTag(new InteropTag { Message = "test" });
         return i.Clone();
     }

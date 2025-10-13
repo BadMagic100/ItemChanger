@@ -20,18 +20,24 @@ public abstract class Item : TaggableObject
     [JsonIgnore]
     public bool Loaded { get; set; }
 
-    [JsonProperty]
+    [JsonProperty("ObtainState")]
     private ObtainState obtainState;
 
     /// <summary>
     /// The name of the item. Item names are not guaranteed to be unique.
     /// </summary>
-    public string name;
+    public required string Name { get; init; }
+
+    private UIDef? uiDef;
 
     /// <summary>
     /// The UIDef associated to an item. GetResolvedUIDef() is preferred in most cases, since it accounts for the hooks which may modify the item.
     /// </summary>
-    public UIDef? UIDef;
+    public UIDef? UIDef
+    {
+        get => uiDef;
+        init => uiDef = value;
+    }
 
     /// <summary>
     /// Method allowing derived item classes to initialize and place hooks. Called once during loading.
@@ -53,7 +59,7 @@ public abstract class Item : TaggableObject
             }
             catch (Exception e)
             {
-                LoggerProxy.LogError($"Error loading item {name}:\n{e}");
+                LoggerProxy.LogError($"Error loading item {Name}:\n{e}");
             }
             Loaded = true;
         }
@@ -79,7 +85,7 @@ public abstract class Item : TaggableObject
             }
             catch (Exception e)
             {
-                LoggerProxy.LogError($"Error unloading item {name}:\n{e}");
+                LoggerProxy.LogError($"Error unloading item {Name}:\n{e}");
             }
             Loaded = false;
         }
@@ -132,7 +138,7 @@ public abstract class Item : TaggableObject
         }
         catch (Exception e)
         {
-            LoggerProxy.LogError($"Error on GiveImmediate for item {item.name}:\n{e}");
+            LoggerProxy.LogError($"Error on GiveImmediate for item {item.Name}:\n{e}");
         }
 
         AfterGiveInvoke(readOnlyArgs);
@@ -145,7 +151,7 @@ public abstract class Item : TaggableObject
             }
             catch (Exception e)
             {
-                LoggerProxy.LogError($"Error on SendMessage for item {item.name}:\n{e}");
+                LoggerProxy.LogError($"Error on SendMessage for item {item.Name}:\n{e}");
                 info.Callback?.Invoke(item);
             }
         }
@@ -241,7 +247,6 @@ public abstract class Item : TaggableObject
     /// <summary>
     /// Returns whether the item is currently obtained. A value of true indicates the item is not eligible to be given.
     /// </summary>
-    /// <returns></returns>
     public bool IsObtained()
     {
         return obtainState == ObtainState.Obtained;
@@ -261,15 +266,14 @@ public abstract class Item : TaggableObject
     public virtual Item Clone()
     {
         Item item = (Item)MemberwiseClone();
-        item.UIDef = UIDef?.Clone();
-        item.tags = tags?.Select(t => t.Clone())?.ToList();
+        item.uiDef = uiDef?.Clone();
+        item.tags = tags?.Select(t => t.Clone())?.ToList() ?? [];
         return item;
     }
 
     /// <summary>
     /// Event invoked by this item at the start of Give(), giving access to the initial give parameters.
     /// </summary>
-    [field: JsonIgnore]
     public event Action<ReadOnlyGiveEventArgs>? BeforeGive;
 
     /// <summary>
@@ -290,13 +294,13 @@ public abstract class Item : TaggableObject
             if (placement != null)
             {
                 LoggerProxy.LogError(
-                    $"Error invoking BeforeGive for item {name} at placement {placement}:\n{e}"
+                    $"Error invoking BeforeGive for item {Name} at placement {placement}:\n{e}"
                 );
             }
             else
             {
                 LoggerProxy.LogError(
-                    $"Error invoking BeforeGive for item {name} with placement unavailable:\n{e}"
+                    $"Error invoking BeforeGive for item {Name} with placement unavailable:\n{e}"
                 );
             }
         }
@@ -305,7 +309,6 @@ public abstract class Item : TaggableObject
     /// <summary>
     /// Event invoked by this item during Give() to allow modification of any of the give parameters, including the item given.
     /// </summary>
-    [field: JsonIgnore]
     public event Action<GiveEventArgs>? ModifyItem;
 
     /// <summary>
@@ -326,13 +329,13 @@ public abstract class Item : TaggableObject
             if (placement != null)
             {
                 LoggerProxy.LogError(
-                    $"Error invoking ModifyItem for item {name} at placement {placement}:\n{e}"
+                    $"Error invoking ModifyItem for item {Name} at placement {placement}:\n{e}"
                 );
             }
             else
             {
                 LoggerProxy.LogError(
-                    $"Error invoking ModifyItem for item {name} with placement unavailable:\n{e}"
+                    $"Error invoking ModifyItem for item {Name} with placement unavailable:\n{e}"
                 );
             }
         }
@@ -341,7 +344,6 @@ public abstract class Item : TaggableObject
     /// <summary>
     /// Event invoked by this item after the ModifyItem events, if the resulting item is null or redundant.
     /// </summary>
-    [field: JsonIgnore]
     public event Action<GiveEventArgs>? ModifyRedundantItem;
 
     /// <summary>
@@ -362,13 +364,13 @@ public abstract class Item : TaggableObject
             if (placement != null)
             {
                 LoggerProxy.LogError(
-                    $"Error invoking ModifyRedundantItem for item {name} at placement {placement}:\n{e}"
+                    $"Error invoking ModifyRedundantItem for item {Name} at placement {placement}:\n{e}"
                 );
             }
             else
             {
                 LoggerProxy.LogError(
-                    $"Error invoking ModifyRedundantItem for item {name} with placement unavailable:\n{e}"
+                    $"Error invoking ModifyRedundantItem for item {Name} with placement unavailable:\n{e}"
                 );
             }
         }
@@ -377,7 +379,6 @@ public abstract class Item : TaggableObject
     /// <summary>
     /// Event invoked by this item just before GiveImmediate(), giving access to the final give parameters.
     /// </summary>
-    [field: JsonIgnore]
     public event Action<ReadOnlyGiveEventArgs>? OnGive;
 
     /// <summary>
@@ -398,13 +399,13 @@ public abstract class Item : TaggableObject
             if (placement != null)
             {
                 LoggerProxy.LogError(
-                    $"Error invoking OnGive for item {name} at placement {placement}:\n{e}"
+                    $"Error invoking OnGive for item {Name} at placement {placement}:\n{e}"
                 );
             }
             else
             {
                 LoggerProxy.LogError(
-                    $"Error invoking OnGive for item {name} with placement unavailable:\n{e}"
+                    $"Error invoking OnGive for item {Name} with placement unavailable:\n{e}"
                 );
             }
         }
@@ -413,7 +414,6 @@ public abstract class Item : TaggableObject
     /// <summary>
     /// Event invoked by this item just after GiveImmediate(), giving access to the final give parameters.
     /// </summary>
-    [field: JsonIgnore]
     public event Action<ReadOnlyGiveEventArgs>? AfterGive;
 
     /// <summary>
@@ -434,13 +434,13 @@ public abstract class Item : TaggableObject
             if (placement != null)
             {
                 LoggerProxy.LogError(
-                    $"Error invoking AfterGive for item {name} at placement {placement}:\n{e}"
+                    $"Error invoking AfterGive for item {Name} at placement {placement}:\n{e}"
                 );
             }
             else
             {
                 LoggerProxy.LogError(
-                    $"Error invoking AfterGive for item {name} with placement unavailable:\n{e}"
+                    $"Error invoking AfterGive for item {Name} with placement unavailable:\n{e}"
                 );
             }
         }

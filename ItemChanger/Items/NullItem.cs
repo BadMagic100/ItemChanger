@@ -4,7 +4,7 @@ public class NullItem : Item
 {
     public static NullItem Create()
     {
-        return new NullItem { name = "Nothing" };
+        return new NullItem { Name = "Nothing" };
     }
 
     public override void GiveImmediate(GiveInfo info)
