@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using ItemChanger.Costs;
 using ItemChanger.Enums;
 using ItemChanger.Items;
@@ -14,18 +15,20 @@ public class ContainerInfo
 {
     public required string ContainerType { get; init; }
 
-    public ContainerGiveInfo GiveInfo { get; init; }
+    public required ContainerGiveInfo GiveInfo { get; init; }
     public ContainerCostInfo? CostInfo { get; init; }
 
     /// <summary>
     /// Creates ContainerInfo with standard ContainerGiveInfo.
     /// </summary>
+    [SetsRequiredMembers]
     public ContainerInfo(string containerType, Placement placement, FlingType flingType)
         : this(containerType, placement, placement.Items, flingType) { }
 
     /// <summary>
     /// Creates ContainerInfo with standard ContainerGiveInfo.
     /// </summary>
+    [SetsRequiredMembers]
     public ContainerInfo(
         string containerType,
         Placement placement,
@@ -46,12 +49,14 @@ public class ContainerInfo
     /// <summary>
     /// Creates ContainerInfo with standard ContainerGiveInfo. If the cost parameter is not null, initializes costInfo with the cost.
     /// </summary>
+    [SetsRequiredMembers]
     public ContainerInfo(string containerType, Placement placement, FlingType flingType, Cost? cost)
         : this(containerType, placement, placement.Items, flingType, cost) { }
 
     /// <summary>
     /// Creates ContainerInfo with standard ContainerGiveInfo. If the cost parameter is not null, initializes costInfo with the cost.
     /// </summary>
+    [SetsRequiredMembers]
     public ContainerInfo(
         string containerType,
         Placement placement,
@@ -96,7 +101,7 @@ public class ContainerInfo
         ContainerInfoComponent cdc = obj.GetComponent<ContainerInfoComponent>();
         if (cdc != null)
         {
-            return cdc.info;
+            return cdc.Info;
         }
 
         return null;

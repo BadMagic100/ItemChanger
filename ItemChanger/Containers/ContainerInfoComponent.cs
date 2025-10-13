@@ -4,5 +4,5 @@ namespace ItemChanger.Containers;
 
 internal class ContainerInfoComponent : MonoBehaviour
 {
-    public ContainerInfo? info;
+    public required ContainerInfo Info { get; init; }
 }
