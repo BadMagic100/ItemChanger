@@ -32,7 +32,7 @@ public class ItemChangerProfile : IDisposable
     private readonly Dictionary<string, Placement> placements = [];
 
     [JsonProperty]
-    public ModuleCollection Modules { get; init; } = [];
+    public ModuleCollection Modules { get; private init; } = [];
 
     private bool hooked = false;
     internal LoadState State { get; private set; } = LoadState.Unloaded;
