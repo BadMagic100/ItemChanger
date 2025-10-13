@@ -1,7 +1,5 @@
 Things to change
 
-Improve loading strategy so that modules can safely add other modules (and placements can do the same and so on)
-
 future improvements:
 * Nullability annotations
 * PolySharp configure included types explicitly per runtime
