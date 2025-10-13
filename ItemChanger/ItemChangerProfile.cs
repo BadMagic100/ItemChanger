@@ -35,7 +35,7 @@ public class ItemChangerProfile : IDisposable
     public ModuleCollection Modules { get; init; } = [];
 
     private bool hooked = false;
-    internal LoadState state = LoadState.Unloaded;
+    internal LoadState State { get; private set; } = LoadState.Unloaded;
 
     private ItemChangerHost host;
     private LifecycleEvents.Invoker lifecycleInvoker;
@@ -101,7 +101,7 @@ public class ItemChangerProfile : IDisposable
             return;
         }
 
-        if (state == LoadState.LoadCompleted)
+        if (State == LoadState.LoadCompleted)
         {
             Unload();
         }
@@ -162,50 +162,50 @@ public class ItemChangerProfile : IDisposable
 
     public void Load()
     {
-        if (state != LoadState.Unloaded)
+        if (State != LoadState.Unloaded)
         {
             throw new InvalidOperationException(
-                $"Cannot load an already loaded profile. Current state is {state}"
+                $"Cannot load an already loaded profile. Current state is {State}"
             );
         }
 
-        state = LoadState.LoadStarted;
+        State = LoadState.LoadStarted;
 
-        state = LoadState.ModuleLoadStarted;
+        State = LoadState.ModuleLoadStarted;
         Modules.Load();
-        state = LoadState.ModuleLoadCompleted;
+        State = LoadState.ModuleLoadCompleted;
 
-        state = LoadState.PlacementsLoadStarted;
+        State = LoadState.PlacementsLoadStarted;
         foreach (Placement placement in placements.Values)
         {
             placement.LoadOnce();
         }
-        state = LoadState.PlacementsLoadCompleted;
+        State = LoadState.PlacementsLoadCompleted;
 
-        state = LoadState.LoadCompleted;
+        State = LoadState.LoadCompleted;
     }
 
     public void Unload()
     {
-        if (state != LoadState.LoadCompleted)
+        if (State != LoadState.LoadCompleted)
         {
             throw new InvalidOperationException(
-                $"Cannot unload an unloaded or partially loaded profile. Current state is {state}"
+                $"Cannot unload an unloaded or partially loaded profile. Current state is {State}"
             );
         }
 
-        state = LoadState.PlacementsLoadCompleted;
+        State = LoadState.PlacementsLoadCompleted;
         foreach (Placement placement in placements.Values)
         {
             placement.Unload();
         }
-        state = LoadState.PlacementsLoadStarted;
+        State = LoadState.PlacementsLoadStarted;
 
-        state = LoadState.ModuleLoadCompleted;
+        State = LoadState.ModuleLoadCompleted;
         Modules.Unload();
-        state = LoadState.ModuleLoadStarted;
+        State = LoadState.ModuleLoadStarted;
 
-        state = LoadState.Unloaded;
+        State = LoadState.Unloaded;
     }
 
     public void AddPlacement(
@@ -213,7 +213,7 @@ public class ItemChangerProfile : IDisposable
         PlacementConflictResolution conflictResolution = PlacementConflictResolution.MergeKeepingNew
     )
     {
-        if (state == LoadState.PlacementsLoadStarted)
+        if (State == LoadState.PlacementsLoadStarted)
         {
             throw new InvalidOperationException(
                 "Cannot add a placement while placement loading is in progress"
@@ -227,14 +227,14 @@ public class ItemChangerProfile : IDisposable
                 case PlacementConflictResolution.MergeKeepingNew:
                     placement.Items.AddRange(existP.Items);
                     placements[placement.Name] = placement;
-                    if (state >= LoadState.PlacementsLoadCompleted)
+                    if (State >= LoadState.PlacementsLoadCompleted)
                     {
                         existP.Unload();
                     }
                     break;
                 case PlacementConflictResolution.MergeKeepingOld:
                     existP.Items.AddRange(placement.Items);
-                    if (state >= LoadState.PlacementsLoadCompleted)
+                    if (State >= LoadState.PlacementsLoadCompleted)
                     {
                         foreach (Item item in placement.Items)
                         {
@@ -244,7 +244,7 @@ public class ItemChangerProfile : IDisposable
                     break;
                 case PlacementConflictResolution.Replace:
                     placements[placement.Name] = placement;
-                    if (state >= LoadState.PlacementsLoadCompleted)
+                    if (State >= LoadState.PlacementsLoadCompleted)
                     {
                         existP.Unload();
                     }
@@ -264,7 +264,7 @@ public class ItemChangerProfile : IDisposable
         }
 
         // if the final placement ending up in the profile is the newly added one, it may need to be loaded to catch up.
-        if (state >= LoadState.PlacementsLoadCompleted && placements[placement.Name] == placement)
+        if (State >= LoadState.PlacementsLoadCompleted && placements[placement.Name] == placement)
         {
             placement.LoadOnce();
         }

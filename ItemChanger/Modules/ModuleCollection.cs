@@ -46,7 +46,7 @@ public class ModuleCollection : IEnumerable<Module>
         modules.Add(m);
         if (
             ItemChangerHost.Singleton.ActiveProfile != null
-            && ItemChangerHost.Singleton.ActiveProfile.state
+            && ItemChangerHost.Singleton.ActiveProfile.State
                 >= ItemChangerProfile.LoadState.ModuleLoadCompleted
         )
         {
@@ -109,7 +109,7 @@ public class ModuleCollection : IEnumerable<Module>
         if (
             modules.Remove(m)
             && ItemChangerHost.Singleton.ActiveProfile != null
-            && ItemChangerHost.Singleton.ActiveProfile.state
+            && ItemChangerHost.Singleton.ActiveProfile.State
                 >= ItemChangerProfile.LoadState.ModuleLoadCompleted
         )
         {
@@ -129,7 +129,7 @@ public class ModuleCollection : IEnumerable<Module>
     {
         if (
             ItemChangerHost.Singleton.ActiveProfile != null
-            && ItemChangerHost.Singleton.ActiveProfile.state
+            && ItemChangerHost.Singleton.ActiveProfile.State
                 >= ItemChangerProfile.LoadState.ModuleLoadCompleted
         )
         {

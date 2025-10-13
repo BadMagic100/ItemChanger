@@ -3,9 +3,6 @@ Things to change
 use :new() in type constraints throughout to enforce/encourage json-friendly construction
 Audit fields -> properties and usage of required throughout
 make taggableobject.tags private, it's unsafe
-see if there is a good way to dejank single/multicost placements
-consistent interface for replacable locations
-save and load profiles from file/stream
 Improve loading strategy so that modules can safely add other modules (and placements can do the same and so on)
 lock down load state to be accessible only to profile
 incompatibility warning tag has some weird timing related edge cases (ie if I add something incompatible after load it doesn't get caught)
