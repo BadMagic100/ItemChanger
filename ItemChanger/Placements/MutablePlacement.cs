@@ -24,7 +24,7 @@ public class MutablePlacement(string Name)
     Location IPrimaryLocationPlacement.Location => Location;
 
     public override string MainContainerType => ContainerType;
-    public string ContainerType { get; set; } = ContainerRegistry.UnknownContainerType;
+    public string ContainerType { get; private set; } = ContainerRegistry.UnknownContainerType;
 
     public Cost? Cost { get; set; }
 

@@ -17,7 +17,7 @@ namespace ItemChanger.Placements;
 /// <remarks>
 /// Creates a placement with the given name.
 /// </remarks>
-public abstract class Placement(string Name) : TaggableObject
+public abstract class Placement(string name) : TaggableObject
 {
     /// <summary>
     /// Whether the placement is loaded.
@@ -28,7 +28,7 @@ public abstract class Placement(string Name) : TaggableObject
     /// <summary>
     /// The name of the placement. Placement names are enforced to be unique.
     /// </summary>
-    public string Name { get; } = Name;
+    public string Name => name;
 
     /// <summary>
     /// The items attached to the placement.
@@ -218,7 +218,6 @@ public abstract class Placement(string Name) : TaggableObject
     /// <summary>
     /// Event invoked by this placement whenever AddVisitFlag is called. Use the NoChange property of the args to detect whether a change will occur.
     /// </summary>
-    [field: JsonIgnore]
     public event Action<VisitStateChangedEventArgs>? OnVisitStateChanged;
 
     private void InvokeVisitStateChanged(VisitState newFlags)

@@ -7,5 +7,5 @@ namespace ItemChanger.Placements;
 /// </summary>
 public interface IPrimaryLocationPlacement
 {
-    Location Location { get; }
+    public Location Location { get; }
 }

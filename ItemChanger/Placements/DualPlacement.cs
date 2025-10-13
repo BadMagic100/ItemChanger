@@ -26,7 +26,7 @@ public class DualPlacement(string Name)
 
     private bool cachedValue;
 
-    public string ContainerType { get; set; } = ContainerRegistry.UnknownContainerType;
+    public string ContainerType { get; private set; } = ContainerRegistry.UnknownContainerType;
     public override string MainContainerType => ContainerType;
 
     [JsonIgnore]

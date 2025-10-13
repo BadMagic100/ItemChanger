@@ -19,7 +19,7 @@ public abstract class Item : TaggableObject
     /// Whether the item is loaded
     /// </summary>
     [JsonIgnore]
-    public bool Loaded { get; set; }
+    public bool Loaded { get; private set; }
 
     [JsonProperty("ObtainState")]
     private ObtainState obtainState;

@@ -8,5 +8,5 @@ namespace ItemChanger.Placements;
 /// </summary>
 public interface IContainerPlacement
 {
-    void GetContainer(Location location, out Container container, out ContainerInfo info);
+    public void GetContainer(Location location, out Container container, out ContainerInfo info);
 }
