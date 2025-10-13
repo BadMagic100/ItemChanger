@@ -8,5 +8,5 @@ namespace ItemChanger.Tags;
 [PlacementTag]
 public class MultiPreviewRecordTag : Tag
 {
-    public string[] PreviewTexts { get; set; }
+    public string[] PreviewTexts { get; set; } = [];
 }

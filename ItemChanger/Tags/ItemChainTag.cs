@@ -16,12 +16,12 @@ public class ItemChainTag : Tag
     /// <summary>
     /// The previous item in the item chain
     /// </summary>
-    public string? Predecessor { get; set; }
+    public string? Predecessor { get; init; }
 
     /// <summary>
     /// The subsequent item in the item chain
     /// </summary>
-    public string? Successor { get; set; }
+    public string? Successor { get; init; }
 
     protected override void DoLoad(TaggableObject parent)
     {

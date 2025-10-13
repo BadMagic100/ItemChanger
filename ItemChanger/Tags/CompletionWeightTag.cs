@@ -5,5 +5,5 @@
 /// </summary>
 public class CompletionWeightTag : Tag
 {
-    public float Weight { get; set; } = 1;
+    public required float Weight { get; init; }
 }

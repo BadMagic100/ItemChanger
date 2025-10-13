@@ -69,5 +69,8 @@ public abstract class Tag
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
     public virtual TagHandlingFlags TagHandlingProperties { get; set; }
 
+    /// <summary>
+    /// Creates a deep copy of the tag
+    /// </summary>
     public virtual Tag Clone() => (Tag)MemberwiseClone();
 }
