@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using ItemChanger.Logging;
 using ItemChanger.Serialization;
 using UnityEngine;
 

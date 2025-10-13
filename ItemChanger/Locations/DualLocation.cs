@@ -1,6 +1,6 @@
-﻿using ItemChanger.Placements;
+﻿using System;
+using ItemChanger.Placements;
 using ItemChanger.Serialization;
-using System;
 
 namespace ItemChanger.Locations;
 

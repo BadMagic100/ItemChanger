@@ -1,5 +1,6 @@
 ﻿using System;
 using ItemChanger.Enums;
+using ItemChanger.Logging;
 using Newtonsoft.Json;
 
 namespace ItemChanger.Modules;

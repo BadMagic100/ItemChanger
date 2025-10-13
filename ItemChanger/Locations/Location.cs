@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using ItemChanger.Enums;
+using ItemChanger.Logging;
 using ItemChanger.Placements;
 using Newtonsoft.Json;
 

@@ -5,6 +5,7 @@ using ItemChanger.Containers;
 using ItemChanger.Enums;
 using ItemChanger.Events.Args;
 using ItemChanger.Items;
+using ItemChanger.Logging;
 using ItemChanger.Tags;
 using Newtonsoft.Json;
 

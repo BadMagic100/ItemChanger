@@ -1,4 +1,4 @@
-﻿namespace ItemChanger;
+﻿namespace ItemChanger.Logging;
 
 /// <summary>
 /// Public hook point to have ItemChanger inject its logs to a logger of the caller's choosing.

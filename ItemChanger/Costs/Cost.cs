@@ -1,4 +1,5 @@
 ﻿using System;
+using ItemChanger.Logging;
 using Newtonsoft.Json;
 
 namespace ItemChanger.Costs;

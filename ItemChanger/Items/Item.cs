@@ -3,6 +3,7 @@ using System.Linq;
 using ItemChanger.Containers;
 using ItemChanger.Enums;
 using ItemChanger.Events.Args;
+using ItemChanger.Logging;
 using ItemChanger.Placements;
 using Newtonsoft.Json;
 using UnityEngine;

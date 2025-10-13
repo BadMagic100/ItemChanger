@@ -5,6 +5,7 @@ using ItemChanger.Containers;
 using ItemChanger.Costs;
 using ItemChanger.Items;
 using ItemChanger.Locations;
+using ItemChanger.Logging;
 using ItemChanger.Tags;
 
 namespace ItemChanger.Placements;

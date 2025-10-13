@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ItemChanger.Logging;
 using ItemChanger.Serialization.Converters;
 using Newtonsoft.Json;
 
