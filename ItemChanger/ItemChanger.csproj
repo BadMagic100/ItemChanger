@@ -15,6 +15,7 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="UnityEngine" Version="5.6.1" />
+    <!-- CSharpier.MsBuild automatically formats code during Debug builds. Run 'dotnet build -c Debug' to format all files. -->
     <PackageReference Include="CSharpier.MsBuild" Version="1.1.2" />
   </ItemGroup>
   <Target
