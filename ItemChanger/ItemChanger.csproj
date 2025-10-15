@@ -7,9 +7,6 @@
     <LangVersion>preview</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Nullable>enable</Nullable>
-    <RestoreAdditionalProjectSources>
-        https://nuget.bepinex.dev/v3/index.json
-    </RestoreAdditionalProjectSources>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="PolySharp" Version="1.14.1">
