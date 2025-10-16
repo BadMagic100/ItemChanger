@@ -1,10 +1,10 @@
 ﻿{
   "Placements": {
     "Test placement": {
-      "$type": "ItemChanger.Placements.AutoPlacement, ItemChanger",
+      "$type": "ItemChanger.Placements.AutoPlacement, ItemChanger.Core",
       "Tags": [],
       "Location": {
-        "$type": "ItemChanger.Locations.EmptyLocation, ItemChanger",
+        "$type": "ItemChanger.Locations.EmptyLocation, ItemChanger.Core",
         "Tags": [],
         "Name": "Test location",
         "SceneName": null,
@@ -15,18 +15,18 @@
       "Name": "Test placement",
       "Items": [
         {
-          "$type": "ItemChanger.Items.NullItem, ItemChanger",
+          "$type": "ItemChanger.Items.NullItem, ItemChanger.Core",
           "Tags": [
             {
-              "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+              "$type": "ItemChanger.Tags.InteropTag, ItemChanger.Core",
               "Properties": {},
               "Message": "test"
             },
             {
               "Cost": {
-                "$type": "ItemChangerTests.Fixtures.DollarCost, ItemChangerTests",
+                "$type": "ItemChangerTests.Fixtures.DollarCost, ItemChanger.Tests",
                 "Source": {
-                  "$type": "ItemChanger.Serialization.BoxedInteger, ItemChanger",
+                  "$type": "ItemChanger.Serialization.BoxedInteger, ItemChanger.Core",
                   "Value": 50
                 },
                 "Amount": 1,

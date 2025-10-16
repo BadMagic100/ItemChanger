@@ -1,10 +1,10 @@
 ﻿{
   "Placements": {
     "Test placement": {
-      "$type": "ItemChanger.Placements.AutoPlacement, ItemChanger",
+      "$type": "ItemChanger.Placements.AutoPlacement, ItemChanger.Core",
       "Tags": [],
       "Location": {
-        "$type": "ItemChanger.Locations.EmptyLocation, ItemChanger",
+        "$type": "ItemChanger.Locations.EmptyLocation, ItemChanger.Core",
         "Tags": [],
         "Name": "Test location",
         "SceneName": null,
@@ -15,10 +15,10 @@
       "Name": "Test placement",
       "Items": [
         {
-          "$type": "ItemChanger.Items.NullItem, ItemChanger",
+          "$type": "ItemChanger.Items.NullItem, ItemChanger.Core",
           "Tags": [
             {
-              "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+              "$type": "ItemChanger.Tags.InteropTag, ItemChanger.Core",
               "Properties": {},
               "Message": "test"
             }
@@ -28,10 +28,10 @@
           "UIDef": null
         },
         {
-          "$type": "ItemChanger.Items.NullItem, ItemChanger",
+          "$type": "ItemChanger.Items.NullItem, ItemChanger.Core",
           "Tags": [
             {
-              "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+              "$type": "ItemChanger.Tags.InteropTag, ItemChanger.Core",
               "Properties": {},
               "Message": "test"
             }
@@ -41,10 +41,10 @@
           "UIDef": null
         },
         {
-          "$type": "ItemChanger.Items.NullItem, ItemChanger",
+          "$type": "ItemChanger.Items.NullItem, ItemChanger.Core",
           "Tags": [
             {
-              "$type": "ItemChanger.Tags.InteropTag, ItemChanger",
+              "$type": "ItemChanger.Tags.InteropTag, ItemChanger.Core",
               "Properties": {},
               "Message": "test"
             }
@@ -59,13 +59,13 @@
   },
   "Modules": [
     {
-      "$type": "ItemChanger.Modules.InteropModule, ItemChanger",
+      "$type": "ItemChanger.Modules.InteropModule, ItemChanger.Core",
       "Message": "foo",
       "Properties": {},
       "Name": "InteropModule"
     },
     {
-      "$type": "ItemChanger.Modules.InteropModule, ItemChanger",
+      "$type": "ItemChanger.Modules.InteropModule, ItemChanger.Core",
       "Message": "bar",
       "Properties": {},
       "Name": "InteropModule"

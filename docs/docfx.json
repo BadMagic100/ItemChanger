@@ -4,7 +4,7 @@
       "src": [
         {
           "files": [
-            "ItemChanger/**.csproj"
+            "ItemChanger.Core/**.csproj"
           ],
           "src": ".."
         }
@@ -15,7 +15,10 @@
     }
   ],
   "build": {
-    "xref": "https://learn.microsoft.com/en-us/dotnet/.xrefmap.json",
+    "xref": [
+      "https://learn.microsoft.com/en-us/dotnet/.xrefmap.json",
+      "https://normanderwan.github.io/UnityXrefMaps/6000.0/xrefmap.yml"
+    ],
     "content": [
       {
         "files": [

@@ -24,10 +24,10 @@ jobs:
     - name: Test
       run: dotnet test -c Release --verbosity normal
     - name: Pack
-      run: dotnet pack ItemChanger/ItemChanger.csproj -o nuget/
+      run: dotnet pack ItemChanger.Core/ItemChanger.Core.csproj -o nuget/
     - name: Get Version
       id: version
       run: |-
-        VERSION=$(dotnet build ItemChanger/ItemChanger.csproj -getProperty:PackageVersion)
+        VERSION=$(dotnet build ItemChanger.Core/ItemChanger.Core.csproj -getProperty:PackageVersion)
         echo Version is $VERSION
         echo "version=$VERSION" >> $GITHUB_OUTPUT

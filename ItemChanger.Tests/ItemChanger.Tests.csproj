@@ -30,7 +30,7 @@
     <Using Include="Xunit" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ItemChanger\ItemChanger.csproj" />
+    <ProjectReference Include="..\ItemChanger.Core\ItemChanger.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="__snapshots__\__mismatch__\" />
