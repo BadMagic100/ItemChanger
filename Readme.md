@@ -1,6 +1,6 @@
 # ItemChanger.Core
 
-![NuGet Version](https://img.shields.io/nuget/v/ItemChanger.Core?link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FItemChanger.Core)
+[![NuGet Version](https://img.shields.io/nuget/v/ItemChanger.Core)](https://www.nuget.org/packages/ItemChanger.Core)
 
 
 
