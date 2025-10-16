@@ -45,7 +45,7 @@ jobs:
         id: publish
         if: github.event_name == 'push'
         run: |-
-          dotnet nuget push nuget/ItemChanger.Core.nupkg \
+          dotnet nuget push nuget/*.nupkg \
             --api-key ${{ steps.login.outputs.NUGET_API_KEY }} \
             --source https://api.nuget.org/v3/index.json
         continue-on-error: true
