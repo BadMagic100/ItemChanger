@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: ["main"]
 
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,10 +27,33 @@ jobs:
       - name: Test
         run: dotnet test -c Release --verbosity normal
       - name: Pack
-        run: dotnet pack ItemChanger.Core/ItemChanger.Core.csproj -o nuget/
+        run: dotnet pack -o nuget/
       - name: Get Version
         id: version
         run: |-
           VERSION=$(dotnet build ItemChanger.Core/ItemChanger.Core.csproj -getProperty:PackageVersion)
           echo Version is $VERSION
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+      # attempts to publish to NuGet on any push to main. Skips already-published versions.
+      - name: NuGet Login
+        id: login
+        if: github.event_name == 'push'
+        uses: NuGet/login@v1
+        with:
+          user: ${{ secrets.NUGET_USER }}
+      - name: Publish NuGet
+        id: publish
+        if: github.event_name == 'push'
+        run: |-
+          dotnet nuget push bin/Release/ItemChanger.Core.nupkg \
+            --api-key ${{ steps.login.outputs.NUGET_API_KEY }} \
+            --source https://api.nuget.org/v3/index.json
+        continue-on-error: true
+      - name: Create Release
+        if: github.event_name == 'push' && steps.publish.outcome == 'success'
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: false
+          generate_release_notes: true
+          tag_name: v${{ steps.version.outputs.version }}
+

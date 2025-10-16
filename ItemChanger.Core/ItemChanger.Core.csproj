@@ -2,11 +2,12 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;net472;net6.0;net8.0</TargetFrameworks>
     <RootNamespace>ItemChanger</RootNamespace>
-    <Version>0.0.1</Version>
+    <Version>0.1.0</Version>
     <LangVersion>preview</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Nullable>enable</Nullable>
     <DebugType>embedded</DebugType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="PolySharp" Version="1.14.1">
@@ -19,6 +20,9 @@
     </PackageReference>
     <!-- CSharpier.MsBuild automatically formats code during Debug builds. Run 'dotnet build' to format all files. -->
     <PackageReference Include="CSharpier.MsBuild" Version="1.1.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="../README.md" Pack="True" PackagePath="README.md" />
   </ItemGroup>
   <Target
     Name="Husky"
