@@ -1,6 +1,7 @@
 # ItemChanger.Core
 
-![NuGet Version](https://img.shields.io/nuget/v/ItemChanger.Core)
+![NuGet Version](https://img.shields.io/nuget/v/ItemChanger.Core?link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FItemChanger.Core)
+
 
 
 ItemChanger.Core is a library to aid in the creation of randomizers and similar mods for Unity games by simplifying the
