@@ -15,7 +15,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="UnityEngine" Version="5.6.1" />
+    <PackageReference Include="UnityEngine" Version="5.6.1" PrivateAssets="all" />
     <!-- CSharpier.MsBuild automatically formats code during Debug builds. Run 'dotnet build' to format all files. -->
     <PackageReference Include="CSharpier.MsBuild" Version="1.1.2" />
   </ItemGroup>
