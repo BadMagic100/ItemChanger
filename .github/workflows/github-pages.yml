@@ -2,7 +2,7 @@ name: Docs
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 permissions:
   actions: read
@@ -24,13 +24,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
-        
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
-        
+
       - name: Setup DocFX
         run: dotnet tool update -g docfx
-      
+
       - name: DocFX build
         working-directory: docs
         run: docfx

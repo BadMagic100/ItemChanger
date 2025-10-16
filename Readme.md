@@ -1,7 +1,10 @@
-# ItemChanger
+# ItemChanger.Core
 
-This is a library intended to be used by mods for the purpose of changing or adding items, locations, transitions, starts, and other aspects of the world. It provides a game-agnostic implementation of the abstraction model used in Hollow Knight's [ItemChanger mod](https://github.com/homothetyhk/HollowKnight.ItemChanger) by homothety.
+ItemChanger.Core is a library to aid in the creation of randomizers and similar mods for Unity games by simplifying the
+process of adding items, locations, and other sandboxed world edits to a game file. It provides a refactored and
+game-agnostic implementation of
+[Hollow Knight's ItemChanger mod](https://github.com/homothetyhk/HollowKnight.ItemChanger) by homothety.
 
-Documentation for most essential classes can be found here: https://badmagic100.github.io/ItemChanger
+Documentation for most essential classes can be found here: https://badmagic100.github.io/ItemChanger.Core
 
-ItemChanger is licensed under LGPL.
+ItemChanger.Core is licensed under LGPL.

@@ -1,4 +1,5 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
+npx prettier '**.{yml,yaml,md}' '!docs/{api,_site}/**' --write --prose-wrap always --print-width 120 || echo "Skipping experimental prettier run"
 dotnet husky run --group pre-commit

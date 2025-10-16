@@ -2,32 +2,31 @@ name: Build
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v5
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 9.x
-    - name: Restore Dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build -c Release
-    - name: Test
-      run: dotnet test -c Release --verbosity normal
-    - name: Pack
-      run: dotnet pack ItemChanger.Core/ItemChanger.Core.csproj -o nuget/
-    - name: Get Version
-      id: version
-      run: |-
-        VERSION=$(dotnet build ItemChanger.Core/ItemChanger.Core.csproj -getProperty:PackageVersion)
-        echo Version is $VERSION
-        echo "version=$VERSION" >> $GITHUB_OUTPUT
+      - uses: actions/checkout@v5
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 9.x
+      - name: Restore Dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build -c Release
+      - name: Test
+        run: dotnet test -c Release --verbosity normal
+      - name: Pack
+        run: dotnet pack ItemChanger.Core/ItemChanger.Core.csproj -o nuget/
+      - name: Get Version
+        id: version
+        run: |-
+          VERSION=$(dotnet build ItemChanger.Core/ItemChanger.Core.csproj -getProperty:PackageVersion)
+          echo Version is $VERSION
+          echo "version=$VERSION" >> $GITHUB_OUTPUT

@@ -71,7 +71,7 @@ public class TestHost : ItemChangerHost, IDisposable
 
     public override IEnumerable<Module> BuildDefaultModules() => [];
 
-    public override void PrepareEvents(
+    protected override void PrepareEvents(
         LifecycleEvents.Invoker lifecycleInvoker,
         GameEvents.Invoker gameInvoker
     )
@@ -80,7 +80,7 @@ public class TestHost : ItemChangerHost, IDisposable
         GameEventsInvoker = gameInvoker;
     }
 
-    public override void UnhookEvents(
+    protected override void UnhookEvents(
         LifecycleEvents.Invoker lifecycleInvoker,
         GameEvents.Invoker gameInvoker
     )

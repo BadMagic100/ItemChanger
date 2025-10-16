@@ -1,2 +1,5 @@
 - name: Getting Started
 - href: ../index.md
+- href: glossary.md
+- href: hk_differences.md
+- href: host.md

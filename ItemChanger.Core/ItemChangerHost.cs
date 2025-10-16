@@ -85,7 +85,7 @@ public abstract class ItemChangerHost
     /// </summary>
     /// <param name="lifecycleInvoker">Invoker for ItemChanger lifecycle events such as starting a new game.</param>
     /// <param name="gameInvoker">Invoker for game events such as scene transitions.</param>
-    public abstract void PrepareEvents(
+    protected internal abstract void PrepareEvents(
         LifecycleEvents.Invoker lifecycleInvoker,
         GameEvents.Invoker gameInvoker
     );
@@ -95,7 +95,7 @@ public abstract class ItemChangerHost
     /// </summary>
     /// <param name="lifecycleInvoker">Invoker for ItemChanger lifecycle events such as starting a new game.</param>
     /// <param name="gameInvoker">Invoker for game events such as scene transitions.</param>
-    public abstract void UnhookEvents(
+    protected internal abstract void UnhookEvents(
         LifecycleEvents.Invoker lifecycleInvoker,
         GameEvents.Invoker gameInvoker
     );
