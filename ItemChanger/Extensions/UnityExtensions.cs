@@ -40,6 +40,41 @@ public static class UnityExtensions
     }
 
     /// <summary>
+    /// Spawns a new game object in the scene. The scene must be loaded.
+    /// </summary>
+    /// <returns>The spawned GameObject</returns>
+    public static GameObject NewGameObject(this Scene s)
+    {
+        GameObject go = new();
+        SceneManager.MoveGameObjectToScene(go, s);
+        return go;
+    }
+
+    /// <summary>
+    /// Spawns a game object in the scene from a prefab. The scene must be loaded.
+    /// </summary>
+    /// <param name="original">The prefab to be cloned</param>
+    /// <returns>The spawned GameObject</returns>
+    public static GameObject Instantiate(this Scene s, GameObject original)
+    {
+        GameObject go = Object.Instantiate(original);
+        SceneManager.MoveGameObjectToScene(go, s);
+        return go;
+    }
+
+    private static readonly List<GameObject> rootGameObjectPool = new(500);
+
+    private static List<GameObject> GetRoots(this Scene s)
+    {
+        if (s.rootCount > rootGameObjectPool.Count)
+        {
+            rootGameObjectPool.Capacity = s.rootCount;
+        }
+        s.GetRootGameObjects(rootGameObjectPool);
+        return rootGameObjectPool;
+    }
+
+    /// <summary>
     /// Finds a GameObject in the given scene by its full path.
     /// </summary>
     /// <param name="s"></param>
@@ -47,8 +82,7 @@ public static class UnityExtensions
     /// <returns></returns>
     public static GameObject? FindGameObject(this Scene s, string path)
     {
-        List<GameObject> rootObjects = new(500);
-        s.GetRootGameObjects(rootObjects);
+        List<GameObject> rootObjects = s.GetRoots();
         int index = path.IndexOf('/');
         GameObject? result = null;
         if (index >= 0)
@@ -73,8 +107,7 @@ public static class UnityExtensions
     /// </summary>
     public static GameObject? FindGameObjectByName(this Scene s, string name)
     {
-        List<GameObject> rootObjects = new(500);
-        s.GetRootGameObjects(rootObjects);
+        List<GameObject> rootObjects = s.GetRoots();
         GameObject? result = null;
         foreach (GameObject g in rootObjects)
         {
@@ -105,8 +138,7 @@ public static class UnityExtensions
     /// </summary>
     public static List<(string path, GameObject go)> Traverse(this Scene s)
     {
-        List<GameObject> rootObjects = new(500);
-        s.GetRootGameObjects(rootObjects);
+        List<GameObject> rootObjects = s.GetRoots();
         List<(string, GameObject)> results = new();
         foreach (GameObject g in rootObjects)
         {
