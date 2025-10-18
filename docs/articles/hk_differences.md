@@ -20,6 +20,7 @@ However, there are a few main themes of changes worth noting for developers fami
 - Rehomed much of the root namespace to more appropriate places
 - Removed ExistingContainerLocation and substantially changed the behavior of @"ItemChanger.Locations.ObjectLocation"
   and @"ItemChanger.Placements.MutablePlacement" to provide similar behavior in a more consistent way.
+- Costs are no longer records, and the contract for @"ItemChanger.Costs.Cost.Includes(ItemChanger.Costs.Cost)" has changed.
 - Support for a broader variety of games (before Silksong, I wanted to do this project for GRIME, a criminally
   underrated game - go play it)
   - Usage of 1d and 2d correction adjustments are replaced with @"UnityEngine.Vector3"

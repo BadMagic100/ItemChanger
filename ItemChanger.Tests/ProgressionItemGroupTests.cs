@@ -1,13 +1,12 @@
-using ItemChanger;
 using ItemChanger.Events.Args;
 using ItemChanger.Items;
 using ItemChanger.Locations;
 using ItemChanger.Modules;
 using ItemChanger.Placements;
 using ItemChanger.Tags;
-using ItemChangerTests.Fixtures;
+using ItemChanger.Tests.Fixtures;
 
-namespace ItemChangerTests;
+namespace ItemChanger.Tests;
 
 [Collection(RequiresHostCollection.NAME)]
 public class ProgressionItemGroupTests : IDisposable

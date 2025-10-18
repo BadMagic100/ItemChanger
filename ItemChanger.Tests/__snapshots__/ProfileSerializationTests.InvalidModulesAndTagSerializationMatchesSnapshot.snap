@@ -24,7 +24,7 @@
             },
             {
               "Cost": {
-                "$type": "ItemChangerTests.Fixtures.DollarCost, ItemChanger.Tests",
+                "$type": "ItemChanger.Tests.Fixtures.DollarCost, ItemChanger.Tests",
                 "Source": {
                   "$type": "ItemChanger.Serialization.BoxedInteger, ItemChanger.Core",
                   "Value": 50

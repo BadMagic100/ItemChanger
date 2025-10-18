@@ -1,4 +1,4 @@
-﻿namespace ItemChangerTests;
+﻿namespace ItemChanger.Tests;
 
 /// <summary>
 /// Collection definition to prevent tests requiring an <see cref="ItemChanger.ItemChangerHost"/> (which is likely most tests)

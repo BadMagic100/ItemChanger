@@ -1,13 +1,13 @@
 ﻿using ItemChanger.Costs;
 using ItemChanger.Serialization;
 
-namespace ItemChangerTests.Fixtures;
+namespace ItemChanger.Tests.Fixtures;
 
-internal record DollarCost : ThresholdIntCost
+internal class DollarCost : ConsumableIntCost
 {
-    public IInteger Source { get; set; } = new BoxedInteger(50);
+    public IWritableInteger Source { get; set; } = new BoxedInteger(50);
 
-    public override string GetCostText() => $"Have ${GetValueSource().Value}";
+    public override string GetCostText() => $"Pay ${GetValueSource().Value}";
 
-    protected override IInteger GetValueSource() => Source;
+    protected override IWritableInteger GetValueSource() => Source;
 }

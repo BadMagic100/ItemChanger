@@ -5,7 +5,7 @@ namespace ItemChanger.Costs;
 /// <summary>
 /// An integer cost where the source integer is not consumed when the cost is paid.
 /// </summary>
-public abstract record ThresholdIntCost : Cost
+public abstract class ThresholdIntCost : Cost
 {
     /// <summary>
     /// The amount needed to pay the cost
@@ -25,12 +25,15 @@ public abstract record ThresholdIntCost : Cost
 
     /// <inheritdoc/>
     public override void OnPay() { }
+
+    /// <inheritdoc/>
+    public override bool IsFree => Amount == 0;
 }
 
 /// <summary>
 /// An integer cost where the source integer is consumed when the cost is paid.
 /// </summary>
-public abstract record ConsumableIntCost : Cost
+public abstract class ConsumableIntCost : Cost
 {
     /// <summary>
     /// The amount needed to pay the cost
@@ -50,4 +53,7 @@ public abstract record ConsumableIntCost : Cost
 
     /// <inheritdoc/>
     public override void OnPay() => GetValueSource().Value -= Amount;
+
+    /// <inheritdoc/>
+    public override bool IsFree => Amount == 0;
 }

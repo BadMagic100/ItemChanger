@@ -1,10 +1,9 @@
-﻿using ItemChanger;
-using ItemChanger.Containers;
+﻿using ItemChanger.Containers;
 using ItemChanger.Events;
 using ItemChanger.Logging;
 using ItemChanger.Modules;
 
-namespace ItemChangerTests.Fixtures;
+namespace ItemChanger.Tests.Fixtures;
 
 internal class TestLogger : ILogger
 {

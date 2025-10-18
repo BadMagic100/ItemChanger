@@ -5,7 +5,7 @@ namespace ItemChanger.Costs;
 /// <summary>
 /// A boolean cost requiring the source boolean to be true and has no pay effect.
 /// </summary>
-public abstract record ThresholdBoolCost : Cost
+public abstract class ThresholdBoolCost : Cost
 {
     /// <summary>
     /// The value to use to evaluate whether the cost is payable
@@ -20,12 +20,15 @@ public abstract record ThresholdBoolCost : Cost
 
     /// <inheritdoc/>
     public override void OnPay() { }
+
+    /// <inheritdoc/>
+    public override bool IsFree => false;
 }
 
 /// <summary>
 /// A boolean cost requiring the source boolean to be true and sets the boolean to false when the cost is paid.
 /// </summary>
-public abstract record ConsumableBoolCost : Cost
+public abstract class ConsumableBoolCost : Cost
 {
     /// <summary>
     /// The value to use to evaluate and pay the cost
@@ -40,4 +43,7 @@ public abstract record ConsumableBoolCost : Cost
 
     /// <inheritdoc/>
     public override void OnPay() => GetValueSource().Value = false;
+
+    /// <inheritdoc/>
+    public override bool IsFree => false;
 }

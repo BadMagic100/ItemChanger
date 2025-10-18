@@ -7,7 +7,7 @@ namespace ItemChanger.Costs;
 /// <summary>
 /// Data type used generally for cost handling, including in shops and y/n dialogue prompts.
 /// </summary>
-public abstract record Cost
+public abstract class Cost
 {
     /// <summary>
     /// Whether the cost has been loaded
@@ -110,6 +110,12 @@ public abstract record Cost
     public virtual float DiscountRate { get; set; } = 1.0f;
 
     /// <summary>
+    /// Whether the cost is free, i.e. requires nothing from the player.
+    /// </summary>
+    [JsonIgnore]
+    public abstract bool IsFree { get; }
+
+    /// <summary>
     /// Method which provides the cost text used in y/n prompts.
     /// </summary>
     public abstract string GetCostText();
@@ -125,9 +131,10 @@ public abstract record Cost
     public virtual Cost GetBaseCost() => this;
 
     /// <summary>
-    /// Is the other cost a subset of this cost?
+    /// Is the other cost a subset of this cost? This is strict inclusion; that is, A includes B if and only if paying A implicitly pays B.
+    /// This generally means that costs which permanently consume a resource are never included by any other cost.
     /// </summary>
-    public virtual bool Includes(Cost c) => c is null || Equals(c);
+    public virtual bool Includes(Cost c) => c is null || c.IsFree;
 
     /// <summary>
     /// Does paying this cost have effects (particularly that could prevent paying other costs of the same type)?
@@ -135,7 +142,7 @@ public abstract record Cost
     public abstract bool HasPayEffects();
 
     /// <summary>
-    /// Combines two costs into a MultiCost. If either argument is null, returns the other argument.  If one or both costs is a MultiCost, flattens the result.
+    /// Combines two costs into a MultiCost. If either argument is null, returns the other argument. If one or both costs is a MultiCost, flattens the result.
     /// </summary>
     public static Cost operator +(Cost a, Cost b)
     {

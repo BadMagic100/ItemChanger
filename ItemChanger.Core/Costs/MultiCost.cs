@@ -11,7 +11,7 @@ namespace ItemChanger.Costs;
 /// Cost which is the concatenation of other costs. Can only be paid if all of its costs can be paid, and pays all its costs sequentially.
 /// </summary>
 [JsonObject]
-public sealed record MultiCost : Cost, IReadOnlyList<Cost>
+public sealed class MultiCost : Cost, IReadOnlyList<Cost>
 {
     [JsonProperty]
     private readonly Cost[] Costs;
@@ -34,6 +34,32 @@ public sealed record MultiCost : Cost, IReadOnlyList<Cost>
         return c.Yield();
     }
 
+    private static IEnumerable<Cost> ReduceRedundant(IEnumerable<Cost> costs)
+    {
+        List<Cost> reduced = [.. costs];
+        // remove redundant costs
+        for (int i = 0; i < reduced.Count - 1; i++)
+        {
+            for (int j = i + 1; j < reduced.Count; j++)
+            {
+                if (reduced[i].Includes(reduced[j]))
+                {
+                    // j is made redundant by i, so get rid of it
+                    reduced.RemoveAt(j);
+                    j--;
+                }
+                else if (reduced[j].Includes(reduced[i]))
+                {
+                    // i is made redundant by j, bit harder to remove correctly
+                    reduced.RemoveAt(i);
+                    i--;
+                    break;
+                }
+            }
+        }
+        return reduced;
+    }
+
     /// <summary>
     /// Constructs an empty MultiCost.
     /// </summary>
@@ -49,7 +75,7 @@ public sealed record MultiCost : Cost, IReadOnlyList<Cost>
     [JsonConstructor]
     public MultiCost(IEnumerable<Cost> Costs)
     {
-        this.Costs = Costs.Where(c => c != null).SelectMany(Flatten).ToArray();
+        this.Costs = [.. ReduceRedundant(Costs.Where(c => c != null).SelectMany(Flatten))];
     }
 
     /// <summary>
@@ -92,6 +118,9 @@ public sealed record MultiCost : Cost, IReadOnlyList<Cost>
     }
 
     /// <inheritdoc/>
+    public override bool IsFree => Costs.All(c => c.IsFree);
+
+    /// <inheritdoc/>
     public override string GetCostText()
     {
         return string.Join(", ", Costs.Select(c => c.GetCostText()).ToArray());
@@ -100,9 +129,15 @@ public sealed record MultiCost : Cost, IReadOnlyList<Cost>
     /// <inheritdoc/>
     public override bool Includes(Cost c)
     {
+        if (base.Includes(c))
+        {
+            return true;
+        }
+
         if (c is MultiCost mc)
         {
-            return mc.Costs.All(d => Includes(d));
+            // we include a multicost if we include all costs of the multicost
+            return mc.Costs.All(Includes);
         }
 
         return Costs.Any(d => d.Includes(c));

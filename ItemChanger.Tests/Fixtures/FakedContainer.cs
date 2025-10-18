@@ -1,6 +1,6 @@
 ﻿using ItemChanger.Containers;
 
-namespace ItemChangerTests.Fixtures;
+namespace ItemChanger.Tests.Fixtures;
 
 internal class FakedContainer : Container
 {

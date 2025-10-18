@@ -1,16 +1,15 @@
 ﻿using System.Text;
-using ItemChanger;
 using ItemChanger.Items;
 using ItemChanger.Locations;
 using ItemChanger.Modules;
 using ItemChanger.Placements;
 using ItemChanger.Serialization;
 using ItemChanger.Tags;
-using ItemChangerTests.Fixtures;
+using ItemChanger.Tests.Fixtures;
 using Newtonsoft.Json.Linq;
 using Snapshooter.Xunit3;
 
-namespace ItemChangerTests;
+namespace ItemChanger.Tests;
 
 [Collection(RequiresHostCollection.NAME)]
 public class ProfileSerializationTests : IDisposable
