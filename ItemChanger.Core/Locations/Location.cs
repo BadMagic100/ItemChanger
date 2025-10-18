@@ -112,8 +112,12 @@ public abstract class Location : TaggableObject
     /// </summary>
     public virtual Location Clone()
     {
+        if (Loaded)
+        {
+            throw new InvalidOperationException("Cannot clone a loaded Location");
+        }
         Location location = (Location)MemberwiseClone();
-        location.tags = location.tags?.Select(t => t.Clone())?.ToList() ?? [];
+        location.tags = location.tags.Select(t => t.Clone())?.ToList() ?? [];
         return location;
     }
 }

@@ -42,6 +42,10 @@ public abstract class ContainerLocation : Location
 
     public override Placement Wrap()
     {
-        return new MutablePlacement(Name) { Location = this };
+        return new MutablePlacement(Name)
+        {
+            Location = this,
+            Cost = ImplicitCostTag.GetDefaultCost(this),
+        };
     }
 }

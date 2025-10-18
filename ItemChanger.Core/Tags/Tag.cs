@@ -72,5 +72,12 @@ public abstract class Tag
     /// <summary>
     /// Creates a deep copy of the tag
     /// </summary>
-    public virtual Tag Clone() => (Tag)MemberwiseClone();
+    public virtual Tag Clone()
+    {
+        if (Loaded)
+        {
+            throw new InvalidOperationException("Cannot clone a loaded Tag");
+        }
+        return (Tag)MemberwiseClone();
+    }
 }

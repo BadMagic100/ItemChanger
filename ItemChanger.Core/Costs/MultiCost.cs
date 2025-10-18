@@ -34,32 +34,6 @@ public sealed class MultiCost : Cost, IReadOnlyList<Cost>
         return c.Yield();
     }
 
-    private static IEnumerable<Cost> ReduceRedundant(IEnumerable<Cost> costs)
-    {
-        List<Cost> reduced = [.. costs];
-        // remove redundant costs
-        for (int i = 0; i < reduced.Count - 1; i++)
-        {
-            for (int j = i + 1; j < reduced.Count; j++)
-            {
-                if (reduced[i].Includes(reduced[j]))
-                {
-                    // j is made redundant by i, so get rid of it
-                    reduced.RemoveAt(j);
-                    j--;
-                }
-                else if (reduced[j].Includes(reduced[i]))
-                {
-                    // i is made redundant by j, bit harder to remove correctly
-                    reduced.RemoveAt(i);
-                    i--;
-                    break;
-                }
-            }
-        }
-        return reduced;
-    }
-
     /// <summary>
     /// Constructs an empty MultiCost.
     /// </summary>
@@ -71,11 +45,11 @@ public sealed class MultiCost : Cost, IReadOnlyList<Cost>
     /// <summary>
     /// Constructs a MultiCost of the provided costs, flattening nested MultiCosts.
     /// </summary>
-    /// <param name="Costs">The costs to include</param>
+    /// <param name="costs">The costs to include</param>
     [JsonConstructor]
-    public MultiCost(IEnumerable<Cost> Costs)
+    public MultiCost(IEnumerable<Cost> costs)
     {
-        this.Costs = [.. ReduceRedundant(Costs.Where(c => c != null).SelectMany(Flatten))];
+        this.Costs = [.. costs.Where(c => c != null).SelectMany(Flatten)];
     }
 
     /// <summary>
@@ -127,23 +101,6 @@ public sealed class MultiCost : Cost, IReadOnlyList<Cost>
     }
 
     /// <inheritdoc/>
-    public override bool Includes(Cost c)
-    {
-        if (base.Includes(c))
-        {
-            return true;
-        }
-
-        if (c is MultiCost mc)
-        {
-            // we include a multicost if we include all costs of the multicost
-            return mc.Costs.All(Includes);
-        }
-
-        return Costs.Any(d => d.Includes(c));
-    }
-
-    /// <inheritdoc/>
     public override bool HasPayEffects()
     {
         return Costs.Any(d => d.HasPayEffects());
@@ -165,6 +122,12 @@ public sealed class MultiCost : Cost, IReadOnlyList<Cost>
         {
             c.UnloadOnce();
         }
+    }
+
+    /// <inheritdoc/>
+    public override Cost Clone()
+    {
+        return new MultiCost(Costs.Select(c => c.Clone()));
     }
 
     /// <inheritdoc/>

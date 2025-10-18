@@ -3,6 +3,7 @@ using ItemChanger.Containers;
 using ItemChanger.Enums;
 using ItemChanger.Items;
 using ItemChanger.Placements;
+using ItemChanger.Tags;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -46,6 +47,10 @@ public abstract class AutoLocation : Location
 
     public override Placement Wrap()
     {
-        return new AutoPlacement(Name) { Location = this };
+        return new AutoPlacement(Name)
+        {
+            Location = this,
+            Cost = ImplicitCostTag.GetDefaultCost(this),
+        };
     }
 }

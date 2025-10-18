@@ -1,6 +1,7 @@
 ﻿using System;
 using ItemChanger.Placements;
 using ItemChanger.Serialization;
+using ItemChanger.Tags;
 
 namespace ItemChanger.Locations;
 
@@ -39,12 +40,13 @@ public class DualLocation : Location
     /// <inheritdoc/>
     public override Placement Wrap()
     {
-        return new Placements.DualPlacement(Name)
+        return new DualPlacement(Name)
         {
             Test = Test,
             FalseLocation = FalseLocation,
             TrueLocation = TrueLocation,
             Tags = tags,
+            Cost = ImplicitCostTag.GetDefaultCost(this),
         };
     }
 }

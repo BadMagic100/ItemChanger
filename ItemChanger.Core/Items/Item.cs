@@ -266,6 +266,10 @@ public abstract class Item : TaggableObject
     /// </summary>
     public virtual Item Clone()
     {
+        if (Loaded)
+        {
+            throw new InvalidOperationException("Cannot clone a loaded Item");
+        }
         Item item = (Item)MemberwiseClone();
         item.uiDef = uiDef?.Clone();
         item.tags = tags?.Select(t => t.Clone())?.ToList() ?? [];

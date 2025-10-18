@@ -131,15 +131,21 @@ public abstract class Cost
     public virtual Cost GetBaseCost() => this;
 
     /// <summary>
-    /// Is the other cost a subset of this cost? This is strict inclusion; that is, A includes B if and only if paying A implicitly pays B.
-    /// This generally means that costs which permanently consume a resource are never included by any other cost.
-    /// </summary>
-    public virtual bool Includes(Cost c) => c is null || c.IsFree;
-
-    /// <summary>
     /// Does paying this cost have effects (particularly that could prevent paying other costs of the same type)?
     /// </summary>
     public abstract bool HasPayEffects();
+
+    /// <summary>
+    /// Creates a deep clone of the current cost
+    /// </summary>
+    public virtual Cost Clone()
+    {
+        if (Loaded)
+        {
+            throw new InvalidOperationException("Cannot clone a loaded Cost");
+        }
+        return (Cost)MemberwiseClone();
+    }
 
     /// <summary>
     /// Combines two costs into a MultiCost. If either argument is null, returns the other argument. If one or both costs is a MultiCost, flattens the result.

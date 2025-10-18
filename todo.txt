@@ -1,5 +1,11 @@
 Things to change
 
+* make costs clonable
+  * Check for tags/placements that hold costs that need to clone the cost
+  * check all existing implementations of Clone to ensure they call base or check loadedness in another way
+
+* Correctly implement clone for duallocation
+
 future improvements:
 * Nullability annotations
 * PolySharp configure included types explicitly per runtime

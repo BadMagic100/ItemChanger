@@ -1,6 +1,7 @@
 ﻿using ItemChanger.Enums;
 using ItemChanger.Items;
 using ItemChanger.Placements;
+using ItemChanger.Tags;
 
 namespace ItemChanger.Locations;
 
@@ -45,6 +46,10 @@ public class StartLocation : AutoLocation
 
     public override Placement Wrap()
     {
-        return new Placements.AutoPlacement(Name) { Location = this };
+        return new AutoPlacement(Name)
+        {
+            Location = this,
+            Cost = ImplicitCostTag.GetDefaultCost(this),
+        };
     }
 }
