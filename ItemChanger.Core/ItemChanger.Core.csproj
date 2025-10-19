@@ -8,6 +8,7 @@
     <Nullable>enable</Nullable>
     <DebugType>embedded</DebugType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/BadMagic100/ItemChanger.Core</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="PolySharp" Version="1.14.1">
