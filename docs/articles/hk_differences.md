@@ -18,6 +18,7 @@ However, there are a few main themes of changes worth noting for developers fami
   - Many properties are now init-only to protect them from unintended modification.
 - Simplified naming of the abstract classes
 - Rehomed much of the root namespace to more appropriate places
+- There is no longer a need to implement Clone, and cloning is done automatically when retrieving templates from Finder.
 - Removed ExistingContainerLocation and substantially changed the behavior of @"ItemChanger.Locations.ObjectLocation"
   and @"ItemChanger.Placements.MutablePlacement" to provide similar behavior in a more consistent way.
 - Costs are no longer records, and Cost.Includes has been removed. Inherent costs no longer exist and implicit costs are applied by default.

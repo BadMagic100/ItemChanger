@@ -1,5 +1,8 @@
 # About ItemChanger.Core
 
+[![NuGet Version](https://img.shields.io/nuget/v/ItemChanger.Core)](https://www.nuget.org/packages/ItemChanger.Core)
+[![GitHub License](https://img.shields.io/github/license/BadMagic100/ItemChanger.Core?logo=github)](https://github.com/BadMagic100/ItemChanger.Core)
+
 ItemChanger.Core is a library to aid in the creation of randomizers and similar mods for Unity games by simplifying the
 process of adding items, locations, and other sandboxed world edits to a game file. It provides a refactored and
 game-agnostic implementation of
