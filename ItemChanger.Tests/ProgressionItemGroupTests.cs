@@ -47,11 +47,10 @@ public class ProgressionItemGroupTests : IDisposable
     public void LeftBiasedSplitCloakProgressionTest(string[] input, string[] expectedOutput)
     {
         // item/placement setup
-        Item l = CreateTaggedItem("L");
-        Item r = CreateTaggedItem("R");
-        Item s = CreateTaggedItem("S");
-        Dictionary<string, Item> items = ((Item[])[l, r, s]).ToDictionary(i => i.Name);
-        Placement p = CreatePlacement(input.Select(i => items[i].Clone()));
+        DefineTaggedItem("L");
+        DefineTaggedItem("R");
+        DefineTaggedItem("S");
+        Placement p = CreatePlacement(input);
         profile.AddPlacement(p);
 
         profile.Modules.Add(
@@ -96,11 +95,10 @@ public class ProgressionItemGroupTests : IDisposable
     )
     {
         // item/placement setup
-        Item l = CreateTaggedItem("L");
-        Item r = CreateTaggedItem("R");
-        Item s = CreateTaggedItem("S");
-        Dictionary<string, Item> items = ((Item[])[l, r, s]).ToDictionary(i => i.Name);
-        Placement p1 = CreatePlacement(firstInput.Select(i => items[i].Clone()));
+        DefineTaggedItem("L");
+        DefineTaggedItem("R");
+        DefineTaggedItem("S");
+        Placement p1 = CreatePlacement(firstInput);
         profile.AddPlacement(p1);
 
         profile.Modules.Add(
@@ -129,7 +127,7 @@ public class ProgressionItemGroupTests : IDisposable
         GiveInfo gi = new();
         p1.GiveAll(gi);
         // define second placement
-        Placement p2 = CreatePlacement(secondInput.Select(i => items[i].Clone()));
+        Placement p2 = CreatePlacement(secondInput);
         profile.AddPlacement(p2);
         foreach (Item i in p2.Items)
         {
@@ -163,11 +161,10 @@ public class ProgressionItemGroupTests : IDisposable
     public void NeedolinProgressionTest(string[] input, string[] expectedOutput)
     {
         // item/placement setup
-        Item n = CreateTaggedItem("N");
-        Item c = CreateTaggedItem("C");
-        Item e = CreateTaggedItem("E");
-        Dictionary<string, Item> items = ((Item[])[n, c, e]).ToDictionary(i => i.Name);
-        Placement p = CreatePlacement(input.Select(i => items[i].Clone()));
+        DefineTaggedItem("N");
+        DefineTaggedItem("C");
+        DefineTaggedItem("E");
+        Placement p = CreatePlacement(input);
         profile.AddPlacement(p);
 
         profile.Modules.Add(
@@ -225,12 +222,11 @@ public class ProgressionItemGroupTests : IDisposable
     public void FourItemProgressionTest(string[] input, string[] expectedOutput)
     {
         // item/placement setup
-        Item m = CreateTaggedItem("M");
-        Item s = CreateTaggedItem("S");
-        Item h1 = CreateTaggedItem("H1");
-        Item h2 = CreateTaggedItem("H2");
-        Dictionary<string, Item> items = ((Item[])[m, s, h1, h2]).ToDictionary(i => i.Name);
-        Placement p = CreatePlacement(input.Select(i => items[i].Clone()));
+        DefineTaggedItem("M");
+        DefineTaggedItem("S");
+        DefineTaggedItem("H1");
+        DefineTaggedItem("H2");
+        Placement p = CreatePlacement(input);
         profile.AddPlacement(p);
 
         profile.Modules.Add(
@@ -439,10 +435,10 @@ public class ProgressionItemGroupTests : IDisposable
     public void UnexpectedMemberTest()
     {
         // item/placement setup
-        Item x = CreateTaggedItem("X");
-        Item y = CreateTaggedItem("Y");
-        Item z = CreateTaggedItem("Z");
-        Placement p = CreatePlacement([x, y, z]);
+        DefineTaggedItem("X");
+        DefineTaggedItem("Y");
+        DefineTaggedItem("Z");
+        Placement p = CreatePlacement(["X", "Y", "Z"]);
         profile.AddPlacement(p);
 
         profile.Modules.Add(
@@ -470,19 +466,18 @@ public class ProgressionItemGroupTests : IDisposable
         );
     }
 
-    private Item CreateTaggedItem(string name)
+    private void DefineTaggedItem(string name)
     {
         Item i = new NullItem { Name = name };
         i.AddTag(new ProgressiveItemGroupTag { GroupID = "test" });
         ItemChangerHost.Singleton.Finder.DefineItem(i, overwrite: true);
-        return i.Clone();
     }
 
-    private Placement CreatePlacement(IEnumerable<Item> items)
+    private Placement CreatePlacement(IEnumerable<string> itemNames)
     {
         return new AutoPlacement("Test placement")
         {
             Location = new EmptyLocation { Name = "Test location" },
-        }.Add(items);
+        }.Add(itemNames.Select(ItemChangerHost.Singleton.Finder.GetItem)!);
     }
 }

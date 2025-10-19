@@ -7,7 +7,7 @@ namespace ItemChanger;
 /// <summary>
 /// Abstractly represents the way an item is to be displayed in various parts of the user interface.
 /// </summary>
-public abstract class UIDef
+public abstract class UIDef : IFinderCloneable
 {
     /// <summary>
     /// Emits the UIDef to the game.
@@ -43,12 +43,4 @@ public abstract class UIDef
     /// Gets the sprite for the item
     /// </summary>
     public abstract Sprite GetSprite();
-
-    /// <summary>
-    /// Creates a deep copy of the UIDef
-    /// </summary>
-    public virtual UIDef Clone()
-    {
-        return (UIDef)MemberwiseClone();
-    }
 }

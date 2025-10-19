@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using ItemChanger.Enums;
 using ItemChanger.Logging;
 using ItemChanger.Placements;
@@ -11,7 +10,7 @@ namespace ItemChanger.Locations;
 /// The base class for all locations. Locations are used by placements to place items.
 /// <br/>Usually the location contains raw data and an implementation that may be customizable to an extent by the placement.
 /// </summary>
-public abstract class Location : TaggableObject
+public abstract class Location : TaggableObject, IFinderCloneable
 {
     /// <summary>
     /// Whether the location is loaded.
@@ -106,18 +105,4 @@ public abstract class Location : TaggableObject
     /// Creates a default placement for this location.
     /// </summary>
     public abstract Placement Wrap();
-
-    /// <summary>
-    /// Performs a deep clone of the location.
-    /// </summary>
-    public virtual Location Clone()
-    {
-        if (Loaded)
-        {
-            throw new InvalidOperationException("Cannot clone a loaded Location");
-        }
-        Location location = (Location)MemberwiseClone();
-        location.tags = location.tags.Select(t => t.Clone())?.ToList() ?? [];
-        return location;
-    }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using ItemChanger.Containers;
 using ItemChanger.Enums;
 using ItemChanger.Events.Args;
@@ -13,7 +12,7 @@ namespace ItemChanger.Items;
 /// <summary>
 /// The base class for all items.
 /// </summary>
-public abstract class Item : TaggableObject
+public abstract class Item : TaggableObject, IFinderCloneable
 {
     /// <summary>
     /// Whether the item is loaded
@@ -29,16 +28,10 @@ public abstract class Item : TaggableObject
     /// </summary>
     public required string Name { get; init; }
 
-    private UIDef? uiDef;
-
     /// <summary>
     /// The UIDef associated to an item. GetResolvedUIDef() is preferred in most cases, since it accounts for the hooks which may modify the item.
     /// </summary>
-    public UIDef? UIDef
-    {
-        get => uiDef;
-        init => uiDef = value;
-    }
+    public UIDef? UIDef { get; init; }
 
     /// <summary>
     /// Method allowing derived item classes to initialize and place hooks. Called once during loading.
@@ -259,21 +252,6 @@ public abstract class Item : TaggableObject
     public bool WasEverObtained()
     {
         return obtainState != ObtainState.Unobtained;
-    }
-
-    /// <summary>
-    /// Returns a deep clone of the current item.
-    /// </summary>
-    public virtual Item Clone()
-    {
-        if (Loaded)
-        {
-            throw new InvalidOperationException("Cannot clone a loaded Item");
-        }
-        Item item = (Item)MemberwiseClone();
-        item.uiDef = uiDef?.Clone();
-        item.tags = tags?.Select(t => t.Clone())?.ToList() ?? [];
-        return item;
     }
 
     /// <summary>

@@ -125,12 +125,6 @@ public sealed class MultiCost : Cost, IReadOnlyList<Cost>
     }
 
     /// <inheritdoc/>
-    public override Cost Clone()
-    {
-        return new MultiCost(Costs.Select(c => c.Clone()));
-    }
-
-    /// <inheritdoc/>
     public int IndexOf(Cost item) => Costs.IndexOf(item);
 
     /// <inheritdoc/>

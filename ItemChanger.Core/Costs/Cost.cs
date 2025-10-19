@@ -7,7 +7,7 @@ namespace ItemChanger.Costs;
 /// <summary>
 /// Data type used generally for cost handling, including in shops and y/n dialogue prompts.
 /// </summary>
-public abstract class Cost
+public abstract class Cost : IFinderCloneable
 {
     /// <summary>
     /// Whether the cost has been loaded
@@ -134,18 +134,6 @@ public abstract class Cost
     /// Does paying this cost have effects (particularly that could prevent paying other costs of the same type)?
     /// </summary>
     public abstract bool HasPayEffects();
-
-    /// <summary>
-    /// Creates a deep clone of the current cost
-    /// </summary>
-    public virtual Cost Clone()
-    {
-        if (Loaded)
-        {
-            throw new InvalidOperationException("Cannot clone a loaded Cost");
-        }
-        return (Cost)MemberwiseClone();
-    }
 
     /// <summary>
     /// Combines two costs into a MultiCost. If either argument is null, returns the other argument. If one or both costs is a MultiCost, flattens the result.

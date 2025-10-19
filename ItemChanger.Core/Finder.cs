@@ -55,7 +55,7 @@ public class Finder
         GetItemOverride?.Invoke(args);
         if (args.Current != null)
         {
-            return args.Current;
+            return args.Current.DeepClone();
         }
         else
         {
@@ -70,13 +70,13 @@ public class Finder
     {
         if (Items.TryGetValue(name, out Item? item))
         {
-            return item;
+            return item.DeepClone();
         }
         foreach (FinderSheet<Item> sheet in ItemSheets)
         {
             if (sheet.Enabled && sheet.TryGet(name, out Item? item1))
             {
-                return item1;
+                return item1.DeepClone();
             }
         }
         return null;
@@ -91,7 +91,7 @@ public class Finder
         GetLocationOverride?.Invoke(args);
         if (args.Current != null)
         {
-            return args.Current;
+            return args.Current.DeepClone();
         }
         else
         {
@@ -106,13 +106,13 @@ public class Finder
     {
         if (Locations.TryGetValue(name, out Location? location))
         {
-            return location;
+            return location.DeepClone();
         }
         foreach (FinderSheet<Location> sheet in LocationSheets)
         {
             if (sheet.Enabled && sheet.TryGet(name, out Location? location1))
             {
-                return location1;
+                return location1.DeepClone();
             }
         }
         return null;

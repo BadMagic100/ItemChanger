@@ -134,7 +134,7 @@ public class ProfileSerializationTests : IDisposable
     {
         Item i = new NullItem { Name = name };
         i.AddTag(new InteropTag { Message = "test" });
-        return i.Clone();
+        return i;
     }
 
     private Placement CreatePlacement(params Item[] items)

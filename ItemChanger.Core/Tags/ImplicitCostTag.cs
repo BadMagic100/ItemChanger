@@ -35,7 +35,7 @@ public class ImplicitCostTag : Tag
     /// <param name="loc">The location to inspect</param>
     public static Cost? GetDefaultCost(Location loc)
     {
-        List<Cost> costs = [.. loc.GetTags<ImplicitCostTag>().Select(c => c.Cost.Clone())];
+        List<Cost> costs = [.. loc.GetTags<ImplicitCostTag>().Select(c => c.Cost.DeepClone())];
         return costs.Count switch
         {
             0 => null,
