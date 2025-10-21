@@ -8,6 +8,7 @@
     <Nullable>enable</Nullable>
     <DebugType>embedded</DebugType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/BadMagic100/ItemChanger.Core</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
