@@ -10,6 +10,8 @@ public class DebugItem : Item
     /// <inheritdoc/>
     public override void GiveImmediate(GiveInfo info)
     {
-        LoggerProxy.LogInfo($"Given item {Name} with info: {{container={info.Container} fling={info.FlingType} msg={info.MessageType}}}");
+        LoggerProxy.LogInfo(
+            $"Given item {Name} with info: {{container={info.Container} fling={info.FlingType} msg={info.MessageType}}}"
+        );
     }
 }
