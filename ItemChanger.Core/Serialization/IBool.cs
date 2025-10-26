@@ -10,17 +10,12 @@ namespace ItemChanger.Serialization;
 /// <summary>
 /// Interface which can supply a bool value. Used frequently for serializable bool tests.
 /// </summary>
-public interface IBool
+public interface IBool : IFinderCloneable
 {
     /// <summary>
     /// The defined value
     /// </summary>
     bool Value { get; }
-
-    /// <summary>
-    /// Creates a deep copy of this bool
-    /// </summary>
-    IBool Clone();
 }
 
 /// <summary>
@@ -39,9 +34,6 @@ public class BoxedBool(bool value) : IWritableBool
 {
     /// <inheritdoc/>
     public bool Value { get; set; } = value;
-
-    /// <inheritdoc/>
-    public IBool Clone() => (IBool)MemberwiseClone();
 }
 
 /// <summary>
@@ -60,8 +52,6 @@ public class IntComparisonBool(
     {
         get { return ToCompare.Value.Compare(op, Amount); }
     }
-
-    public IBool Clone() => (IBool)MemberwiseClone();
 }
 
 /// <summary>
@@ -92,13 +82,6 @@ public class PlacementAllObtainedBool(string placementName, IBool? missingPlacem
             }
             return MissingPlacementTest?.Value ?? true;
         }
-    }
-
-    /// <inheritdoc/>
-    public IBool Clone()
-    {
-        PlacementAllObtainedBool obj = (PlacementAllObtainedBool)MemberwiseClone();
-        return obj;
     }
 }
 
@@ -148,14 +131,6 @@ public class PlacementVisitStateBool(
             return MissingPlacementTest?.Value ?? true;
         }
     }
-
-    /// <inheritdoc/>
-    public IBool Clone()
-    {
-        PlacementVisitStateBool obj = (PlacementVisitStateBool)MemberwiseClone();
-        obj.missingPlacementTest = obj.MissingPlacementTest?.Clone();
-        return obj;
-    }
 }
 
 public class Disjunction : IBool
@@ -178,12 +153,6 @@ public class Disjunction : IBool
     /// <inheritdoc/>
     [JsonIgnore]
     public bool Value => bools.Any(b => b.Value);
-
-    /// <inheritdoc/>
-    public IBool Clone()
-    {
-        return new Disjunction(bools.Select(b => b.Clone()));
-    }
 
     public Disjunction OrWith(IBool b) =>
         b is Disjunction d ? new([.. bools, .. d.bools]) : new([.. bools, b]);
@@ -210,12 +179,6 @@ public class Conjunction : IBool
     [JsonIgnore]
     public bool Value => bools.All(b => b.Value);
 
-    /// <inheritdoc/>
-    public IBool Clone()
-    {
-        return new Conjunction(bools.Select(b => b.Clone()));
-    }
-
     public Conjunction AndWith(IBool b) =>
         b is Conjunction c ? new([.. bools, .. c.bools]) : new([.. bools, b]);
 }
@@ -228,10 +191,4 @@ public class Negation(IBool @bool) : IBool
     /// <inheritdoc/>
     [JsonIgnore]
     public bool Value => !Bool.Value;
-
-    /// <inheritdoc/>
-    public IBool Clone()
-    {
-        return new Negation(Bool.Clone());
-    }
 }

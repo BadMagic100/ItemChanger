@@ -6,17 +6,12 @@ namespace ItemChanger.Serialization;
 /// <summary>
 /// Interface which allows representing functions to define sprites in a serializable manner.
 /// </summary>
-public interface ISprite
+public interface ISprite : IFinderCloneable
 {
     /// <summary>
     /// Gets the defined sprite.
     /// </summary>
     Sprite Value { get; }
-
-    /// <summary>
-    /// Creates a deep clone of this sprite.
-    /// </summary>
-    ISprite Clone();
 }
 
 /// <summary>
@@ -38,9 +33,6 @@ public abstract class EmbeddedSprite : ISprite
     /// <inheritdoc/>
     [JsonIgnore]
     public Sprite Value => SpriteManager.GetSprite(Key);
-
-    /// <inheritdoc/>
-    public ISprite Clone() => (ISprite)MemberwiseClone();
 }
 
 /// <summary>
@@ -67,9 +59,6 @@ public class EmptySprite : ISprite
             return cachedSprite;
         }
     }
-
-    /// <inheritdoc/>
-    public ISprite Clone() => new EmptySprite();
 }
 
 /// <summary>
@@ -84,7 +73,4 @@ public class DualSprite(IBool test, ISprite trueSprite, ISprite falseSprite) : I
     /// <inheritdoc/>
     [JsonIgnore]
     public Sprite Value => Test.Value ? TrueSprite.Value : FalseSprite.Value;
-
-    /// <inheritdoc/>
-    public ISprite Clone() => (ISprite)MemberwiseClone();
 }
