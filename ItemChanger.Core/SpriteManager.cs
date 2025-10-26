@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -19,7 +20,10 @@ public class SpriteManager(Assembly a, string resourcePrefix, SpriteManager.Info
 {
     private readonly Assembly _assembly = a;
     private readonly Dictionary<string, string> _resourcePaths = a.GetManifestResourceNames()
-        .Where(n => n.EndsWith(".png") && n.StartsWith(resourcePrefix))
+        .Where(n =>
+            n.EndsWith(".png", StringComparison.InvariantCulture)
+            && n.StartsWith(resourcePrefix, StringComparison.InvariantCulture)
+        )
         .ToDictionary(n =>
             n.Substring(resourcePrefix.Length, n.Length - resourcePrefix.Length - ".png".Length)
         );
@@ -28,32 +32,32 @@ public class SpriteManager(Assembly a, string resourcePrefix, SpriteManager.Info
 
     public class Info
     {
-        public Dictionary<string, float>? overridePPUs;
-        public Dictionary<string, FilterMode>? overrideFilterModes;
-        public FilterMode defaultFilterMode = FilterMode.Bilinear;
-        public float defaultPixelsPerUnit = 100f;
+        public IReadOnlyDictionary<string, float>? OverridePPUs { get; init; }
+        public IReadOnlyDictionary<string, FilterMode>? OverrideFilterModes { get; init; }
+        public FilterMode DefaultFilterMode { get; init; } = FilterMode.Bilinear;
+        public float DefaultPixelsPerUnit { get; init; } = 100f;
 
         public virtual float GetPixelsPerUnit(string name)
         {
-            if (overridePPUs != null && overridePPUs.TryGetValue(name, out float ppu))
+            if (OverridePPUs != null && OverridePPUs.TryGetValue(name, out float ppu))
             {
                 return ppu;
             }
 
-            return defaultPixelsPerUnit;
+            return DefaultPixelsPerUnit;
         }
 
         public virtual FilterMode GetFilterMode(string name)
         {
             if (
-                overrideFilterModes != null
-                && overrideFilterModes.TryGetValue(name, out FilterMode mode)
+                OverrideFilterModes != null
+                && OverrideFilterModes.TryGetValue(name, out FilterMode mode)
             )
             {
                 return mode;
             }
 
-            return defaultFilterMode;
+            return DefaultFilterMode;
         }
     }
 

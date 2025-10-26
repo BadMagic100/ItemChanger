@@ -16,40 +16,40 @@
       "Items": [
         {
           "$type": "ItemChanger.Items.NullItem, ItemChanger.Core",
+          "ObtainState": "Unobtained",
           "Tags": [
             {
               "$type": "ItemChanger.Tags.InteropTag, ItemChanger.Core",
-              "Properties": {},
-              "Message": "test"
+              "Message": "test",
+              "Properties": {}
             }
           ],
-          "ObtainState": "Unobtained",
           "Name": "A",
           "UIDef": null
         },
         {
           "$type": "ItemChanger.Items.NullItem, ItemChanger.Core",
+          "ObtainState": "Unobtained",
           "Tags": [
             {
               "$type": "ItemChanger.Tags.InteropTag, ItemChanger.Core",
-              "Properties": {},
-              "Message": "test"
+              "Message": "test",
+              "Properties": {}
             }
           ],
-          "ObtainState": "Unobtained",
           "Name": "B",
           "UIDef": null
         },
         {
           "$type": "ItemChanger.Items.NullItem, ItemChanger.Core",
+          "ObtainState": "Unobtained",
           "Tags": [
             {
               "$type": "ItemChanger.Tags.InteropTag, ItemChanger.Core",
-              "Properties": {},
-              "Message": "test"
+              "Message": "test",
+              "Properties": {}
             }
           ],
-          "ObtainState": "Unobtained",
           "Name": "C",
           "UIDef": null
         }

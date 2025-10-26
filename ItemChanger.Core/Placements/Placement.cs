@@ -244,7 +244,7 @@ public abstract class Placement(string name) : TaggableObject
 
     public virtual IEnumerable<Tag> GetPlacementAndLocationTags()
     {
-        return tags ?? Enumerable.Empty<Tag>();
+        return Tags ?? Enumerable.Empty<Tag>();
     }
 
     /// <summary>

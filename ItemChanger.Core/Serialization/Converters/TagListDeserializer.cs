@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ItemChanger.Serialization.Converters;
 
-internal class TagListDeserializer : JsonConverter<List<Tag>>
+internal sealed class TagListDeserializer : JsonConverter<List<Tag>>
 {
     public override bool CanRead => true;
     public override bool CanWrite => false;

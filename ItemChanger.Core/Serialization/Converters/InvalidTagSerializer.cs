@@ -7,7 +7,7 @@ namespace ItemChanger.Serialization.Converters;
 /// <summary>
 /// Converter which erases the InvalidTag during serialization and writes the JSON which it wraps.
 /// </summary>
-internal class InvalidTagSerializer : JsonConverter<InvalidTag>
+internal sealed class InvalidTagSerializer : JsonConverter<InvalidTag>
 {
     public override bool CanRead => false;
     public override bool CanWrite => true;

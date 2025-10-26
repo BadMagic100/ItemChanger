@@ -10,7 +10,7 @@ public class TaggableObject
 {
     [JsonProperty(nameof(Tags))]
     [JsonConverter(typeof(TagListDeserializer))]
-    protected List<Tag> tags = [];
+    private List<Tag> tags = [];
 
     [JsonIgnore]
     public IReadOnlyList<Tag> Tags

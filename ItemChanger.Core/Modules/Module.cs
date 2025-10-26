@@ -8,7 +8,9 @@ namespace ItemChanger.Modules;
 /// <summary>
 /// Base type for classes which perform self-contained changes that should be applied when a save is created or continued and disabled when the save is unloaded.
 /// </summary>
+#pragma warning disable CA1716 // Identifiers should not match keywords (sorry VB users, your suffering is self-inflicted as usual)
 public abstract class Module
+#pragma warning restore CA1716
 {
     /// <summary>
     /// Whether the module is loaded.

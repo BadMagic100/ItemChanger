@@ -21,7 +21,10 @@ public class SoundManager(Assembly a, string resourcePrefix)
 {
     private readonly Assembly _assembly = a;
     private readonly Dictionary<string, string> _resourcePaths = a.GetManifestResourceNames()
-        .Where(n => n.EndsWith(".wav") && n.StartsWith(resourcePrefix))
+        .Where(n =>
+            n.EndsWith(".wav", StringComparison.InvariantCulture)
+            && n.StartsWith(resourcePrefix, StringComparison.InvariantCulture)
+        )
         .ToDictionary(n =>
             n.Substring(resourcePrefix.Length, n.Length - resourcePrefix.Length - ".wav".Length)
         );
@@ -50,15 +53,15 @@ public class SoundManager(Assembly a, string resourcePrefix)
     /// <summary>
     /// Equivalent to the static PlayClipAtPoint, composed with GetAudioClip.
     /// </summary>
-    public void PlayClipAtPoint(string name, Vector3 pos)
+    public void PlayClipAtPoint(string name, Vector3 pos, AudioMixerGroup target)
     {
-        PlayClipAtPoint(GetAudioClip(name), pos);
+        PlayClipAtPoint(GetAudioClip(name), pos, target);
     }
 
     /// <summary>
     /// Creates an AudioSource component at the specified point with generally applicable settings, and plays the clip from that source.
     /// </summary>
-    public static void PlayClipAtPoint(AudioClip clip, Vector3 pos)
+    public static void PlayClipAtPoint(AudioClip clip, Vector3 pos, AudioMixerGroup target)
     {
         try
         {
@@ -70,7 +73,7 @@ public class SoundManager(Assembly a, string resourcePrefix)
             source.maxDistance = 50;
             source.rolloffMode = AudioRolloffMode.Linear;
             source.playOnAwake = false;
-            source.outputAudioMixerGroup = actors;
+            source.outputAudioMixerGroup = target;
             source.PlayOneShot(clip);
         }
         catch (Exception e)
@@ -177,11 +180,4 @@ public class SoundManager(Assembly a, string resourcePrefix)
 
         return clip;
     }
-
-    /// <summary>
-    /// The Actors AudioMixerGroup, from global resources. Used as the mixer for SoundManager.PlayClipAtPoint.
-    /// </summary>
-    public static readonly AudioMixerGroup actors = Resources
-        .FindObjectsOfTypeAll<AudioMixerGroup>()
-        .First(amg => amg.name.StartsWith("Actors"));
 }

@@ -16,11 +16,12 @@
       "Items": [
         {
           "$type": "ItemChanger.Items.NullItem, ItemChanger.Core",
+          "ObtainState": "Unobtained",
           "Tags": [
             {
               "$type": "ItemChanger.Tags.InteropTag, ItemChanger.Core",
-              "Properties": {},
-              "Message": "test"
+              "Message": "test",
+              "Properties": {}
             },
             {
               "Cost": {
@@ -36,7 +37,6 @@
               }
             }
           ],
-          "ObtainState": "Unobtained",
           "Name": "A",
           "UIDef": null
         }

@@ -53,6 +53,7 @@ public static class UnityExtensions
     /// <summary>
     /// Spawns a game object in the scene from a prefab. The scene must be loaded.
     /// </summary>
+    /// <param name="s">The scene to spawn the object in</param>
     /// <param name="original">The prefab to be cloned</param>
     /// <returns>The spawned GameObject</returns>
     public static GameObject Instantiate(this Scene s, GameObject original)
@@ -168,7 +169,7 @@ public static class UnityExtensions
     {
         Queue<Transform> q = new();
         q.Enqueue(g.transform);
-        while (q.Any())
+        while (q.Count > 0)
         {
             Transform t = q.Dequeue();
             foreach (Transform u in t)

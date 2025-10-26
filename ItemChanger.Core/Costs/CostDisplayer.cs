@@ -15,13 +15,13 @@ public abstract class CostDisplayer
     /// A sprite to use to display the cost visually, if contextually applicable. If no sprite
     /// is provided, existing sprites won't be replaced. Default is null.
     /// </summary>
-    public virtual ISprite? CustomCostSprite { get; set; } = null;
+    public virtual ISprite? CustomCostSprite { get; set; }
 
     /// <summary>
     /// Whether nested costs should be considered cumulative. A cost is cumulative if costs paid
     /// also count towards subsequent costs. For example, grub costs are cumulative, geo costs are not.
     /// </summary>
-    public virtual bool Cumulative { get; set; } = false;
+    public virtual bool Cumulative { get; set; }
 
     /// <summary>
     /// Gets the amount to display alongside the cost, e.g. in the shop item list.  For multicosts,

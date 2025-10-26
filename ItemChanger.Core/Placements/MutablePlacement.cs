@@ -98,7 +98,7 @@ public class MutablePlacement(string Name)
             .Aggregate(0u, (acc, next) => acc | next);
         if (placement.Cost != null)
         {
-            requestedCapabilities |= ContainerCapabilities.PAY_COSTS;
+            requestedCapabilities |= ContainerCapabilities.PayCosts;
         }
 
         HashSet<string> unsupported =

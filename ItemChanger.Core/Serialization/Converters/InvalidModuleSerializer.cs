@@ -7,7 +7,7 @@ namespace ItemChanger.Serialization.Converters;
 /// <summary>
 /// Converter which erases the InvalidModule during serialization and writes the JSON which it wraps.
 /// </summary>
-internal class InvalidModuleSerializer : JsonConverter<InvalidModule>
+internal sealed class InvalidModuleSerializer : JsonConverter<InvalidModule>
 {
     public override bool CanRead => false;
     public override bool CanWrite => true;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using ItemChanger.Enums;
@@ -82,7 +83,7 @@ public static class Extensions
         StringBuilder uiname = new StringBuilder(str);
         if (str.Length > 0)
         {
-            uiname[0] = char.ToUpper(uiname[0]);
+            uiname[0] = char.ToUpper(uiname[0], CultureInfo.InvariantCulture);
         }
 
         for (int i = 1; i < uiname.Length; i++)

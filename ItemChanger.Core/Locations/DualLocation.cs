@@ -45,7 +45,7 @@ public class DualLocation : Location
             Test = Test,
             FalseLocation = FalseLocation,
             TrueLocation = TrueLocation,
-            Tags = tags,
+            Tags = Tags,
             Cost = ImplicitCostTag.GetDefaultCost(this),
         };
     }

@@ -22,16 +22,16 @@ public class ObjectLocation : ContainerLocation, IReplaceableLocation
         ItemChangerHost.Singleton.GameEvents.RemoveSceneEdit(UnsafeSceneName, OnSceneLoaded);
     }
 
-    protected virtual void OnSceneLoaded(Scene to)
+    protected virtual void OnSceneLoaded(Scene scene)
     {
         base.GetContainer(out Container container, out ContainerInfo info);
         if (container.Name == OriginalContainerType && container.SupportsModifyInPlace)
         {
-            ModifyContainerInPlace(to, container, info);
+            ModifyContainerInPlace(scene, container, info);
         }
         else
         {
-            ReplaceWithContainer(to, container, info);
+            ReplaceWithContainer(scene, container, info);
         }
     }
 

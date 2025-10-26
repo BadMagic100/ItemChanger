@@ -30,7 +30,7 @@ public class InteropTag : Tag, IInteropTag
     /// <summary>
     /// A read/writable dictionary of properties
     /// </summary>
-    public Dictionary<string, object?> Properties = new();
+    public Dictionary<string, object?> Properties { get; init; } = new();
 
     /// <inheritdoc/>
     public bool TryGetProperty<T>(string propertyName, [NotNullWhen(true)] out T? value)

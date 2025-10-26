@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ItemChanger.Serialization.Converters;
 
-internal class ModuleCollectionConverter : JsonConverter<ModuleCollection>
+internal sealed class ModuleCollectionConverter : JsonConverter<ModuleCollection>
 {
     public override bool CanRead => true;
     public override bool CanWrite => true;

@@ -34,7 +34,7 @@ public class ItemChangerProfile : IDisposable
     [JsonProperty]
     public ModuleCollection Modules { get; private init; } = [];
 
-    private bool hooked = false;
+    private bool hooked;
     internal LoadState State { get; private set; } = LoadState.Unloaded;
 
     private ItemChangerHost host;
@@ -91,7 +91,7 @@ public class ItemChangerProfile : IDisposable
         Dispose();
     }
 
-    private bool disposed = false;
+    private bool disposed;
 
     /// <inheritdoc/>
     public void Dispose()

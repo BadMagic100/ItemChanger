@@ -35,7 +35,7 @@ public abstract class Location : TaggableObject, IFinderCloneable
     [JsonIgnore]
     public string UnsafeSceneName =>
         SceneName
-        ?? throw new NullReferenceException($"Scene name of location {Name} is not defined.");
+        ?? throw new InvalidOperationException($"Scene name of location {Name} is not defined.");
 
     /// <summary>
     /// The flingType of the location, specifying how geo and similar objects are to be flung.

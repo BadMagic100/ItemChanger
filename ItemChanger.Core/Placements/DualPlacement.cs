@@ -103,7 +103,7 @@ public class DualPlacement(string Name)
             .Aggregate(0u, (acc, next) => acc | next);
         if (Cost != null)
         {
-            requestedCapabilities |= ContainerCapabilities.PAY_COSTS;
+            requestedCapabilities |= ContainerCapabilities.PayCosts;
         }
 
         ContainerRegistry reg = ItemChangerHost.Singleton.ContainerRegistry;

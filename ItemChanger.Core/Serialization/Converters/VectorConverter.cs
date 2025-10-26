@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace ItemChanger.Serialization.Converters;
 
-internal class VectorConverter : JsonConverter
+internal sealed class VectorConverter : JsonConverter
 {
     public override bool CanConvert(Type objectType)
     {

@@ -55,9 +55,9 @@ public sealed class GameEvents
     /// </summary>
     public void AddSceneEdit(string sceneName, Action<Scene> action)
     {
-        if (sceneEdits.ContainsKey(sceneName))
+        if (sceneEdits.TryGetValue(sceneName, out List<Action<Scene>>? sceneSpecificEdits))
         {
-            sceneEdits[sceneName].Add(action);
+            sceneSpecificEdits.Add(action);
         }
         else
         {

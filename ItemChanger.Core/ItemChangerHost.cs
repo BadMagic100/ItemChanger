@@ -117,7 +117,7 @@ public abstract class ItemChangerHost
     /// This is intented as a temporary stopgap to allow test instances to clean up the singleton host.
     /// It will not be sufficient if any tests run in parallel.
     /// </summary>
-    protected void DetachSingleton()
+    protected static void DetachSingleton()
     {
         singleton = null;
     }

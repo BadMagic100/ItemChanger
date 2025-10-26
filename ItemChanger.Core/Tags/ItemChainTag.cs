@@ -37,8 +37,9 @@ public class ItemChainTag : Tag
 
     protected virtual Item GetItem(string name)
     {
-        return ItemChangerHost.Singleton.Finder.GetItem(name) ?? throw new NullReferenceException(
-                "Could not find item " + name
+        return ItemChangerHost.Singleton.Finder.GetItem(name) ?? throw new ArgumentException(
+                "Could not find item " + name,
+                nameof(name)
             );
     }
 

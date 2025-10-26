@@ -49,7 +49,7 @@ public class BoxedBool(bool value) : IWritableBool
 /// <br/>Supports IWritableBool in one direction only (direction depends on comparison operator).
 /// </summary>
 public class IntComparisonBool(
-    IInteger Int,
+    IInteger ToCompare,
     int Amount,
     ComparisonOperator op = ComparisonOperator.Ge
 ) : IBool
@@ -58,7 +58,7 @@ public class IntComparisonBool(
     [JsonIgnore]
     public bool Value
     {
-        get { return Int.Value.Compare(op, Amount); }
+        get { return ToCompare.Value.Compare(op, Amount); }
     }
 
     public IBool Clone() => (IBool)MemberwiseClone();

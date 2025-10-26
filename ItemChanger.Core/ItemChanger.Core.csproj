@@ -4,6 +4,9 @@
     <RootNamespace>ItemChanger</RootNamespace>
     <Version>0.2.1</Version>
     <LangVersion>preview</LangVersion>
+    <AnalysisMode>recommended</AnalysisMode>
+    <!-- CA1711 is just kinda bad (disallows *Flags as an enum name). Others are minor performance improvements not available on older .net versions. -->
+    <NoWarn>$(NoWarn);CA1510;CA1711;CA1847;CA1864</NoWarn>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Nullable>enable</Nullable>
