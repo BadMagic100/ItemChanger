@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/github/">
+    <File Path=".github/workflows/build-publish.yml" />
+    <File Path=".github/workflows/github-pages.yml" />
+  </Folder>
+  <Folder Name="/config/">
+    <File Path=".editorconfig" />
+	<File Path="global.json" />
+  </Folder>
+  <Project Path="ItemChanger.Core/ItemChanger.Core.csproj" />
+  <Project Path="ItemChanger.Tests/ItemChanger.Tests.csproj" />
+</Solution>
