@@ -3,13 +3,16 @@
     {
       "src": [
         {
-          "files": ["ItemChanger.Core/**.csproj"],
+          "files": ["ItemChanger.Core/bin/Release/**/ItemChanger.Core.dll"],
           "src": ".."
         }
       ],
       "dest": "api",
       "disableGitFeatures": false,
-      "disableDefaultFilter": false
+      "disableDefaultFilter": false,
+	  "properties": {
+        "TargetFramework": "net10.0"
+	  }
     }
   ],
   "build": {
