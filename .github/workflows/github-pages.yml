@@ -27,6 +27,8 @@ jobs:
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.x
 
       - name: Setup DocFX
         run: dotnet tool update -g docfx
