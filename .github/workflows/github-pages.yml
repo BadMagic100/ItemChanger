@@ -35,7 +35,7 @@ jobs:
 
       - name: DocFX build
         working-directory: docs
-        run: dnx docfx
+        run: dnx docfx --yes
         continue-on-error: false
 
       - name: Upload assets
