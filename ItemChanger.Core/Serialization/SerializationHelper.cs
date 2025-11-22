@@ -9,6 +9,9 @@ namespace ItemChanger.Serialization;
 /// </summary>
 public static class SerializationHelper
 {
+    /// <summary>
+    /// Shared serializer instance configured with all ItemChanger converters.
+    /// </summary>
     public static JsonSerializer Serializer
     {
         get

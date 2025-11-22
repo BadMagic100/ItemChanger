@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace ItemChanger.Events;
 
+/// <summary>
+/// Exposes host lifecycle event hooks such as entering/leaving the game or starting a new save.
+/// </summary>
 public sealed class LifecycleEvents
 {
     /// <summary>
@@ -108,6 +111,9 @@ public sealed class LifecycleEvents
     {
         private readonly LifecycleEvents events;
 
+        /// <summary>
+        /// Creates an invoker bound to the given lifecycle events instance.
+        /// </summary>
         internal Invoker(LifecycleEvents events)
         {
             this.events = events;
@@ -119,23 +125,44 @@ public sealed class LifecycleEvents
         internal void NotifyUnhooked() =>
             InvokeHelper.InvokeList(events.onItemChangerUnhookSubscribers);
 
+        /// <summary>
+        /// Signals that a new game is about to start.
+        /// </summary>
         public void NotifyBeforeStartNewGame() =>
             InvokeHelper.InvokeList(events.beforeStartNewGameSubscribers);
 
+        /// <summary>
+        /// Signals that a new game has just started.
+        /// </summary>
         public void NotifyAfterStartNewGame() =>
             InvokeHelper.InvokeList(events.afterStartNewGameSubscribers);
 
+        /// <summary>
+        /// Signals that an existing game is about to be continued.
+        /// </summary>
         public void NotifyBeforeContinueGame() =>
             InvokeHelper.InvokeList(events.beforeContinueGameSubscribers);
 
+        /// <summary>
+        /// Signals that an existing game has been continued.
+        /// </summary>
         public void NotifyAfterContinueGame() =>
             InvokeHelper.InvokeList(events.afterContinueGameSubscribers);
 
+        /// <summary>
+        /// Signals that the player is entering the game world.
+        /// </summary>
         public void NotifyOnEnterGame() => InvokeHelper.InvokeList(events.onEnterGameSubscribers);
 
+        /// <summary>
+        /// Signals that it is safe to give items.
+        /// </summary>
         public void NotifyOnSafeToGiveItems() =>
             InvokeHelper.InvokeList(events.onSafeToGiveItemsSubscribers);
 
+        /// <summary>
+        /// Signals that the player is leaving the game.
+        /// </summary>
         public void NotifyOnLeaveGame() => InvokeHelper.InvokeList(events.onLeaveGameSubscribers);
     }
 }

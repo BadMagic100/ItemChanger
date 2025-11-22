@@ -23,18 +23,27 @@ public class ItemChainTag : Tag
     /// </summary>
     public string? Successor { get; init; }
 
+    /// <summary>
+    /// Subscribes to the parent item's <see cref="Item.ModifyItem"/> event.
+    /// </summary>
     protected override void DoLoad(TaggableObject parent)
     {
         Item item = (Item)parent;
         item.ModifyItem += ModifyItem;
     }
 
+    /// <summary>
+    /// Removes the subscription to the parent item's <see cref="Item.ModifyItem"/> event.
+    /// </summary>
     protected override void DoUnload(TaggableObject parent)
     {
         Item item = (Item)parent;
         item.ModifyItem -= ModifyItem;
     }
 
+    /// <summary>
+    /// Retrieves an item by name from the global finder.
+    /// </summary>
     protected virtual Item GetItem(string name)
     {
         return ItemChangerHost.Singleton.Finder.GetItem(name) ?? throw new ArgumentException(

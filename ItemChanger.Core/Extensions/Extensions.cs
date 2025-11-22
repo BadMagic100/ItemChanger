@@ -30,6 +30,9 @@ public static class Extensions
         return defaultValue;
     }
 
+    /// <summary>
+    /// Truncates the string to the specified length, if necessary.
+    /// </summary>
     public static string CapLength(this string s, int length) =>
         s.Length > length ? s.Substring(0, length) : s;
 
@@ -41,6 +44,9 @@ public static class Extensions
         return items == null || !items.Any() || items.Any(i => i.WasEverObtained());
     }
 
+    /// <summary>
+    /// Compares two values using the provided operator.
+    /// </summary>
     public static bool Compare<T>(this T t, ComparisonOperator op, T u)
         where T : IComparable
     {
@@ -55,6 +61,9 @@ public static class Extensions
         };
     }
 
+    /// <summary>
+    /// Compares two integers using the provided operator.
+    /// </summary>
     public static bool Compare(this int a, ComparisonOperator op, int b)
     {
         return op switch
@@ -68,11 +77,17 @@ public static class Extensions
         };
     }
 
+    /// <summary>
+    /// Returns the zero-based index of <paramref name="t"/> within the sequence.
+    /// </summary>
     public static int IndexOf<T>(this IEnumerable<T> ts, T t)
     {
         return ts.TakeWhile(u => !EqualityComparer<T>.Default.Equals(u, t)).Count();
     }
 
+    /// <summary>
+    /// Returns a single-element enumerable containing <paramref name="t"/>.
+    /// </summary>
     public static IEnumerable<T> Yield<T>(this T t)
     {
         yield return t;

@@ -10,12 +10,18 @@ namespace ItemChanger.Extensions;
 /// </summary>
 public static class UnityExtensions
 {
+    /// <summary>
+    /// Finds the direct child of a GameObject by name.
+    /// </summary>
     public static GameObject? FindChild(this GameObject g, string name)
     {
         Transform t = g.transform.Find(name);
         return t != null ? t.gameObject : null;
     }
 
+    /// <summary>
+    /// Finds a nested child by traversing the provided sequence of names.
+    /// </summary>
     public static GameObject FindChild(this GameObject g, IEnumerable<string> steps)
     {
         Transform t = g.transform;
@@ -27,6 +33,9 @@ public static class UnityExtensions
         return t.gameObject;
     }
 
+    /// <summary>
+    /// Builds the full hierarchy path for the given transform.
+    /// </summary>
     public static string GetPathInHierarchy(this Transform t)
     {
         if (t.parent == null)

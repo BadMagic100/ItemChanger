@@ -7,5 +7,8 @@ namespace ItemChanger.Tags;
 /// </summary>
 public interface IPersistenceTag
 {
+    /// <summary>
+    /// Declares how the tagged item should persist across save boundaries.
+    /// </summary>
     Persistence Persistence { get; }
 }

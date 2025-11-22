@@ -22,6 +22,9 @@ public abstract class ContainerLocation : Location
     [JsonIgnore]
     public string? OriginalContainerType => GetTag<OriginalContainerTag>()?.ContainerType;
 
+    /// <summary>
+    /// Retrieves the container implementation that will be used for this location.
+    /// </summary>
     public void GetContainer(out Container container, out ContainerInfo info)
     {
         if (Placement is not IContainerPlacement cp)
@@ -33,6 +36,9 @@ public abstract class ContainerLocation : Location
         cp.GetContainer(this, out container, out info);
     }
 
+    /// <summary>
+    /// Determines whether the given container type can be used at this location.
+    /// </summary>
     public virtual bool Supports(string containerType)
     {
         return containerType
@@ -40,6 +46,9 @@ public abstract class ContainerLocation : Location
             || !ForceDefaultContainer;
     }
 
+    /// <summary>
+    /// Wraps this location into a <see cref="MutablePlacement"/>.
+    /// </summary>
     public override Placement Wrap()
     {
         return new MutablePlacement(Name)

@@ -19,21 +19,47 @@ public class DualPlacement(string Name)
         ISingleCostPlacement,
         IPrimaryLocationPlacement
 {
+    /// <summary>
+    /// Location used when <see cref="Test"/> evaluates to true.
+    /// </summary>
     public required Location TrueLocation { get; init; }
+
+    /// <summary>
+    /// Location used when <see cref="Test"/> evaluates to false.
+    /// </summary>
     public required Location FalseLocation { get; init; }
 
+    /// <summary>
+    /// Test determining which location is active.
+    /// </summary>
     public required IBool Test { get; init; }
 
     private bool cachedValue;
 
+    /// <summary>
+    /// Container type currently assigned to the placement.
+    /// </summary>
     public string ContainerType { get; private set; } = ContainerRegistry.UnknownContainerType;
+
+    /// <summary>
+    /// Gets the container type currently assigned to this placement.
+    /// </summary>
     public override string MainContainerType => ContainerType;
 
+    /// <summary>
+    /// Gets the location currently selected by <see cref="Test"/>.
+    /// </summary>
     [JsonIgnore]
     public Location Location => cachedValue ? TrueLocation : FalseLocation;
 
+    /// <summary>
+    /// Optional cost shared across both locations.
+    /// </summary>
     public Cost? Cost { get; set; }
 
+    /// <summary>
+    /// Loads whichever location the test currently selects and hooks state-change tracking.
+    /// </summary>
     protected override void DoLoad()
     {
         cachedValue = Test.Value;
@@ -45,6 +71,9 @@ public class DualPlacement(string Name)
         ItemChangerHost.Singleton.GameEvents.BeforeNextSceneLoaded += BeforeNextSceneLoaded;
     }
 
+    /// <summary>
+    /// Unloads the active location and unhooks state-change tracking.
+    /// </summary>
     protected override void DoUnload()
     {
         Location.UnloadOnce();
@@ -64,6 +93,9 @@ public class DualPlacement(string Name)
     }
 
     // MutablePlacement implementation of GetContainer
+    /// <summary>
+    /// The <see cref="MutablePlacement"/> implementation for selecting a container at runtime.
+    /// </summary>
     public void GetContainer(Location location, out Container container, out ContainerInfo info)
     {
         if (this.ContainerType == ContainerRegistry.UnknownContainerType)
@@ -123,6 +155,9 @@ public class DualPlacement(string Name)
         ContainerType = MutablePlacement.ChooseContainerType(this, cl, Items); // container type already failed the initial test
     }
 
+    /// <summary>
+    /// Combines placement tags with tags from both potential locations.
+    /// </summary>
     public override IEnumerable<Tag> GetPlacementAndLocationTags()
     {
         return base.GetPlacementAndLocationTags()

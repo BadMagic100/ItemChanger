@@ -66,8 +66,19 @@ public class EmptySprite : ISprite
 /// </summary>
 public class DualSprite(IBool test, ISprite trueSprite, ISprite falseSprite) : ISprite
 {
+    /// <summary>
+    /// Boolean controlling which sprite is used.
+    /// </summary>
     public IBool Test => test;
+
+    /// <summary>
+    /// Sprite returned when <see cref="Test"/> is true.
+    /// </summary>
     public ISprite TrueSprite => trueSprite;
+
+    /// <summary>
+    /// Sprite returned when <see cref="Test"/> is false.
+    /// </summary>
     public ISprite FalseSprite => falseSprite;
 
     /// <inheritdoc/>

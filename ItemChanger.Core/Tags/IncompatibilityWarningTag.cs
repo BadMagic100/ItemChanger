@@ -12,8 +12,14 @@ namespace ItemChanger.Tags;
 /// </summary>
 public class IncompatibilityWarningTag : Tag
 {
+    /// <summary>
+    /// Placement name that should not coexist with the tagged placement.
+    /// </summary>
     public required string IncompatiblePlacementName { get; init; }
 
+    /// <summary>
+    /// Emits a warning if the incompatible placement is present in the active profile.
+    /// </summary>
     protected override void DoLoad(TaggableObject parent)
     {
         string? parentPlacementName = parent switch

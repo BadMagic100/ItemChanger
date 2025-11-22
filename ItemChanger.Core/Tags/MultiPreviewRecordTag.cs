@@ -8,5 +8,8 @@ namespace ItemChanger.Tags;
 [PlacementTag]
 public class MultiPreviewRecordTag : Tag
 {
+    /// <summary>
+    /// Per-item preview text used when displaying multi-cost placements.
+    /// </summary>
     public string[] PreviewTexts { get; set; } = [];
 }

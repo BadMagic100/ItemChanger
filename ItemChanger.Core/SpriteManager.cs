@@ -30,13 +30,34 @@ public class SpriteManager(Assembly a, string resourcePrefix, SpriteManager.Info
     private readonly Dictionary<string, Sprite> _cachedSprites = new();
     private readonly Info _info = info;
 
+    /// <summary>
+    /// Describes default sprite settings and overrides for a <see cref="SpriteManager"/>.
+    /// </summary>
     public class Info
     {
+        /// <summary>
+        /// Optional per-sprite overrides for pixels per unit.
+        /// </summary>
         public IReadOnlyDictionary<string, float>? OverridePPUs { get; init; }
+
+        /// <summary>
+        /// Optional per-sprite overrides for filter mode.
+        /// </summary>
         public IReadOnlyDictionary<string, FilterMode>? OverrideFilterModes { get; init; }
+
+        /// <summary>
+        /// Default filter mode when no override is specified.
+        /// </summary>
         public FilterMode DefaultFilterMode { get; init; } = FilterMode.Bilinear;
+
+        /// <summary>
+        /// Default pixels-per-unit value when no override is specified.
+        /// </summary>
         public float DefaultPixelsPerUnit { get; init; } = 100f;
 
+        /// <summary>
+        /// Resolves the pixels-per-unit value for the given sprite name.
+        /// </summary>
         public virtual float GetPixelsPerUnit(string name)
         {
             if (OverridePPUs != null && OverridePPUs.TryGetValue(name, out float ppu))
@@ -47,6 +68,9 @@ public class SpriteManager(Assembly a, string resourcePrefix, SpriteManager.Info
             return DefaultPixelsPerUnit;
         }
 
+        /// <summary>
+        /// Resolves the filter mode for the given sprite name.
+        /// </summary>
         public virtual FilterMode GetFilterMode(string name)
         {
             if (
@@ -112,6 +136,9 @@ public class SpriteManager(Assembly a, string resourcePrefix, SpriteManager.Info
         return Load(data, filterMode, 100f);
     }
 
+    /// <summary>
+    /// Loads a sprite from the given PNG data, applying the provided filter mode and pixels-per-unit.
+    /// </summary>
     public static Sprite Load(byte[] data, FilterMode filterMode, float pixelsPerUnit)
     {
         Texture2D tex = new(1, 1, TextureFormat.RGBA32, false);

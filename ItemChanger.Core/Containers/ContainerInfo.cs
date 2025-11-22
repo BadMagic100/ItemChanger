@@ -13,9 +13,19 @@ namespace ItemChanger.Containers;
 /// </summary>
 public class ContainerInfo
 {
+    /// <summary>
+    /// Container type used to fulfill the instructions.
+    /// </summary>
     public required string ContainerType { get; init; }
 
+    /// <summary>
+    /// Details about how items should be dispensed.
+    /// </summary>
     public required ContainerGiveInfo GiveInfo { get; init; }
+
+    /// <summary>
+    /// Optional cost enforcement configuration.
+    /// </summary>
     public ContainerCostInfo? CostInfo { get; init; }
 
     /// <summary>
@@ -77,6 +87,9 @@ public class ContainerInfo
         }
     }
 
+    /// <summary>
+    /// Creates a container descriptor using explicit give and cost information.
+    /// </summary>
     public ContainerInfo(
         string containerType,
         ContainerGiveInfo giveInfo,

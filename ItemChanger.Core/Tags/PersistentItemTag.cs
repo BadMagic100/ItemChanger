@@ -9,5 +9,8 @@ namespace ItemChanger.Tags;
 [ItemTag]
 public class PersistentItemTag : Tag, IPersistenceTag
 {
+    /// <summary>
+    /// Persistence level to apply to the tagged item.
+    /// </summary>
     public required Persistence Persistence { get; set; }
 }

@@ -6,12 +6,18 @@ using Newtonsoft.Json;
 
 namespace ItemChanger;
 
+/// <summary>
+/// Base class that provides tag storage and lifecycle management for derived objects.
+/// </summary>
 public class TaggableObject
 {
     [JsonProperty(nameof(Tags))]
     [JsonConverter(typeof(TagListDeserializer))]
     private List<Tag> tags = [];
 
+    /// <summary>
+    /// Snapshot of tags currently attached to this object.
+    /// </summary>
     [JsonIgnore]
     public IReadOnlyList<Tag> Tags
     {
@@ -21,6 +27,9 @@ public class TaggableObject
 
     private bool _tagsLoaded;
 
+    /// <summary>
+    /// Loads all tags, calling <see cref="Tag.LoadOnce(TaggableObject)"/> when the tag list is initialized.
+    /// </summary>
     protected void LoadTags()
     {
         _tagsLoaded = true;
@@ -35,6 +44,9 @@ public class TaggableObject
         }
     }
 
+    /// <summary>
+    /// Unloads all tags, calling <see cref="Tag.UnloadOnce(TaggableObject)"/> when the tag list is initialized.
+    /// </summary>
     protected void UnloadTags()
     {
         _tagsLoaded = false;
@@ -49,6 +61,9 @@ public class TaggableObject
         }
     }
 
+    /// <summary>
+    /// Adds a new tag instance of type <typeparamref name="T"/>.
+    /// </summary>
     public T AddTag<T>()
         where T : Tag, new()
     {
@@ -63,6 +78,9 @@ public class TaggableObject
         return t;
     }
 
+    /// <summary>
+    /// Adds the provided tag instance to the object.
+    /// </summary>
     public void AddTag(Tag t)
     {
         tags ??= [];
@@ -74,6 +92,9 @@ public class TaggableObject
         tags.Add(t);
     }
 
+    /// <summary>
+    /// Adds a collection of tags.
+    /// </summary>
     public void AddTags(IEnumerable<Tag> ts)
     {
         tags ??= [];
@@ -88,11 +109,17 @@ public class TaggableObject
         tags.AddRange(ts);
     }
 
+    /// <summary>
+    /// Retrieves the first tag of type <typeparamref name="T"/>, or null if none exist.
+    /// </summary>
     public T? GetTag<T>()
     {
         return tags == null ? default : tags.OfType<T>().FirstOrDefault();
     }
 
+    /// <summary>
+    /// Attempts to retrieve a tag of type <typeparamref name="T"/>.
+    /// </summary>
     public bool GetTag<T>(out T t)
         where T : class
     {
@@ -100,11 +127,17 @@ public class TaggableObject
         return t != null;
     }
 
+    /// <summary>
+    /// Enumerates all tags of type <typeparamref name="T"/>.
+    /// </summary>
     public IEnumerable<T> GetTags<T>()
     {
         return tags?.OfType<T>() ?? [];
     }
 
+    /// <summary>
+    /// Retrieves or creates a tag of type <typeparamref name="T"/>.
+    /// </summary>
     public T GetOrAddTag<T>()
         where T : Tag, new()
     {
@@ -112,12 +145,18 @@ public class TaggableObject
         return tags.OfType<T>().FirstOrDefault() ?? AddTag<T>();
     }
 
+    /// <summary>
+    /// Checks whether a tag of type <typeparamref name="T"/> exists.
+    /// </summary>
     public bool HasTag<T>()
         where T : Tag
     {
         return tags?.OfType<T>()?.Any() ?? false;
     }
 
+    /// <summary>
+    /// Removes all tags of type <typeparamref name="T"/>.
+    /// </summary>
     public void RemoveTags<T>()
     {
         if (_tagsLoaded && tags != null)
