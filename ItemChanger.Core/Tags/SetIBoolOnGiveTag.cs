@@ -9,7 +9,7 @@ namespace ItemChanger.Tags;
 
 /// <summary>
 /// Tag which sets an IWriteableBool when its parent item is given.
-/// <br/>If attached to a location or placement, sets the bool when VisitState.ObtainedAnyItem is first set on the placement.
+/// <br/>If attached to a location or placement, sets the bool when VisitStates.ObtainedAnyItem is first set on the placement.
 /// </summary>
 public class SetIBoolOnGiveTag : Tag
 {
@@ -56,8 +56,8 @@ public class SetIBoolOnGiveTag : Tag
     private void OnVisitStateChanged(VisitStateChangedEventArgs obj)
     {
         if (
-            obj.NewFlags.HasFlag(VisitState.ObtainedAnyItem)
-            && !obj.Orig.HasFlag(VisitState.ObtainedAnyItem)
+            obj.NewFlags.HasFlag(VisitStates.ObtainedAnyItem)
+            && !obj.Orig.HasFlag(VisitStates.ObtainedAnyItem)
         )
         {
             Bool.Value = Value;

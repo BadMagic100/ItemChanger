@@ -91,19 +91,23 @@ public class PlacementAllObtainedBool(string placementName, IBool? missingPlacem
 /// </summary>
 public class PlacementVisitStateBool(
     string placementName,
-    VisitState requiredFlags,
+    VisitStates requiredFlags,
     IBool? missingPlacementTest
 ) : IBool
 {
     public string PlacementName => placementName;
-    public VisitState RequiredFlags => requiredFlags;
+
+    /// <summary>
+    /// Flags that must be present on the placement's visit state.
+    /// </summary>
+    public VisitStates RequiredFlags => requiredFlags;
 
     /// <summary>
     /// If true, requires any flag in requiredFlags to be contained in the VisitState. If false, requires all flags in requiredFlags to be contained in VisitState. Defaults to false.
     /// </summary>
     public bool RequireAny { get; }
 
-    private IBool? missingPlacementTest = missingPlacementTest;
+    private readonly IBool? missingPlacementTest = missingPlacementTest;
 
     /// <summary>
     /// An optional test to use if the placement is not found.

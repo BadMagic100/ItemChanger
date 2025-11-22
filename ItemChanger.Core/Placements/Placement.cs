@@ -39,7 +39,7 @@ public abstract class Placement(string name) : TaggableObject
     /// An enumeration of visit flags accrued by the placement. Which flags may be set depends on the placement type and other factors.
     /// </summary>
     [JsonProperty]
-    public VisitState Visited { get; private set; }
+    public VisitStates Visited { get; private set; }
 
     #region Give
 
@@ -73,13 +73,13 @@ public abstract class Placement(string name) : TaggableObject
 
     public virtual void OnObtainedItem(Item item)
     {
-        AddVisitFlag(VisitState.ObtainedAnyItem);
+        AddVisitFlag(VisitStates.ObtainedAnyItem);
     }
 
     public virtual void OnPreview(string previewText)
     {
         GetOrAddTag<PreviewRecordTag>().PreviewText = previewText;
-        AddVisitFlag(VisitState.Previewed);
+        AddVisitFlag(VisitStates.Previewed);
     }
 
     /// <summary>
@@ -98,7 +98,7 @@ public abstract class Placement(string name) : TaggableObject
         IEnumerable<string> itemNames = Items
             .Where(i => !i.IsObtained())
             .Select(i => i.GetPreviewName(this) ?? "Unknown Item");
-        string itemText = string.Join(", ", [.. itemNames]);
+        string itemText = string.Join(", ", itemNames);
         if (itemText.Length > maxLength)
         {
             itemText = itemText[..(maxLength > 3 ? maxLength - 3 : 0)] + "...";
@@ -122,7 +122,7 @@ public abstract class Placement(string name) : TaggableObject
     /// <summary>
     /// Sets the visit state of the placement to the union of its current flags and the parameter flags.
     /// </summary>
-    public void AddVisitFlag(VisitState flag)
+    public void AddVisitFlag(VisitStates flag)
     {
         InvokeVisitStateChanged(flag);
         Visited |= flag;
@@ -131,15 +131,15 @@ public abstract class Placement(string name) : TaggableObject
     /// <summary>
     /// Returns true if the flags have nonempty intersection with the placement's visit state.
     /// </summary>
-    public bool CheckVisitedAny(VisitState flags)
+    public bool CheckVisitedAny(VisitStates flags)
     {
-        return (Visited & flags) != VisitState.None;
+        return (Visited & flags) != VisitStates.None;
     }
 
     /// <summary>
     /// Returns true if the flags are a subset of the placement's visit state.
     /// </summary>
-    public bool CheckVisitedAll(VisitState flags)
+    public bool CheckVisitedAll(VisitStates flags)
     {
         return (Visited & flags) == flags;
     }
@@ -220,7 +220,7 @@ public abstract class Placement(string name) : TaggableObject
     /// </summary>
     public event Action<VisitStateChangedEventArgs>? OnVisitStateChanged;
 
-    private void InvokeVisitStateChanged(VisitState newFlags)
+    private void InvokeVisitStateChanged(VisitStates newFlags)
     {
         VisitStateChangedEventArgs args = new(this, newFlags);
         try
