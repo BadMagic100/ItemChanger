@@ -38,11 +38,12 @@ internal sealed class ModuleCollectionConverter : JsonConverter<ModuleCollection
                 }
                 catch (Exception e)
                 {
-                    ModuleHandlingFlags flags =
+                    ModuleHandlingOptions flags =
                         ((JObject)jModule)
                             .GetValue(nameof(Module.ModuleHandlingProperties))
-                            ?.ToObject<ModuleHandlingFlags>(serializer) ?? ModuleHandlingFlags.None;
-                    if (flags.HasFlag(ModuleHandlingFlags.AllowDeserializationFailure))
+                            ?.ToObject<ModuleHandlingOptions>(serializer)
+                        ?? ModuleHandlingOptions.None;
+                    if (flags.HasFlag(ModuleHandlingOptions.AllowDeserializationFailure))
                     {
                         t = new InvalidModule { JSON = jModule, DeserializationError = e };
                     }

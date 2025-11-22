@@ -38,11 +38,11 @@ internal sealed class TagListDeserializer : JsonConverter<List<Tag>>
                 }
                 catch (Exception e)
                 {
-                    TagHandlingFlags flags =
+                    TagHandlingOptions flags =
                         ((JObject)jTag)
                             .GetValue(nameof(Tag.TagHandlingProperties))
-                            ?.ToObject<TagHandlingFlags>(serializer) ?? TagHandlingFlags.None;
-                    if (flags.HasFlag(TagHandlingFlags.AllowDeserializationFailure))
+                            ?.ToObject<TagHandlingOptions>(serializer) ?? TagHandlingOptions.None;
+                    if (flags.HasFlag(TagHandlingOptions.AllowDeserializationFailure))
                     {
                         t = new InvalidTag { JSON = jTag, DeserializationError = e };
                     }

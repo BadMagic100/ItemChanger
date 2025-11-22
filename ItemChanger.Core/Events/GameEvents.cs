@@ -2,12 +2,23 @@
 using System.Collections.Generic;
 using ItemChanger.Enums;
 using ItemChanger.Events.Args;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 namespace ItemChanger.Events;
 
 public sealed class GameEvents
 {
+    private readonly UnityAction<Scene, LoadSceneMode> sceneLoadedHandler;
+
+    /// <summary>
+    /// Initializes a new instance with its scene handlers configured.
+    /// </summary>
+    public GameEvents()
+    {
+        sceneLoadedHandler = (scene, _) => InvokeSceneLoadedEvent(scene);
+    }
+
     /// <summary>
     /// Called after persistent items reset.
     /// </summary>
@@ -84,17 +95,17 @@ public sealed class GameEvents
 
     private readonly Dictionary<string, List<Action<Scene>>> sceneEdits = [];
 
-    internal void Hook()
+    internal static void Hook(GameEvents events)
     {
-        SceneManager.sceneLoaded += InvokeSceneLoadedEvent;
+        SceneManager.sceneLoaded += events.sceneLoadedHandler;
     }
 
-    internal void Unhook()
+    internal static void Unhook(GameEvents events)
     {
-        SceneManager.sceneLoaded -= InvokeSceneLoadedEvent;
+        SceneManager.sceneLoaded -= events.sceneLoadedHandler;
     }
 
-    private void InvokeSceneLoadedEvent(Scene to, LoadSceneMode _)
+    private void InvokeSceneLoadedEvent(Scene to)
     {
         SceneLoadedEventArgs args = new SceneLoadedEventArgs(to);
         InvokeHelper.InvokeList(args, onNextSceneLoadedSubscribers);

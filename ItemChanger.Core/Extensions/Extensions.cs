@@ -86,18 +86,19 @@ public static class Extensions
             uiname[0] = char.ToUpper(uiname[0], CultureInfo.InvariantCulture);
         }
 
-        for (int i = 1; i < uiname.Length; i++)
+        int i = 1;
+        while (i < uiname.Length)
         {
-            if (char.IsUpper(uiname[i]))
+            if (
+                char.IsUpper(uiname[i])
+                && (
+                    char.IsLower(uiname[i - 1])
+                    || (i + 1 < uiname.Length && char.IsLower(uiname[i + 1]))
+                )
+            )
             {
-                if (char.IsLower(uiname[i - 1]))
-                {
-                    uiname.Insert(i++, " ");
-                }
-                else if (i + 1 < uiname.Length && char.IsLower(uiname[i + 1]))
-                {
-                    uiname.Insert(i++, " ");
-                }
+                uiname.Insert(i, " ");
+                i++;
             }
 
             if (
@@ -107,7 +108,10 @@ public static class Extensions
             )
             {
                 uiname.Insert(i, " ");
+                i++;
             }
+
+            i++;
         }
 
         return uiname.ToString();

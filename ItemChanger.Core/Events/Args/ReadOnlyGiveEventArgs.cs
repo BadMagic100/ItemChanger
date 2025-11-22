@@ -20,7 +20,11 @@ public class ReadOnlyGiveEventArgs(
     public string? Container => info.Container;
     public FlingType Fling => info.FlingType;
     public Transform? Transform => info.Transform;
-    public MessageType MessageType => info.MessageType;
+
+    /// <summary>UI message types permitted for showing the item.</summary>
+    public MessageTypes MessageType => info.MessageType;
+
+    /// <summary>Callback invoked after the UI message completes.</summary>
     public Action<Item>? Callback => info.Callback;
     public ObtainState OriginalState => state;
 }

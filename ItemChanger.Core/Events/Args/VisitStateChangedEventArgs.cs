@@ -4,10 +4,25 @@ using ItemChanger.Placements;
 
 namespace ItemChanger.Events.Args;
 
-public class VisitStateChangedEventArgs(Placement placement, VisitState newFlags) : EventArgs
+/// <summary>
+/// Event arguments describing changes to a placement's visit-state flags.
+/// </summary>
+public class VisitStateChangedEventArgs(Placement placement, VisitStates newFlags) : EventArgs
 {
     public Placement Placement { get; } = placement;
-    public VisitState Orig { get; } = placement.Visited;
-    public VisitState NewFlags { get; } = newFlags;
+
+    /// <summary>
+    /// Flags that were set before the change.
+    /// </summary>
+    public VisitStates Orig { get; } = placement.Visited;
+
+    /// <summary>
+    /// Flags being applied in this change.
+    /// </summary>
+    public VisitStates NewFlags { get; } = newFlags;
+
+    /// <summary>
+    /// Returns true when the new flags are already part of the original state.
+    /// </summary>
     public bool NoChange => (NewFlags & Orig) == NewFlags;
 }

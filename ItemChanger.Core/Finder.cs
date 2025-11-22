@@ -5,6 +5,7 @@ using System.Linq;
 using ItemChanger.Events.Args;
 using ItemChanger.Items;
 using ItemChanger.Locations;
+using ItemChanger.Logging;
 
 namespace ItemChanger;
 
@@ -52,7 +53,14 @@ public class Finder
     public Item? GetItem(string name)
     {
         GetItemEventArgs args = new(name);
-        GetItemOverride?.Invoke(args);
+        try
+        {
+            GetItemOverride?.Invoke(args);
+        }
+        catch (Exception e)
+        {
+            LoggerProxy.LogError($"Error running GetItemOverride for {name}:\n{e}");
+        }
         if (args.Current != null)
         {
             return args.Current.DeepClone();
@@ -88,7 +96,14 @@ public class Finder
     public Location? GetLocation(string name)
     {
         GetLocationEventArgs args = new(name);
-        GetLocationOverride?.Invoke(args);
+        try
+        {
+            GetLocationOverride?.Invoke(args);
+        }
+        catch (Exception e)
+        {
+            LoggerProxy.LogError($"Error running GetLocationOverride for {name}:\n{e}");
+        }
         if (args.Current != null)
         {
             return args.Current.DeepClone();
