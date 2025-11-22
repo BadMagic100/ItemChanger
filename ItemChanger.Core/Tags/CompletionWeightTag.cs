@@ -5,5 +5,8 @@
 /// </summary>
 public class CompletionWeightTag : Tag
 {
+    /// <summary>
+    /// Relative weight contribution for the tagged object when computing completion.
+    /// </summary>
     public required float Weight { get; init; }
 }

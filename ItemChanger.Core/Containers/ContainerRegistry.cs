@@ -4,8 +4,14 @@ using System.Collections.Generic;
 
 namespace ItemChanger.Containers;
 
+/// <summary>
+/// Central lookup for all container definitions and defaults.
+/// </summary>
 public class ContainerRegistry : IEnumerable<Container>
 {
+    /// <summary>
+    /// Default container type name when no specific type is available.
+    /// </summary>
     public const string UnknownContainerType = "Unknown";
 
     private readonly Dictionary<string, Container> containers = [];

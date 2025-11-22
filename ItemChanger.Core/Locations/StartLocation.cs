@@ -12,11 +12,13 @@ public class StartLocation : AutoLocation
 {
     public MessageType MessageType { get; init; }
 
+    /// <inheritdoc/>
     protected override void DoLoad()
     {
         ItemChangerHost.Singleton.LifecycleEvents.OnSafeToGiveItems += OnSafeToGiveItems;
     }
 
+    /// <inheritdoc/>
     protected override void DoUnload()
     {
         ItemChangerHost.Singleton.LifecycleEvents.OnSafeToGiveItems -= OnSafeToGiveItems;
@@ -44,6 +46,7 @@ public class StartLocation : AutoLocation
         }
     }
 
+    /// <inheritdoc/>
     public override Placement Wrap()
     {
         return new AutoPlacement(Name)

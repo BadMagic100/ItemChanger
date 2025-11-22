@@ -18,6 +18,9 @@ public abstract class Module
     [JsonIgnore]
     public bool Loaded { get; private set; }
 
+    /// <summary>
+    /// Human-readable name for the module, defaulting to the type name.
+    /// </summary>
     public string Name => GetType().Name;
 
     /// <summary>

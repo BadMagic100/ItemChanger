@@ -8,20 +8,42 @@ using ItemChanger.Locations;
 
 namespace ItemChanger;
 
+/// <summary>
+/// Represents a named collection of lookup entries that the <see cref="Finder"/> can search through.
+/// </summary>
+/// <typeparam name="T">Type stored inside the sheet.</typeparam>
 public class FinderSheet<T>(Dictionary<string, T> members, float priority)
 {
+    /// <summary>
+    /// Gets the order in which this sheet should be queried relative to other sheets.
+    /// </summary>
     public float Priority => priority;
 
+    /// <summary>
+    /// Gets all names exposed by this sheet.
+    /// </summary>
     public IEnumerable<string> Names => members.Keys;
 
+    /// <summary>
+    /// Returns whether the sheet participates in searches.
+    /// </summary>
     public virtual bool Enabled => true;
 
+    /// <summary>
+    /// Attempts to resolve an entry by name.
+    /// </summary>
+    /// <param name="name">Entry to locate.</param>
+    /// <param name="result">Resolved entry if found.</param>
+    /// <returns><see langword="true"/> if the entry exists; otherwise <see langword="false"/>.</returns>
     public bool TryGet(string name, [NotNullWhen(true)] out T? result)
     {
         return members.TryGetValue(name, out result!);
     }
 }
 
+/// <summary>
+/// Provides lookup utilities for items and locations registered within ItemChanger, acting as a template registry so consumers can define and retrieve canonical objects instead of instantiating them ad-hoc.
+/// </summary>
 public class Finder
 {
     /// <summary>
@@ -41,8 +63,16 @@ public class Finder
 
     private readonly List<FinderSheet<Item>> ItemSheets = [];
     private readonly List<FinderSheet<Location>> LocationSheets = [];
+
+    /// <summary>
+    /// Gets all known item names from both the internal catalog and any registered sheets.
+    /// </summary>
     public IEnumerable<string> ItemNames =>
         Items.Keys.Concat(ItemSheets.SelectMany(s => s.Names)).Distinct();
+
+    /// <summary>
+    /// Gets all known location names from both the internal catalog and any registered sheets.
+    /// </summary>
     public IEnumerable<string> LocationNames =>
         Locations.Keys.Concat(LocationSheets.SelectMany(s => s.Names)).Distinct();
 
@@ -118,6 +148,12 @@ public class Finder
         return null;
     }
 
+    /// <summary>
+    /// Registers a custom item for later lookup.
+    /// </summary>
+    /// <param name="item">Item to register.</param>
+    /// <param name="overwrite">If <see langword="true"/>, replaces any existing item with the same name.</param>
+    /// <exception cref="ArgumentException">Thrown when the name already exists and <paramref name="overwrite"/> is false.</exception>
     public void DefineItem(Item item, bool overwrite = false)
     {
         if (Items.ContainsKey(item.Name) && !overwrite)
@@ -130,6 +166,12 @@ public class Finder
         Items[item.Name] = item;
     }
 
+    /// <summary>
+    /// Registers a custom location for later lookup.
+    /// </summary>
+    /// <param name="loc">Location to register.</param>
+    /// <param name="overwrite">If <see langword="true"/>, replaces any existing location with the same name.</param>
+    /// <exception cref="ArgumentException">Thrown when the name already exists and <paramref name="overwrite"/> is false.</exception>
     public void DefineLocation(Location loc, bool overwrite = false)
     {
         if (Locations.ContainsKey(loc.Name) && !overwrite)

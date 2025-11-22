@@ -1,5 +1,8 @@
-﻿namespace ItemChanger.Logging;
+namespace ItemChanger.Logging;
 
+/// <summary>
+/// Abstraction for logging messages at various severity levels.
+/// </summary>
 public interface ILogger
 {
     public void LogFine(string? message);

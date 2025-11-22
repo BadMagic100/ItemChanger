@@ -8,5 +8,8 @@ namespace ItemChanger.Tags;
 [PlacementTag]
 public class PreviewRecordTag : Tag
 {
+    /// <summary>
+    /// Last preview message shown for the placement.
+    /// </summary>
     public string? PreviewText { get; set; }
 }
