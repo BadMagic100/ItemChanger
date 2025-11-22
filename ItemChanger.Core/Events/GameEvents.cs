@@ -95,14 +95,14 @@ public sealed class GameEvents
 
     private readonly Dictionary<string, List<Action<Scene>>> sceneEdits = [];
 
-    internal static void Hook(GameEvents events)
+    internal void Hook()
     {
-        SceneManager.sceneLoaded += events.sceneLoadedHandler;
+        SceneManager.sceneLoaded += sceneLoadedHandler;
     }
 
-    internal static void Unhook(GameEvents events)
+    internal void Unhook()
     {
-        SceneManager.sceneLoaded -= events.sceneLoadedHandler;
+        SceneManager.sceneLoaded -= sceneLoadedHandler;
     }
 
     private void InvokeSceneLoadedEvent(Scene to)

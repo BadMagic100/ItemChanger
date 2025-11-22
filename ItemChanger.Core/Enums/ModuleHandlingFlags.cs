@@ -6,7 +6,7 @@ namespace ItemChanger.Enums;
 /// Enum which provides additional information for serialization and other module handling purposes.
 /// </summary>
 [Flags]
-public enum ModuleHandlingOptions
+public enum ModuleHandlingFlags
 {
     /// <summary>No flags.</summary>
     None = 0,

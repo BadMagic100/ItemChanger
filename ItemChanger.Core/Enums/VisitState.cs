@@ -6,7 +6,7 @@ namespace ItemChanger.Enums;
 /// Flag enum describing the states a placement has reached during gameplay.
 /// </summary>
 [Flags]
-public enum VisitStates
+public enum VisitState
 {
     /// <summary>
     /// The placement has not been visited

@@ -39,7 +39,7 @@ public abstract class Placement(string name) : TaggableObject
     /// An enumeration of visit flags accrued by the placement. Which flags may be set depends on the placement type and other factors.
     /// </summary>
     [JsonProperty]
-    public VisitStates Visited { get; private set; }
+    public VisitState Visited { get; private set; }
 
     #region Give
 
@@ -73,13 +73,13 @@ public abstract class Placement(string name) : TaggableObject
 
     public virtual void OnObtainedItem(Item item)
     {
-        AddVisitFlag(VisitStates.ObtainedAnyItem);
+        AddVisitFlag(VisitState.ObtainedAnyItem);
     }
 
     public virtual void OnPreview(string previewText)
     {
         GetOrAddTag<PreviewRecordTag>().PreviewText = previewText;
-        AddVisitFlag(VisitStates.Previewed);
+        AddVisitFlag(VisitState.Previewed);
     }
 
     /// <summary>
@@ -122,7 +122,7 @@ public abstract class Placement(string name) : TaggableObject
     /// <summary>
     /// Sets the visit state of the placement to the union of its current flags and the parameter flags.
     /// </summary>
-    public void AddVisitFlag(VisitStates flag)
+    public void AddVisitFlag(VisitState flag)
     {
         InvokeVisitStateChanged(flag);
         Visited |= flag;
@@ -131,15 +131,15 @@ public abstract class Placement(string name) : TaggableObject
     /// <summary>
     /// Returns true if the flags have nonempty intersection with the placement's visit state.
     /// </summary>
-    public bool CheckVisitedAny(VisitStates flags)
+    public bool CheckVisitedAny(VisitState flags)
     {
-        return (Visited & flags) != VisitStates.None;
+        return (Visited & flags) != VisitState.None;
     }
 
     /// <summary>
     /// Returns true if the flags are a subset of the placement's visit state.
     /// </summary>
-    public bool CheckVisitedAll(VisitStates flags)
+    public bool CheckVisitedAll(VisitState flags)
     {
         return (Visited & flags) == flags;
     }
@@ -220,7 +220,7 @@ public abstract class Placement(string name) : TaggableObject
     /// </summary>
     public event Action<VisitStateChangedEventArgs>? OnVisitStateChanged;
 
-    private void InvokeVisitStateChanged(VisitStates newFlags)
+    private void InvokeVisitStateChanged(VisitState newFlags)
     {
         VisitStateChangedEventArgs args = new(this, newFlags);
         try

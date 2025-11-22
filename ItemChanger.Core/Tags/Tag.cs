@@ -67,5 +67,5 @@ public abstract class Tag
     /// Additional information for serialization and other tag handling purposes.
     /// </summary>
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-    public virtual TagHandlingOptions TagHandlingProperties { get; set; }
+    public virtual TagHandlingFlags TagHandlingProperties { get; set; }
 }

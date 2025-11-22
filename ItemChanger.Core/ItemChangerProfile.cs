@@ -241,7 +241,7 @@ public class ItemChangerProfile : IDisposable
 
         if (placementActive)
         {
-            CatchUpPlacement(placement);
+            LoadIfNeeded(placement);
         }
     }
 
@@ -286,11 +286,7 @@ public class ItemChangerProfile : IDisposable
             PlacementConflictResolution.Throw => throw new ArgumentException(
                 $"A placement named {newPlacement.Name} already exists"
             ),
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(resolution),
-                resolution,
-                "Unknown conflict resolution mode."
-            ),
+            _ => throw new NotImplementedException("Unknown conflict resolution mode."),
         };
     }
 
@@ -304,7 +300,7 @@ public class ItemChangerProfile : IDisposable
     {
         newPlacement.Items.AddRange(existing.Items);
         placements[newPlacement.Name] = newPlacement;
-        UnloadIfLoaded(existing);
+        UnloadIfNeeded(existing);
         return true;
     }
 
@@ -324,11 +320,11 @@ public class ItemChangerProfile : IDisposable
     private bool ReplacePlacement(Placement newPlacement, Placement existing)
     {
         placements[newPlacement.Name] = newPlacement;
-        UnloadIfLoaded(existing);
+        UnloadIfNeeded(existing);
         return true;
     }
 
-    private void UnloadIfLoaded(Placement placement)
+    private void UnloadIfNeeded(Placement placement)
     {
         if (State >= LoadState.PlacementsLoadCompleted)
         {
@@ -336,7 +332,7 @@ public class ItemChangerProfile : IDisposable
         }
     }
 
-    private void CatchUpPlacement(Placement placement)
+    private void LoadIfNeeded(Placement placement)
     {
         if (State >= LoadState.PlacementsLoadCompleted && placements[placement.Name] == placement)
         {
@@ -360,7 +356,7 @@ public class ItemChangerProfile : IDisposable
             return;
         }
 
-        GameEvents.Hook(host.GameEvents);
+        host.GameEvents.Hook();
         host.PrepareEvents(lifecycleInvoker, gameInvoker);
         foreach (Container c in host.ContainerRegistry)
         {
@@ -398,7 +394,7 @@ public class ItemChangerProfile : IDisposable
             }
         }
         host.UnhookEvents(lifecycleInvoker, gameInvoker);
-        GameEvents.Unhook(host.GameEvents);
+        host.GameEvents.Unhook();
 
         lifecycleInvoker.NotifyUnhooked();
 

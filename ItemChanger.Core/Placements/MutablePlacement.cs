@@ -177,7 +177,7 @@ public class MutablePlacement(string Name)
     )
         where T : Placement
     {
-        containerType = string.Empty;
+        containerType = ContainerRegistry.UnknownContainerType;
         if (
             originalContainerTag == null
             || !(originalContainerTag.Force || originalContainerTag.Priority)
@@ -226,8 +226,7 @@ public class MutablePlacement(string Name)
         return items
             .Select(i => i.GetPreferredContainer())
             .FirstOrDefault(c =>
-                c != null
-                && location.Supports(c)
+                location.Supports(c)
                 && !unsupported.Contains(c)
                 && registry.GetContainer(c)?.SupportsAll(true, requestedCapabilities) == true
             );

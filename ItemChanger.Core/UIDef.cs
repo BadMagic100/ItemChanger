@@ -14,7 +14,7 @@ public abstract class UIDef : IFinderCloneable
     /// </summary>
     /// <param name="type">The message type.</param>
     /// <param name="callback">A callback to be invoked after sending the message.</param>
-    public abstract void SendMessage(MessageTypes type, Action? callback = null);
+    public abstract void SendMessage(MessageType type, Action? callback = null);
 
     /// <summary>
     /// Get the displayed name of the item after it is obtained.

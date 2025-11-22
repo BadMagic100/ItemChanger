@@ -13,7 +13,7 @@ public class StartLocation : AutoLocation
     /// <summary>
     /// Message type to use when presenting the granted item.
     /// </summary>
-    public MessageTypes MessageType { get; init; }
+    public MessageType MessageType { get; init; }
 
     protected override void DoLoad()
     {

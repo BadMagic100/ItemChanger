@@ -6,7 +6,7 @@ namespace ItemChanger.Enums;
 /// Enum which provides additional options for serialization and other tag handling purposes.
 /// </summary>
 [Flags]
-public enum TagHandlingOptions
+public enum TagHandlingFlags
 {
     /// <summary>No options.</summary>
     None = 0,

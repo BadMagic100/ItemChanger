@@ -21,7 +21,7 @@ public abstract class AutoLocation : Location
             FlingType = FlingType,
             Callback = null,
             Container = ContainerRegistry.UnknownContainerType,
-            MessageType = MessageTypes.Any,
+            MessageType = MessageType.Any,
         };
     }
 

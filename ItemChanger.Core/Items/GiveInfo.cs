@@ -27,7 +27,7 @@ public class GiveInfo
     /// <summary>
     /// A flag enumeration of the allowed message types for the UIDef after the item is given.
     /// </summary>
-    public MessageTypes MessageType { get; set; }
+    public MessageType MessageType { get; set; }
 
     /// <summary>
     /// A callback set by the location or placement to be executed by the UIDef when its message is complete.

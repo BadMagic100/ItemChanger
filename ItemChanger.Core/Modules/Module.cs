@@ -72,5 +72,5 @@ public abstract class Module
     /// Additional information for serialization and other tag handling purposes.
     /// </summary>
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-    public virtual ModuleHandlingOptions ModuleHandlingProperties { get; set; }
+    public virtual ModuleHandlingFlags ModuleHandlingProperties { get; set; }
 }
