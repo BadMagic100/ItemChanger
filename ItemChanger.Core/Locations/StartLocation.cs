@@ -12,17 +12,13 @@ public class StartLocation : AutoLocation
 {
     public MessageType MessageType { get; init; }
 
-    /// <summary>
-    /// Subscribes to lifecycle events so items can be given at the safe moment.
-    /// </summary>
+    /// <inheritdoc/>
     protected override void DoLoad()
     {
         ItemChangerHost.Singleton.LifecycleEvents.OnSafeToGiveItems += OnSafeToGiveItems;
     }
 
-    /// <summary>
-    /// Unsubscribes from lifecycle events when the location unloads.
-    /// </summary>
+    /// <inheritdoc/>
     protected override void DoUnload()
     {
         ItemChangerHost.Singleton.LifecycleEvents.OnSafeToGiveItems -= OnSafeToGiveItems;
@@ -50,9 +46,7 @@ public class StartLocation : AutoLocation
         }
     }
 
-    /// <summary>
-    /// Wraps the location into an <see cref="AutoPlacement"/> for placement-based workflows.
-    /// </summary>
+    /// <inheritdoc/>
     public override Placement Wrap()
     {
         return new AutoPlacement(Name)

@@ -22,17 +22,13 @@ public class ImplicitCostTag : Tag
     /// </summary>
     public bool Inherent { get; init; }
 
-    /// <summary>
-    /// Loads the associated cost when the parent taggable loads.
-    /// </summary>
+    /// <inheritdoc/>
     protected override void DoLoad(TaggableObject parent)
     {
         Cost.LoadOnce();
     }
 
-    /// <summary>
-    /// Unloads the associated cost when the parent taggable unloads.
-    /// </summary>
+    /// <inheritdoc/>
     protected override void DoUnload(TaggableObject parent)
     {
         Cost.UnloadOnce();

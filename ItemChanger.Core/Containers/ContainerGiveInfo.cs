@@ -26,7 +26,7 @@ public class ContainerGiveInfo
     public required FlingType FlingType { get; init; }
 
     /// <summary>
-    /// Indicates whether the give logic has been executed.
+    /// Indicates whether the give logic has been applied to the underlying GameObject.
     /// </summary>
     public bool Applied { get; set; }
 }

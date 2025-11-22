@@ -42,7 +42,7 @@ public class FinderSheet<T>(Dictionary<string, T> members, float priority)
 }
 
 /// <summary>
-/// Provides lookup utilities for items and locations registered within ItemChanger.
+/// Provides lookup utilities for items and locations registered within ItemChanger, acting as a template registry so consumers can define and retrieve canonical objects instead of instantiating them ad-hoc.
 /// </summary>
 public class Finder
 {

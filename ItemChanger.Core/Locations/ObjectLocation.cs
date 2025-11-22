@@ -22,17 +22,13 @@ public class ObjectLocation : ContainerLocation, IReplaceableLocation
     /// </summary>
     public required Vector3 Correction { get; init; }
 
-    /// <summary>
-    /// Hooks the scene edit that swaps or modifies the target object.
-    /// </summary>
+    /// <inheritdoc/>
     protected override void DoLoad()
     {
         ItemChangerHost.Singleton.GameEvents.AddSceneEdit(UnsafeSceneName, OnSceneLoaded);
     }
 
-    /// <summary>
-    /// Removes the scene edit that handles container replacement.
-    /// </summary>
+    /// <inheritdoc/>
     protected override void DoUnload()
     {
         ItemChangerHost.Singleton.GameEvents.RemoveSceneEdit(UnsafeSceneName, OnSceneLoaded);

@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 namespace ItemChanger.Events;
 
 /// <summary>
-/// Central dispatcher for scene and persistence events raised by ItemChanger.
+/// Central dispatcher for gameplay-driven events (scene/persistence changes) raised during normal play, as opposed to ItemChanger startup/shutdown lifecycle events.
 /// </summary>
 public sealed class GameEvents
 {

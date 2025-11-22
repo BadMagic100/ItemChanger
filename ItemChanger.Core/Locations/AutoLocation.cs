@@ -51,9 +51,7 @@ public abstract class AutoLocation : Location
     [JsonIgnore]
     public virtual bool SupportsCost => false;
 
-    /// <summary>
-    /// Wraps the auto location into an <see cref="AutoPlacement"/> so it can participate in placement workflows.
-    /// </summary>
+    /// <inheritdoc/>
     public override Placement Wrap()
     {
         return new AutoPlacement(Name)

@@ -7,7 +7,7 @@ using ItemChanger.Tags;
 namespace ItemChanger.Placements;
 
 /// <summary>
-/// Placement for self-implementing locations, usually acting through cutscene or conversation FSMs.
+/// Placement for self-implementing locations (anything that drives its own logic without being placed in a container), typically used when a location awards items via in-scene scripts rather than spawned objects.
 /// </summary>
 public class AutoPlacement(string Name)
     : Placement(Name),
@@ -31,26 +31,20 @@ public class AutoPlacement(string Name)
     /// </summary>
     public virtual bool SupportsCost => Location.SupportsCost;
 
-    /// <summary>
-    /// Connects the location to this placement and loads it once.
-    /// </summary>
+    /// <inheritdoc/>
     protected override void DoLoad()
     {
         Location.Placement = this;
         Location.LoadOnce();
     }
 
-    /// <summary>
-    /// Unloads the underlying location.
-    /// </summary>
+    /// <inheritdoc/>
     protected override void DoUnload()
     {
         Location.UnloadOnce();
     }
 
-    /// <summary>
-    /// Merges placement tags with the tags provided by the auto location.
-    /// </summary>
+    /// <inheritdoc/>
     public override IEnumerable<Tag> GetPlacementAndLocationTags()
     {
         return base.GetPlacementAndLocationTags().Concat(Location.Tags ?? Enumerable.Empty<Tag>());

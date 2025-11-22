@@ -26,9 +26,7 @@ public class MutablePlacement(string Name)
     public required ContainerLocation Location { get; init; }
     Location IPrimaryLocationPlacement.Location => Location;
 
-    /// <summary>
-    /// Gets the container type currently associated with this placement.
-    /// </summary>
+    /// <inheritdoc/>
     public override string MainContainerType => ContainerType;
 
     /// <summary>
@@ -41,9 +39,7 @@ public class MutablePlacement(string Name)
     /// </summary>
     public Cost? Cost { get; set; }
 
-    /// <summary>
-    /// Hooks the location into this placement and loads associated resources.
-    /// </summary>
+    /// <inheritdoc/>
     protected override void DoLoad()
     {
         Location.Placement = this;
@@ -51,9 +47,7 @@ public class MutablePlacement(string Name)
         Cost?.LoadOnce();
     }
 
-    /// <summary>
-    /// Unloads the location and cost resources.
-    /// </summary>
+    /// <inheritdoc/>
     protected override void DoUnload()
     {
         Location.UnloadOnce();

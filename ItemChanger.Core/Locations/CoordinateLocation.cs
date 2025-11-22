@@ -18,17 +18,13 @@ public class CoordinateLocation : PlaceableLocation
     /// <summary>World-space Z coordinate for placement.</summary>
     public float Z { get; init; }
 
-    /// <summary>
-    /// Hooks the scene edit that handles placement.
-    /// </summary>
+    /// <inheritdoc/>
     protected override void DoLoad()
     {
         ItemChangerHost.Singleton.GameEvents.AddSceneEdit(UnsafeSceneName, OnActiveSceneChanged);
     }
 
-    /// <summary>
-    /// Removes the placement scene edit.
-    /// </summary>
+    /// <inheritdoc/>
     protected override void DoUnload()
     {
         ItemChangerHost.Singleton.GameEvents.RemoveSceneEdit(UnsafeSceneName, OnActiveSceneChanged);

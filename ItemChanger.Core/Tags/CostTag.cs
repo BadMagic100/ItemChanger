@@ -12,17 +12,13 @@ public class CostTag : Tag
     /// </summary>
     public required Cost Cost { get; init; }
 
-    /// <summary>
-    /// Ensures the cost is loaded alongside the parent.
-    /// </summary>
+    /// <inheritdoc/>
     protected override void DoLoad(TaggableObject parent)
     {
         Cost?.LoadOnce();
     }
 
-    /// <summary>
-    /// Unloads the cost when the parent unloads.
-    /// </summary>
+    /// <inheritdoc/>
     protected override void DoUnload(TaggableObject parent)
     {
         Cost?.UnloadOnce();

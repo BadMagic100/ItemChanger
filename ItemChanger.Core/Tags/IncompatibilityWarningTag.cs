@@ -17,9 +17,7 @@ public class IncompatibilityWarningTag : Tag
     /// </summary>
     public required string IncompatiblePlacementName { get; init; }
 
-    /// <summary>
-    /// Emits a warning if the incompatible placement is present in the active profile.
-    /// </summary>
+    /// <inheritdoc/>
     protected override void DoLoad(TaggableObject parent)
     {
         string? parentPlacementName = parent switch

@@ -26,7 +26,7 @@ public class ContainerCostInfo
     public required Placement Placement { get; init; }
 
     /// <summary>
-    /// Indicates whether the cost enforcement has already been applied.
+    /// Indicates whether the effects of the container have already been applied to the underlying GameObject.
     /// </summary>
     public bool Applied { get; set; }
 }

@@ -13,9 +13,7 @@ public class NullItem : Item
         return new NullItem { Name = "Nothing" };
     }
 
-    /// <summary>
-    /// Overrides the give behavior with a no-op.
-    /// </summary>
+    /// <inheritdoc/>
     public override void GiveImmediate(GiveInfo info)
     {
         // intentional no-op

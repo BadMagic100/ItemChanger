@@ -46,9 +46,7 @@ public abstract class ContainerLocation : Location
             || !ForceDefaultContainer;
     }
 
-    /// <summary>
-    /// Wraps this location into a <see cref="MutablePlacement"/>.
-    /// </summary>
+    /// <inheritdoc/>
     public override Placement Wrap()
     {
         return new MutablePlacement(Name)

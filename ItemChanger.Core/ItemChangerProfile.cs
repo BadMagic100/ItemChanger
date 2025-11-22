@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 namespace ItemChanger;
 
 /// <summary>
-/// Represents a set of ItemChanger placements, modules, and hooks tied to a particular host.
+/// Represents the ItemChanger data (placements, modules, hooks) associated with an in-game save file, tied to a particular host.
 /// </summary>
 public class ItemChangerProfile : IDisposable
 {

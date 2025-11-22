@@ -23,9 +23,7 @@ public class SetIBoolOnGiveTag : Tag
     /// </summary>
     public required bool Value { get; init; }
 
-    /// <summary>
-    /// Subscribes to the relevant events on the parent object.
-    /// </summary>
+    /// <inheritdoc/>
     protected override void DoLoad(TaggableObject parent)
     {
         if (parent is Item item)
@@ -42,9 +40,7 @@ public class SetIBoolOnGiveTag : Tag
         }
     }
 
-    /// <summary>
-    /// Unsubscribes from events that were set up in <see cref="DoLoad(TaggableObject)"/>.
-    /// </summary>
+    /// <inheritdoc/>
     protected override void DoUnload(TaggableObject parent)
     {
         if (parent is Item item)

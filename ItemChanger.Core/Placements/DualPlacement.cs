@@ -41,9 +41,7 @@ public class DualPlacement(string Name)
     /// </summary>
     public string ContainerType { get; private set; } = ContainerRegistry.UnknownContainerType;
 
-    /// <summary>
-    /// Gets the container type currently assigned to this placement.
-    /// </summary>
+    /// <inheritdoc/>
     public override string MainContainerType => ContainerType;
 
     /// <summary>
@@ -57,9 +55,7 @@ public class DualPlacement(string Name)
     /// </summary>
     public Cost? Cost { get; set; }
 
-    /// <summary>
-    /// Loads whichever location the test currently selects and hooks state-change tracking.
-    /// </summary>
+    /// <inheritdoc/>
     protected override void DoLoad()
     {
         cachedValue = Test.Value;
@@ -71,9 +67,7 @@ public class DualPlacement(string Name)
         ItemChangerHost.Singleton.GameEvents.BeforeNextSceneLoaded += BeforeNextSceneLoaded;
     }
 
-    /// <summary>
-    /// Unloads the active location and unhooks state-change tracking.
-    /// </summary>
+    /// <inheritdoc/>
     protected override void DoUnload()
     {
         Location.UnloadOnce();
@@ -155,9 +149,7 @@ public class DualPlacement(string Name)
         ContainerType = MutablePlacement.ChooseContainerType(this, cl, Items); // container type already failed the initial test
     }
 
-    /// <summary>
-    /// Combines placement tags with tags from both potential locations.
-    /// </summary>
+    /// <inheritdoc/>
     public override IEnumerable<Tag> GetPlacementAndLocationTags()
     {
         return base.GetPlacementAndLocationTags()
