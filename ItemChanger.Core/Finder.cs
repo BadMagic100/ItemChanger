@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using ItemChanger.Events;
 using ItemChanger.Events.Args;
 using ItemChanger.Items;
 using ItemChanger.Locations;
@@ -29,13 +30,23 @@ public class Finder
     /// Invoked by Finder.GetItem. The initial arguments are the requested name, and null. If the event finishes with a non-null item, that item is returned to the requester.
     /// <br/>Otherwise, the ItemChanger internal implementation of that item is cloned and returned, if it exists. Otherwise, null is returned.
     /// </summary>
-    public event Action<GetItemEventArgs>? GetItemOverride;
+    public event Action<GetItemEventArgs> GetItemOverride
+    {
+        add => getItemOverrideSubscribers.Add(value);
+        remove => getItemOverrideSubscribers.Remove(value);
+    }
+    private readonly List<Action<GetItemEventArgs>> getItemOverrideSubscribers = [];
 
     /// <summary>
     /// Invoked by Finder.GetLocation. The initial arguments are the requested name, and null. If the event finishes with a non-null location, that location is returned to the requester.
     /// <br/>Otherwise, the ItemChanger internal implementation of that location is cloned and returned, if it exists. Otherwise, null is returned.
     /// </summary>
-    public event Action<GetLocationEventArgs>? GetLocationOverride;
+    public event Action<GetLocationEventArgs> GetLocationOverride
+    {
+        add => getLocationOverrideSubscribers.Add(value);
+        remove => getLocationOverrideSubscribers.Remove(value);
+    }
+    private readonly List<Action<GetLocationEventArgs>> getLocationOverrideSubscribers = [];
 
     private readonly Dictionary<string, Item> Items = [];
     private readonly Dictionary<string, Location> Locations = [];
@@ -53,14 +64,7 @@ public class Finder
     public Item? GetItem(string name)
     {
         GetItemEventArgs args = new(name);
-        try
-        {
-            GetItemOverride?.Invoke(args);
-        }
-        catch (Exception e)
-        {
-            LoggerProxy.LogError($"Error running GetItemOverride for {name}:\n{e}");
-        }
+        InvokeHelper.InvokeList(args, getItemOverrideSubscribers);
         if (args.Current != null)
         {
             return args.Current.DeepClone();
@@ -96,14 +100,7 @@ public class Finder
     public Location? GetLocation(string name)
     {
         GetLocationEventArgs args = new(name);
-        try
-        {
-            GetLocationOverride?.Invoke(args);
-        }
-        catch (Exception e)
-        {
-            LoggerProxy.LogError($"Error running GetLocationOverride for {name}:\n{e}");
-        }
+        InvokeHelper.InvokeList(args, getLocationOverrideSubscribers);
         if (args.Current != null)
         {
             return args.Current.DeepClone();
