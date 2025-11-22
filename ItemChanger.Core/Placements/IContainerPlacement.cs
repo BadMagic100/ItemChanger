@@ -8,5 +8,11 @@ namespace ItemChanger.Placements;
 /// </summary>
 public interface IContainerPlacement
 {
+    /// <summary>
+    /// Provides a container and associated metadata that can dispense the placement's items in the given location.
+    /// </summary>
+    /// <param name="location">Location requesting the container.</param>
+    /// <param name="container">Container capable of dispensing the items.</param>
+    /// <param name="info">Additional container metadata.</param>
     public void GetContainer(Location location, out Container container, out ContainerInfo info);
 }

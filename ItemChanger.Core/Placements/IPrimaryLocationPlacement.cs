@@ -7,5 +7,8 @@ namespace ItemChanger.Placements;
 /// </summary>
 public interface IPrimaryLocationPlacement
 {
+    /// <summary>
+    /// Gets the primary location that the placement represents.
+    /// </summary>
     public Location Location { get; }
 }

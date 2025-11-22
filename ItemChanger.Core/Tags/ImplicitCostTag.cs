@@ -7,11 +7,14 @@ using ItemChanger.Tags.Constraints;
 namespace ItemChanger.Tags;
 
 /// <summary>
-/// A tag which does provides a default cost for a location.
+/// A tag which provides a default cost for a location.
 /// </summary>
 [LocationTag]
 public class ImplicitCostTag : Tag
 {
+    /// <summary>
+    /// Cost applied when this tag is present.
+    /// </summary>
     public required Cost Cost { get; init; }
 
     /// <summary>
@@ -19,11 +22,17 @@ public class ImplicitCostTag : Tag
     /// </summary>
     public bool Inherent { get; init; }
 
+    /// <summary>
+    /// Loads the associated cost when the parent taggable loads.
+    /// </summary>
     protected override void DoLoad(TaggableObject parent)
     {
         Cost.LoadOnce();
     }
 
+    /// <summary>
+    /// Unloads the associated cost when the parent taggable unloads.
+    /// </summary>
     protected override void DoUnload(TaggableObject parent)
     {
         Cost.UnloadOnce();

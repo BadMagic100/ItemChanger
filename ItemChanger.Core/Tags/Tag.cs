@@ -5,6 +5,9 @@ using Newtonsoft.Json;
 
 namespace ItemChanger.Tags;
 
+/// <summary>
+/// Base class for lightweight metadata objects that can be attached to placements, items, locations, and other taggable objects.
+/// </summary>
 public abstract class Tag
 {
     /// <summary>

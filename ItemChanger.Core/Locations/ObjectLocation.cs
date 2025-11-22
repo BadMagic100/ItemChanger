@@ -7,21 +7,40 @@ using UnityEngine.SceneManagement;
 
 namespace ItemChanger.Locations;
 
+/// <summary>
+/// Location that uses an existing scene object as the anchor for a container.
+/// </summary>
 public class ObjectLocation : ContainerLocation, IReplaceableLocation
 {
+    /// <summary>
+    /// Path of the in-scene object to replace or modify.
+    /// </summary>
     public required string ObjectName { get; init; }
+
+    /// <summary>
+    /// Offset correction applied when placing a new container.
+    /// </summary>
     public required Vector3 Correction { get; init; }
 
+    /// <summary>
+    /// Hooks the scene edit that swaps or modifies the target object.
+    /// </summary>
     protected override void DoLoad()
     {
         ItemChangerHost.Singleton.GameEvents.AddSceneEdit(UnsafeSceneName, OnSceneLoaded);
     }
 
+    /// <summary>
+    /// Removes the scene edit that handles container replacement.
+    /// </summary>
     protected override void DoUnload()
     {
         ItemChangerHost.Singleton.GameEvents.RemoveSceneEdit(UnsafeSceneName, OnSceneLoaded);
     }
 
+    /// <summary>
+    /// Invoked when the target scene is loaded so the container can be applied.
+    /// </summary>
     protected virtual void OnSceneLoaded(Scene scene)
     {
         base.GetContainer(out Container container, out ContainerInfo info);
@@ -35,6 +54,9 @@ public class ObjectLocation : ContainerLocation, IReplaceableLocation
         }
     }
 
+    /// <summary>
+    /// Modifies the existing container object in place.
+    /// </summary>
     protected virtual void ModifyContainerInPlace(
         Scene scene,
         Container container,
@@ -45,6 +67,9 @@ public class ObjectLocation : ContainerLocation, IReplaceableLocation
         container.ModifyContainerInPlace(target, info);
     }
 
+    /// <summary>
+    /// Replaces the target object with a new container.
+    /// </summary>
     public virtual void ReplaceWithContainer(Scene scene, Container container, ContainerInfo info)
     {
         GameObject target = FindObject(scene, ObjectName);
@@ -57,6 +82,9 @@ public class ObjectLocation : ContainerLocation, IReplaceableLocation
         }
     }
 
+    /// <summary>
+    /// Finds the target object by name or path in the given scene.
+    /// </summary>
     protected static GameObject FindObject(Scene scene, string objectName)
     {
         GameObject? candidate;

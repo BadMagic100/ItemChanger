@@ -71,11 +71,19 @@ public abstract class Placement(string name) : TaggableObject
         }
     }
 
+    /// <summary>
+    /// Called when one of the placement's items is obtained.
+    /// </summary>
+    /// <param name="item">Item that was obtained.</param>
     public virtual void OnObtainedItem(Item item)
     {
         AddVisitFlag(VisitState.ObtainedAnyItem);
     }
 
+    /// <summary>
+    /// Records the provided preview text on the placement.
+    /// </summary>
+    /// <param name="previewText">Preview message produced by the hint source.</param>
     public virtual void OnPreview(string previewText)
     {
         GetOrAddTag<PreviewRecordTag>().PreviewText = previewText;
@@ -242,6 +250,9 @@ public abstract class Placement(string name) : TaggableObject
     [JsonIgnore]
     public virtual string MainContainerType => ContainerRegistry.UnknownContainerType;
 
+    /// <summary>
+    /// Returns all tags attached to the placement and any associated locations.
+    /// </summary>
     public virtual IEnumerable<Tag> GetPlacementAndLocationTags()
     {
         return Tags ?? Enumerable.Empty<Tag>();

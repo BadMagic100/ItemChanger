@@ -7,5 +7,8 @@ namespace ItemChanger.Placements;
 /// </summary>
 public interface ISingleCostPlacement
 {
+    /// <summary>
+    /// Gets or sets the cost shared across the placement's items.
+    /// </summary>
     Cost? Cost { get; set; }
 }
