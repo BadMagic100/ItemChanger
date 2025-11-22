@@ -41,8 +41,7 @@ internal sealed class ModuleCollectionConverter : JsonConverter<ModuleCollection
                     ModuleHandlingFlags flags =
                         ((JObject)jModule)
                             .GetValue(nameof(Module.ModuleHandlingProperties))
-                            ?.ToObject<ModuleHandlingFlags>(serializer)
-                        ?? ModuleHandlingFlags.None;
+                            ?.ToObject<ModuleHandlingFlags>(serializer) ?? ModuleHandlingFlags.None;
                     if (flags.HasFlag(ModuleHandlingFlags.AllowDeserializationFailure))
                     {
                         t = new InvalidModule { JSON = jModule, DeserializationError = e };
