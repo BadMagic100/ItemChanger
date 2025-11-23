@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using ItemChanger.Containers;
 using ItemChanger.Costs;
@@ -66,6 +67,28 @@ public sealed class MutablePlacementTests : IDisposable
     }
 
     [Fact]
+    public void ChooseContainerType_ReplacesPrioritizedOriginalContainerWhenUnsupported()
+    {
+        string originalType = RegisterContainer("Original");
+        string preferredType = RegisterContainer("Preferred");
+        TestContainerLocation location = new("WithoutOriginal") { ForceDefaultContainer = false };
+        location.Disallow(originalType);
+        MutablePlacement placement = new(PlacementName) { Location = location };
+        placement.AddTag(
+            new OriginalContainerTag { ContainerType = originalType, Priority = true }
+        );
+        placement.Add(new PreferredContainerItem("Item", preferredType));
+
+        string container = MutablePlacement.ChooseContainerType(
+            placement,
+            location,
+            placement.Items
+        );
+
+        Assert.Equal(preferredType, container);
+    }
+
+    [Fact]
     public void ChooseContainerType_RespectsItemPreferredContainer()
     {
         string preferredType = RegisterContainer("ItemPreferred");
@@ -122,11 +145,28 @@ public sealed class MutablePlacementTests : IDisposable
 
     private sealed class TestContainerLocation : ContainerLocation
     {
+        private readonly HashSet<string> disallowedContainers = [];
+
         [SetsRequiredMembers]
         public TestContainerLocation(string name)
         {
             Name = name;
             SceneName = "Scene";
+        }
+
+        public void Disallow(string containerType)
+        {
+            disallowedContainers.Add(containerType);
+        }
+
+        public override bool Supports(string containerType)
+        {
+            if (disallowedContainers.Contains(containerType))
+            {
+                return false;
+            }
+
+            return base.Supports(containerType);
         }
 
         protected override void DoLoad() { }

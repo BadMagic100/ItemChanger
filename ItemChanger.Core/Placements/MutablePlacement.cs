@@ -102,6 +102,7 @@ public class MutablePlacement(string Name)
         if (
             TryUsePrioritizedOriginalContainer(
                 placement,
+                targetLocation,
                 originalContainerTag,
                 requestedCapabilities,
                 unsupported,
@@ -169,6 +170,7 @@ public class MutablePlacement(string Name)
 
     private static bool TryUsePrioritizedOriginalContainer<T>(
         T placement,
+        ContainerLocation location,
         OriginalContainerTag? originalContainerTag,
         uint requestedCapabilities,
         HashSet<string> unsupported,
@@ -193,7 +195,8 @@ public class MutablePlacement(string Name)
         }
 
         bool supported =
-            !unsupported.Contains(originalContainerTag.ContainerType)
+            location.Supports(originalContainerTag.ContainerType)
+            && !unsupported.Contains(originalContainerTag.ContainerType)
             && originalContainer.SupportsAll(false, requestedCapabilities);
         if (supported)
         {
