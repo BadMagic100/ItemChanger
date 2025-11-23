@@ -24,7 +24,12 @@ public interface IInteropModule
 /// </summary>
 public class InteropModule : Module, IInteropModule
 {
+    /// <inheritdoc/>
     public required string Message { get; set; }
+
+    /// <summary>
+    /// A customizable property bag exposed to other modules.
+    /// </summary>
     public Dictionary<string, object?> Properties { get; set; } = new();
 
     /// <inheritdoc/>

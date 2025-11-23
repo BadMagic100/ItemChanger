@@ -9,20 +9,30 @@ namespace ItemChanger.Locations;
 /// </summary>
 public class CoordinateLocation : PlaceableLocation
 {
+    /// <summary>World-space X coordinate for placement.</summary>
     public required float X { get; init; }
+
+    /// <summary>World-space Y coordinate for placement.</summary>
     public required float Y { get; init; }
+
+    /// <summary>World-space Z coordinate for placement.</summary>
     public float Z { get; init; }
 
+    /// <inheritdoc/>
     protected override void DoLoad()
     {
         ItemChangerHost.Singleton.GameEvents.AddSceneEdit(UnsafeSceneName, OnActiveSceneChanged);
     }
 
+    /// <inheritdoc/>
     protected override void DoUnload()
     {
         ItemChangerHost.Singleton.GameEvents.RemoveSceneEdit(UnsafeSceneName, OnActiveSceneChanged);
     }
 
+    /// <summary>
+    /// Places a container when the target scene becomes active and the location is unmanaged.
+    /// </summary>
     protected void OnActiveSceneChanged(Scene to)
     {
         if (!Managed && to.name == UnsafeSceneName)

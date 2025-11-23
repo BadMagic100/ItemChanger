@@ -13,9 +13,17 @@ namespace ItemChanger.Tags;
 /// </summary>
 public class SetIBoolOnGiveTag : Tag
 {
+    /// <summary>
+    /// Bool updated when the tag triggers.
+    /// </summary>
     public required IWritableBool Bool { get; init; }
+
+    /// <summary>
+    /// Value assigned to <see cref="Bool"/> upon trigger.
+    /// </summary>
     public required bool Value { get; init; }
 
+    /// <inheritdoc/>
     protected override void DoLoad(TaggableObject parent)
     {
         if (parent is Item item)
@@ -32,6 +40,7 @@ public class SetIBoolOnGiveTag : Tag
         }
     }
 
+    /// <inheritdoc/>
     protected override void DoUnload(TaggableObject parent)
     {
         if (parent is Item item)

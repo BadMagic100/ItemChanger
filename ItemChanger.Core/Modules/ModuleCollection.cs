@@ -8,6 +8,9 @@ using Newtonsoft.Json;
 
 namespace ItemChanger.Modules;
 
+/// <summary>
+/// Represents the list of modules attached to an <see cref="ItemChangerProfile"/>.
+/// </summary>
 [JsonConverter(typeof(ModuleCollectionConverter))]
 public class ModuleCollection : IEnumerable<Module>
 {
@@ -21,6 +24,9 @@ public class ModuleCollection : IEnumerable<Module>
         this.modules = [];
     }
 
+    /// <summary>
+    /// Loads each module once in declaration order.
+    /// </summary>
     public void Load()
     {
         for (int i = 0; i < modules.Count; i++)
@@ -29,6 +35,9 @@ public class ModuleCollection : IEnumerable<Module>
         }
     }
 
+    /// <summary>
+    /// Unloads each module once in declaration order.
+    /// </summary>
     public void Unload()
     {
         for (int i = 0; i < modules.Count; i++)
@@ -37,6 +46,11 @@ public class ModuleCollection : IEnumerable<Module>
         }
     }
 
+    /// <summary>
+    /// Adds a module instance to the collection and loads it when the host profile is active.
+    /// </summary>
+    /// <param name="m">Module to add.</param>
+    /// <returns>The same module instance for chaining.</returns>
     public Module Add(Module m)
     {
         if (m == null)
@@ -57,6 +71,11 @@ public class ModuleCollection : IEnumerable<Module>
         return m;
     }
 
+    /// <summary>
+    /// Adds a module created via reflection.
+    /// </summary>
+    /// <typeparam name="T">Module type to instantiate.</typeparam>
+    /// <returns>The new module instance.</returns>
     public T Add<T>()
         where T : Module, new()
     {
@@ -64,6 +83,11 @@ public class ModuleCollection : IEnumerable<Module>
         return (T)Add(t);
     }
 
+    /// <summary>
+    /// Adds a module given the runtime type.
+    /// </summary>
+    /// <param name="T">Module type to instantiate.</param>
+    /// <returns>The new module instance.</returns>
     public Module Add(Type T)
     {
         try
@@ -88,6 +112,9 @@ public class ModuleCollection : IEnumerable<Module>
         return modules.OfType<T>().FirstOrDefault();
     }
 
+    /// <summary>
+    /// Retrieves the module of type <typeparamref name="T"/> or creates one when missing.
+    /// </summary>
     public T GetOrAdd<T>()
         where T : Module, new()
     {
@@ -97,6 +124,9 @@ public class ModuleCollection : IEnumerable<Module>
         return t;
     }
 
+    /// <summary>
+    /// Retrieves the module matching the provided type or creates one when missing.
+    /// </summary>
     public Module GetOrAdd(Type T)
     {
         Module? m = modules.FirstOrDefault(m => T.IsInstanceOfType(m));
@@ -105,6 +135,9 @@ public class ModuleCollection : IEnumerable<Module>
         return m;
     }
 
+    /// <summary>
+    /// Removes a module instance and unloads it if the profile is currently loaded.
+    /// </summary>
     public void Remove(Module m)
     {
         if (
@@ -118,6 +151,9 @@ public class ModuleCollection : IEnumerable<Module>
         }
     }
 
+    /// <summary>
+    /// Removes the first module of type <typeparamref name="T"/>.
+    /// </summary>
     public void Remove<T>()
     {
         if (modules.OfType<T>().FirstOrDefault() is Module m)
@@ -126,6 +162,9 @@ public class ModuleCollection : IEnumerable<Module>
         }
     }
 
+    /// <summary>
+    /// Removes all modules with the given type.
+    /// </summary>
     public void Remove(Type T)
     {
         if (
@@ -142,6 +181,9 @@ public class ModuleCollection : IEnumerable<Module>
         modules.RemoveAll(m => m.GetType() == T);
     }
 
+    /// <summary>
+    /// Removes the first module with the provided name.
+    /// </summary>
     public void Remove(string name)
     {
         if (modules.FirstOrDefault(m => m.Name == name) is Module m)

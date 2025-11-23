@@ -23,18 +23,23 @@ public class ItemChainTag : Tag
     /// </summary>
     public string? Successor { get; init; }
 
+    /// <inheritdoc/>
     protected override void DoLoad(TaggableObject parent)
     {
         Item item = (Item)parent;
         item.ModifyItem += ModifyItem;
     }
 
+    /// <inheritdoc/>
     protected override void DoUnload(TaggableObject parent)
     {
         Item item = (Item)parent;
         item.ModifyItem -= ModifyItem;
     }
 
+    /// <summary>
+    /// Retrieves an item by name. Default implementation queries the global <see cref="Finder"/>, but subclasses can resolve names differently.
+    /// </summary>
     protected virtual Item GetItem(string name)
     {
         return ItemChangerHost.Singleton.Finder.GetItem(name) ?? throw new ArgumentException(

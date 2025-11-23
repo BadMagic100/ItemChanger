@@ -20,14 +20,26 @@ public class MutablePlacement(string Name)
         ISingleCostPlacement,
         IPrimaryLocationPlacement
 {
+    /// <summary>
+    /// Location that provides the placement's interaction surface.
+    /// </summary>
     public required ContainerLocation Location { get; init; }
     Location IPrimaryLocationPlacement.Location => Location;
 
+    /// <inheritdoc/>
     public override string MainContainerType => ContainerType;
+
+    /// <summary>
+    /// Gets the currently selected container type.
+    /// </summary>
     public string ContainerType { get; private set; } = ContainerRegistry.UnknownContainerType;
 
+    /// <summary>
+    /// Optional cost paid before retrieving items from this placement.
+    /// </summary>
     public Cost? Cost { get; set; }
 
+    /// <inheritdoc/>
     protected override void DoLoad()
     {
         Location.Placement = this;
@@ -35,12 +47,16 @@ public class MutablePlacement(string Name)
         Cost?.LoadOnce();
     }
 
+    /// <inheritdoc/>
     protected override void DoUnload()
     {
         Location.UnloadOnce();
         Cost?.UnloadOnce();
     }
 
+    /// <summary>
+    /// Resolves a container suited for the placement at runtime.
+    /// </summary>
     public void GetContainer(Location location, out Container container, out ContainerInfo info)
     {
         string containerType;
@@ -78,6 +94,9 @@ public class MutablePlacement(string Name)
         };
     }
 
+    /// <summary>
+    /// Determines the most appropriate container type for the placement and location context.
+    /// </summary>
     public static string ChooseContainerType<T>(
         T placement,
         ContainerLocation? location,

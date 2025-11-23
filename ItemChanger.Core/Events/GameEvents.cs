@@ -7,6 +7,9 @@ using UnityEngine.SceneManagement;
 
 namespace ItemChanger.Events;
 
+/// <summary>
+/// Central dispatcher for gameplay-driven events (scene/persistence changes) raised during normal play, as opposed to ItemChanger startup/shutdown lifecycle events.
+/// </summary>
 public sealed class GameEvents
 {
     private readonly UnityAction<Scene, LoadSceneMode> sceneLoadedHandler;
@@ -115,29 +118,44 @@ public sealed class GameEvents
         }
     }
 
+    /// <summary>
+    /// Helper class that raises GameEvents on behalf of a specific profile.
+    /// </summary>
     public class Invoker
     {
         private readonly ItemChangerProfile profile;
         private readonly GameEvents events;
 
+        /// <summary>
+        /// Creates an invoker bound to the specified profile and event source.
+        /// </summary>
         internal Invoker(ItemChangerProfile profile, GameEvents events)
         {
             this.profile = profile;
             this.events = events;
         }
 
+        /// <summary>
+        /// Signals that persistent data has been updated.
+        /// </summary>
         public void NotifyPersistentUpdate()
         {
             profile.ResetPersistentItems(Persistence.Persistent);
             InvokeHelper.InvokeList(events.onPersistentUpdateSubscribers);
         }
 
+        /// <summary>
+        /// Signals that semi-persistent data has been updated.
+        /// </summary>
         public void NotifySemiPersistentUpdate()
         {
             profile.ResetPersistentItems(Persistence.SemiPersistent);
             InvokeHelper.InvokeList(events.onSemiPersistentUpdateSubscribers);
         }
 
+        /// <summary>
+        /// Signals that a scene transition is about to occur.
+        /// </summary>
         public void NotifyBeforeNextSceneLoaded(BeforeSceneLoadedEventArgs args) =>
             InvokeHelper.InvokeList(args, events.beforeNextSceneLoadedSubscribers);
     }

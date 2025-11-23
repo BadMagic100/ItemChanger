@@ -9,5 +9,8 @@ namespace ItemChanger.Tags;
 [PlacementTag]
 public class UnsupportedContainerTag : Tag
 {
+    /// <summary>
+    /// Container type that the associated location or placement does not support.
+    /// </summary>
     public required string ContainerType { get; init; }
 }

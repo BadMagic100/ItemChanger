@@ -14,6 +14,9 @@ namespace ItemChanger.Locations;
 /// </summary>
 public abstract class AutoLocation : Location
 {
+    /// <summary>
+    /// Builds the give-info descriptor used when this location awards items.
+    /// </summary>
     public virtual GiveInfo GetGiveInfo()
     {
         return new GiveInfo
@@ -25,6 +28,9 @@ public abstract class AutoLocation : Location
         };
     }
 
+    /// <summary>
+    /// Gives every item using the default give info immediately.
+    /// </summary>
     public void GiveAll()
     {
         Placement!.GiveAll(GetGiveInfo());
@@ -54,6 +60,7 @@ public abstract class AutoLocation : Location
     [JsonIgnore]
     public virtual bool SupportsCost => false;
 
+    /// <inheritdoc/>
     public override Placement Wrap()
     {
         return new AutoPlacement(Name)

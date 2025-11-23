@@ -9,6 +9,9 @@ namespace ItemChanger.Events.Args;
 /// </summary>
 public class VisitStateChangedEventArgs(Placement placement, VisitState newFlags) : EventArgs
 {
+    /// <summary>
+    /// Placement whose state changed.
+    /// </summary>
     public Placement Placement { get; } = placement;
 
     /// <summary>
