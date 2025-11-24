@@ -1,7 +1,0 @@
-Things to change
-
-future improvements:
-* Nullability annotations
-* PolySharp configure included types explicitly per runtime
-* docs
-* find additional places for exception handling
